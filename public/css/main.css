@@ -1,6 +1,6 @@
 html {
-    --color_primary: #43b583;
-    --color_secondary: #3f51b5;
+    --color-primary: #43b583;
+    --color-secondary: #3f51b5;
     font-family: 'Cabin', sans-serif;
 }
 
@@ -8,12 +8,29 @@ html {
     margin: 0;
 }
 
-#splash_screen {
-    height: 100vh;
-    background: #43b583;
+#app-bar {
+	background-color: #43b583;
+	width: 100%;
+	height: 56px;
 }
 
-#splash_logo {
+#splash-screen {
+	position: fixed; 
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+    height: 100vh;
+	background: #43b583;
+	transition: 375ms cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+#splash-screen.go-away {
+	top: -100vh;
+	bottom: -100vh;
+}
+
+#splash-logo {
     position: absolute;
     top: 0;
     left: 0;
@@ -24,7 +41,7 @@ html {
     height: 40vh;
 }
 
-#splash_name {
+#splash-name {
     font-family: 'Jua', sans-serif;
     color: #fff;
     position: absolute;

@@ -1,82 +1,41 @@
-[debug] [2018-04-12T14:49:49.069Z] ----------------------------------------------------------------------
-[debug] [2018-04-12T14:49:49.072Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Edhi7\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
-[debug] [2018-04-12T14:49:49.073Z] CLI Version:   3.17.7
-[debug] [2018-04-12T14:49:49.073Z] Platform:      win32
-[debug] [2018-04-12T14:49:49.073Z] Node Version:  v8.10.0
-[debug] [2018-04-12T14:49:49.074Z] Time:          Thu Apr 12 2018 16:49:49 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-12T14:49:49.074Z] ----------------------------------------------------------------------
+[debug] [2018-04-14T10:19:33.045Z] ----------------------------------------------------------------------
+[debug] [2018-04-14T10:19:33.048Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Edhi7\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-04-14T10:19:33.048Z] CLI Version:   3.17.7
+[debug] [2018-04-14T10:19:33.048Z] Platform:      win32
+[debug] [2018-04-14T10:19:33.048Z] Node Version:  v8.10.0
+[debug] [2018-04-14T10:19:33.049Z] Time:          Sat Apr 14 2018 12:19:33 GMT+0200 (W. Europe Daylight Time)
+[debug] [2018-04-14T10:19:33.049Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2018-04-12T14:49:49.091Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-04-12T14:49:49.092Z] > authorizing via signed-in user
-[debug] [2018-04-12T14:49:49.094Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
-[debug] [2018-04-12T14:49:49.095Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+[debug] [2018-04-14T10:19:33.065Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-04-14T10:19:33.066Z] > authorizing via signed-in user
+[debug] [2018-04-14T10:19:33.068Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-04-14T10:19:33.069Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
  { refresh_token: '1/IhlCtUxu4F-vSENOdMvGHFkUIYayEnVZhwTob4asJUo',
   client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
   client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
   grant_type: 'refresh_token',
   scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
- Thu Apr 12 2018 16:49:49 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-12T14:49:50.617Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-12T14:49:50.983Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/aeoni-b7fe2  
+ Sat Apr 14 2018 12:19:33 GMT+0200 (W. Europe Daylight Time)
+[debug] [2018-04-14T10:19:33.287Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-14T10:19:33.299Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/aeoni-b7fe2  
   
- Thu Apr 12 2018 16:49:50 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-12T14:49:51.963Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-12T14:49:51.965Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/aeoni-b7fe2/tokens  
+ Sat Apr 14 2018 12:19:33 GMT+0200 (W. Europe Daylight Time)
+[debug] [2018-04-14T10:19:34.172Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-14T10:19:34.173Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/aeoni-b7fe2/tokens  
   
- Thu Apr 12 2018 16:49:51 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-12T14:49:52.822Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-12T14:49:52.824Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/aeoni-b7fe2  
+ Sat Apr 14 2018 12:19:34 GMT+0200 (W. Europe Daylight Time)
+[debug] [2018-04-14T10:19:34.944Z] <<< HTTP RESPONSE 200
+[debug] [2018-04-14T10:19:34.946Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/aeoni-b7fe2  
   
- Thu Apr 12 2018 16:49:52 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-12T14:49:53.749Z] <<< HTTP RESPONSE 200
+ Sat Apr 14 2018 12:19:34 GMT+0200 (W. Europe Daylight Time)
+[debug] [2018-04-14T10:19:35.899Z] <<< HTTP RESPONSE 200
 [info] 
 [info] === Serving from 'C:\Users\Edhi7\Documents\html projects\Aeoni'...
 [info] 
-[debug] [2018-04-12T14:49:53.757Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/978297012441/clients/_:getWebAppConfig  
+[debug] [2018-04-14T10:19:35.907Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/978297012441/clients/_:getWebAppConfig  
   
- Thu Apr 12 2018 16:49:53 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-12T14:49:54.326Z] <<< HTTP RESPONSE 200
-[info] i  hosting: Serving hosting files from: public
-[info] +  hosting: Local server: http://localhost:5000
-
-[debug] [2018-04-14T09:01:04.879Z] ----------------------------------------------------------------------
-[debug] [2018-04-14T09:01:04.883Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Edhi7\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
-[debug] [2018-04-14T09:01:04.883Z] CLI Version:   3.17.7
-[debug] [2018-04-14T09:01:04.883Z] Platform:      win32
-[debug] [2018-04-14T09:01:04.883Z] Node Version:  v8.10.0
-[debug] [2018-04-14T09:01:04.884Z] Time:          Sat Apr 14 2018 11:01:04 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-14T09:01:04.884Z] ----------------------------------------------------------------------
-[debug] 
-[debug] [2018-04-14T09:01:04.905Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-04-14T09:01:04.905Z] > authorizing via signed-in user
-[debug] [2018-04-14T09:01:04.908Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
-[debug] [2018-04-14T09:01:04.908Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
- { refresh_token: '1/IhlCtUxu4F-vSENOdMvGHFkUIYayEnVZhwTob4asJUo',
-  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
-  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
-  grant_type: 'refresh_token',
-  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
- Sat Apr 14 2018 11:01:04 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-14T09:01:05.145Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-14T09:01:05.165Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/aeoni-b7fe2  
-  
- Sat Apr 14 2018 11:01:05 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-14T09:01:06.391Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-14T09:01:06.392Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/aeoni-b7fe2/tokens  
-  
- Sat Apr 14 2018 11:01:06 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-14T09:01:07.180Z] <<< HTTP RESPONSE 200
-[debug] [2018-04-14T09:01:07.182Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/aeoni-b7fe2  
-  
- Sat Apr 14 2018 11:01:07 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-14T09:01:08.168Z] <<< HTTP RESPONSE 200
-[info] 
-[info] === Serving from 'C:\Users\Edhi7\Documents\html projects\Aeoni'...
-[info] 
-[debug] [2018-04-14T09:01:08.176Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/978297012441/clients/_:getWebAppConfig  
-  
- Sat Apr 14 2018 11:01:08 GMT+0200 (W. Europe Daylight Time)
-[debug] [2018-04-14T09:01:08.911Z] <<< HTTP RESPONSE 200
+ Sat Apr 14 2018 12:19:35 GMT+0200 (W. Europe Daylight Time)
+[debug] [2018-04-14T10:19:36.654Z] <<< HTTP RESPONSE 200
 [info] i  hosting: Serving hosting files from: public
 [info] +  hosting: Local server: http://localhost:5000
 

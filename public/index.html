@@ -1,62 +1,49 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Welcome to Firebase Hosting</title>
 
-	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-	<link rel="manifest" href="images/site.webmanifest">
-	<link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#43b583">
-	<meta name="apple-mobile-web-app-title" content="Aeoni">
-	<meta name="application-name" content="Aeoni">
-	<meta name="msapplication-TileColor" content="#43b583">
-	<meta name="theme-color" content="#43b583">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png"/>
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png"/>
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png"/>
+	<link rel="manifest" href="images/site.webmanifest"/>
+	<link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#43b583"/>
+	<meta name="apple-mobile-web-app-title" content="Aeoni"/>
+	<meta name="application-name" content="Aeoni"/>
+	<meta name="msapplication-TileColor" content="#43b583"/>
+	<meta name="theme-color" content="#43b583"/>
 
-	<!-- update the version number as needed -->
 	<script defer src="/__/firebase/4.12.1/firebase-app.js"></script>
 	<!-- include only the Firebase features as you need -->
-	<script defer src="/__/firebase/4.12.1/firebase-auth.js"></script>
+	<!-- <script defer src="/__/firebase/4.12.1/firebase-auth.js"></script>
 	<script defer src="/__/firebase/4.12.1/firebase-database.js"></script>
 	<script defer src="/__/firebase/4.12.1/firebase-messaging.js"></script>
-	<script defer src="/__/firebase/4.1 2.1/firebase-storage.js"></script>
+	<script defer src="/__/firebase/4.12.1/firebase-storage.js"></script>-->
 	<!-- initialize the SDK after all desired features are loaded -->
 	<script defer src="/__/firebase/init.js"></script>
 
-	<link href="https://fonts.googleapis.com/css?family=Cabin|Jua" rel="stylesheet">
+	<script defer src="js/main.js" />
+
+	<link href="https://fonts.googleapis.com/css?family=Cabin|Jua" rel="stylesheet"/>
 
 	<link href="css/main.css" rel="stylesheet" />
 
 </head>
 
 <body>
-
-	<section id="splash_screen">
-		<img id="splash_logo" src="images/white_logo.svg" />
-		<div id="splash_name">Aeoni</div>
+	<section id="splash-screen">
+		<img id="splash-logo" src="images/white_logo.svg" />
+		<div id="splash-name">Aeoni</div>
 	</section>
 
-	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			// firebase.auth().onAuthStateChanged(user => { });
-			// firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-			// firebase.messaging().requestPermission().then(() => { });
-			// firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-
-			try {
-				let app = firebase.app();
-				let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] ===
-					'function');
-				document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-			} catch (e) {
-				console.error(e);
-				document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-			}
-		});
-	</script>
+	<header id="app-bar">
+		Aeoni jef
+	</header>
 </body>
 
 </html>
