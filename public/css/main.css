@@ -1,5 +1,5 @@
 html {
-    --color-primary: #43b583;
+    --color-primary: #2d966b;
     --color-secondary: #3f51b5;
     font-family: 'Cabin', sans-serif;
 }
@@ -8,10 +8,79 @@ html {
     margin: 0;
 }
 
+#app-title {
+	line-height: 56px;
+	font-size: 20px;
+	font-weight: medium;
+}
+
 #app-bar {
-	background-color: #43b583;
+	background-color: #2d966b;
 	width: 100%;
+	height: 100vh;
+	color: #fff;
+	transition: 375ms cubic-bezier(0.4, 0.0, 0.2, 1) 225ms;
+	overflow: hidden;
+}
+
+#app-bar.float-up { 
 	height: 56px;
+	box-shadow: 0 3px 5px rgba(0, 0,0 ,0.12), 0 1px 10px rgba(0, 0, 0, 0.2);
+}
+
+#app-bar.float-up #splash-logo {
+	width: 20vh;
+	height: 20vh;
+	bottom: 50vh;
+}
+
+#splash-logo {
+	transition: 550ms cubic-bezier(0.4, 0.0, 1, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 40vh;
+    height: 40vh;
+}
+
+#splash-logo.fadeUp {
+	transition: 375ms cubic-bezier(0.0, 0.0, 0.2, 1);
+	bottom: 50vh;
+	opacity: 0;
+}
+
+#login {
+	position: fixed;
+	margin: auto;
+	top: 50vh;
+	width: 40vh;
+	height: 128px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	opacity: 0;
+	background-color: #fff;
+	border-radius: 2px;
+	padding: 16px;
+	transition: 375ms cubic-bezier(0.4, 0, 0.2, 1) 225ms;
+	box-shadow: 0 3px 4px rgba(0, 0, 0, 0.12), 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+#login.fadeIn {
+	top: 0px;
+	opacity: 1;
+}
+
+
+#hamburger {
+	margin: 4px;
+	padding: 12px;
+	width: 24px;
+	height: 24px;
+	float: left;
 }
 
 #splash-screen {
@@ -21,26 +90,17 @@ html {
 	right: 0;
 	bottom: 0;
     height: 100vh;
-	background: #43b583;
-	transition: 375ms cubic-bezier(0.4, 0, 0.6, 1);
+	background: #2d966b;
+	transition: all 225ms cubic-bezier(0.4, 0.0, 1, 1) 525ms;
 }
 
 #splash-screen.go-away {
-	top: -100vh;
-	bottom: -100vh;
+	top: 100vh;
+	bottom: 100vh;
+	opacity: 0;
 }
 
-#splash-logo {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 20vh;
-    margin: auto;
-    width: 40vh;
-    height: 40vh;
-}
-
+/* Don't need anymore
 #splash-name {
     font-family: 'Jua', sans-serif;
     color: #fff;
@@ -51,7 +111,7 @@ html {
     text-align: center;
     text-transform: uppercase;
     font-size: 96px;
-}
+} */
 
 /* Begin preloader */
 

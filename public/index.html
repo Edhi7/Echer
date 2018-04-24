@@ -4,45 +4,68 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Welcome to Firebase Hosting</title>
 
-	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png"/>
-	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png"/>
-	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png"/>
-	<link rel="manifest" href="images/site.webmanifest"/>
-	<link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#43b583"/>
-	<meta name="apple-mobile-web-app-title" content="Aeoni"/>
-	<meta name="application-name" content="Aeoni"/>
-	<meta name="msapplication-TileColor" content="#43b583"/>
-	<meta name="theme-color" content="#43b583"/>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="My name jeff and this is my website. 
+	I work her with my young man same and my ">
+	
+	<title>Aeoni</title>
+
+	<link rel="canonical" href="https://aeoni-b7fe2.firebaseapp.com/" />
+	
+
+	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png" />
+	<link rel="manifest" href="images/site.webmanifest" />
+	<link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#43b583" />
+	<meta name="apple-mobile-web-app-title" content="Aeoni" />
+	<meta name="application-name" content="Aeoni" />
+	<meta name="msapplication-TileColor" content="#43b583" />
+	<meta name="theme-color" content="#43b583" />
 
 	<script defer src="/__/firebase/4.12.1/firebase-app.js"></script>
 	<!-- include only the Firebase features as you need -->
-	<!-- <script defer src="/__/firebase/4.12.1/firebase-auth.js"></script>
-	<script defer src="/__/firebase/4.12.1/firebase-database.js"></script>
+	<script defer src="/__/firebase/4.12.1/firebase-auth.js"></script>
+	<!--<script defer src="/__/firebase/4.12.1/firebase-database.js"></script>
 	<script defer src="/__/firebase/4.12.1/firebase-messaging.js"></script>
 	<script defer src="/__/firebase/4.12.1/firebase-storage.js"></script>-->
 	<!-- initialize the SDK after all desired features are loaded -->
 	<script defer src="/__/firebase/init.js"></script>
 
-	<script defer src="js/main.js" />
+	<script defer src="js/main.js"></script>
 
-	<link href="https://fonts.googleapis.com/css?family=Cabin|Jua" rel="stylesheet"/>
-
+	<link defer href="https://fonts.googleapis.com/css?family=Cabin:400,500|Jua&subset=latin-ext" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link href="css/main.css" rel="stylesheet" />
+	<link defer href="css/field.css" rel="stylesheet" />
 
 </head>
 
 <body>
-	<section id="splash-screen">
+	<!-- <section id="splash-screen">
 		<img id="splash-logo" src="images/white_logo.svg" />
-		<div id="splash-name">Aeoni</div>
-	</section>
+	</section> -->
 
 	<header id="app-bar">
-		Aeoni jef
+		<img id="splash-logo" src="images/white_logo.svg" alt="bad illustration of succulent"/>
+		<i class="material-icons" id="hamburger">menu</i>
+		<div id="app-title">Aeoni</div>
+
+		<form id="login">
+			<div class="form-element form-input">
+				<input id="email" class="form-element-field" placeholder="Skriv din email tjockis" type="input" required/>
+				<div class="form-element-bar"></div>
+				<label class="form-element-label" for="email">Email</label>
+			</div>
+
+			<div class="form-element form-input">
+				<input id="password" class="form-element-field" placeholder="Önskas korv med senapen?" type="input" required/>
+				<div class="form-element-bar"></div>
+				<label class="form-element-label" for="password">Password</label>
+			</div>
+		</form>
 	</header>
 </body>
 
