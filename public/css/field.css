@@ -36,7 +36,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
-    color: #a6a6a6;
     transform: translateY(-50%);
     transform-origin: left center;
     transition: transform 0.28s ease, color 0.28s linear, opacity 0.28s linear;

@@ -3,18 +3,18 @@
     "short_name": "Aeoni",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "../images/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png",
+            "src": "../images/android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         }
     ],
-    "theme_color": "#43b583",
-    "background_color": "#43b583",
+    "theme_color": "#2d966b",
+    "background_color": "#2d966b",
     "start_url": "https://aeoni-b7fe2.firebaseapp.com/",
-    "display": "standalone"
+    "display": "fullscreen"
 }

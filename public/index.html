@@ -1,31 +1,32 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//SV"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="sv-se">
 
 <head>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="description" content="My name jeff and this is my website. 
-	I work her with my young man same and my ">
-	
+	<meta name="description" content="Jag är jeff och detta är ett helvete. 
+	Jag jobbar här med min goda vän och kompanjon same bergöm.
+	En sak jag lärt mig under mina 10 minuter i branchen är att en halv korv är bättre än ingen.">
+
 	<title>Aeoni</title>
 
 	<link rel="canonical" href="https://aeoni-b7fe2.firebaseapp.com/" />
-	
+
 
 	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
 	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png" />
 	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png" />
-	<link rel="manifest" href="images/site.webmanifest" />
+	<link rel="manifest" href="config/site.webmanifest" />
 	<link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#43b583" />
 	<meta name="apple-mobile-web-app-title" content="Aeoni" />
 	<meta name="application-name" content="Aeoni" />
 	<meta name="msapplication-TileColor" content="#43b583" />
 	<meta name="theme-color" content="#43b583" />
 
-	<script defer src="/__/firebase/4.12.1/firebase-app.js"></script>
+	<script src="/__/firebase/4.12.1/firebase-app.js"></script>
 	<!-- include only the Firebase features as you need -->
 	<script defer src="/__/firebase/4.12.1/firebase-auth.js"></script>
 	<!--<script defer src="/__/firebase/4.12.1/firebase-database.js"></script>
@@ -34,39 +35,133 @@
 	<!-- initialize the SDK after all desired features are loaded -->
 	<script defer src="/__/firebase/init.js"></script>
 
+	<script defer src="js/ripple.js"></script>
 	<script defer src="js/main.js"></script>
 
-	<link defer href="https://fonts.googleapis.com/css?family=Cabin:400,500|Jua&subset=latin-ext" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	<link href="css/main.css" rel="stylesheet" />
-	<link defer href="css/field.css" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css?family=Cabin:400,500&subset=latin-ext" rel="stylesheet" media="none" onload="media='all'">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" media="none" onload="media='all'">
+	<link href="css/main.css" rel="stylesheet" media="none" onload="media='all'" />
+	<link href="css/field.css" rel="stylesheet" media="none" onload="media='all'" />
 
+
+	<style>
+		body {
+			font-family: sans-serif;
+			background-color: #303030;
+		}
+
+		* {
+			margin: 0;
+		}
+
+		#app-bar {
+			background-color: #2d966b;
+			/* Hide text before fonts are loaded */
+			color: #2d966b;
+			width: 100%;
+			height: 56px;
+			transition: 375ms cubic-bezier(0.4, 0.0, 0.2, 1);
+			overflow: hidden;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.14), 0 1px 10px rgba(0, 0, 0, 0.2);
+		}
+
+		#hamburger {
+			margin: 4px;
+			padding: 12px;
+			float: left;
+		}
+
+		#menu-button {
+			float: right;
+			margin: 4px;
+			padding: 12px 8px;
+		}
+
+		#app-title {
+			line-height: 56px;
+			font-size: 20px;
+			float: left;
+		}
+
+		#splash-logo {
+			transition: 550ms cubic-bezier(0.4, 0.0, 1, 1);
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			margin: auto;
+			width: 40vh;
+			height: 40vh;
+		}
+
+		#login {
+			display: none;
+		}
+	</style>
 </head>
 
 <body>
-	<!-- <section id="splash-screen">
-		<img id="splash-logo" src="images/white_logo.svg" />
-	</section> -->
-
 	<header id="app-bar">
-		<img id="splash-logo" src="images/white_logo.svg" alt="bad illustration of succulent"/>
-		<i class="material-icons" id="hamburger">menu</i>
+		<i class="material-icons" id="hamburger" tabindex=0>menu</i>
 		<div id="app-title">Aeoni</div>
-
-		<form id="login">
-			<div class="form-element form-input">
-				<input id="email" class="form-element-field" placeholder="Skriv din email tjockis" type="input" required/>
-				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="email">Email</label>
-			</div>
-
-			<div class="form-element form-input">
-				<input id="password" class="form-element-field" placeholder="Önskas korv med senapen?" type="input" required/>
-				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="password">Password</label>
-			</div>
-		</form>
+		<i class="material-icons" id="menu-button" tabindex=0>more_vert</i>
+		<span class="toolbar-menu">
+			<span class="toolbar-menu-option" tabindex=0>
+				Meny
+			</span>
+			<span class="toolbar-menu-option" tabindex=0>
+				Kontakt
+			</span>
+			<span class="toolbar-menu-option" tabindex=0>
+				Om oss
+			</span>
+		</span>
 	</header>
+
+	<form id="login">
+		<div class="body-2" style="padding-bottom: 16px;">Sign up</div>
+		<div class="form-element form-input" style="margin-right: 16px">
+			<input id="email" class="form-element-field" placeholder="Skriv din email tjockis" type="input" required/>
+			<div class="form-element-bar"></div>
+			<label class="form-element-label" for="email">Email</label>
+		</div>
+
+		<div class="form-element form-input" style="margin-right: 16px">
+			<input id="password" class="form-element-field" placeholder="Önskas korv med senapen?" type="password" required/>
+			<div class="form-element-bar"></div>
+			<label class="form-element-label" for="password">Lösenord</label>
+		</div>
+
+		<div class="alternative-login ripple" onclick="google_sign_in()" tabindex=0>
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="alternative-login-logo"
+			    style="margin-top: 9px;">
+				<g>
+					<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+					<path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+					<path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+					<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+					<path fill="none" d="M0 0h48v48H0z"></path>
+				</g>
+			</svg>
+			Google
+		</div>
+
+		<div class="alternative-login ripple" onclick="github_sign_in()" tabindex=0>
+			<svg class="alternative-login-logo" style="margin-top: 9px; width: 18px" aria-labelledby="simpleicons-github-icon" role="img"
+			    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+				<title id="simpleicons-github-icon">GitHub icon</title>
+				<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+				/>
+			</svg>
+			GitHub
+		</div>
+
+		<hr class="divider">
+		<div class="button-flat ripple" style="float: right;" onclick="submit_signup_form(this)" tabindex=0>Submit</div>
+	</form>
+
+	</form>
 </body>
 
 </html>
