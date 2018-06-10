@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//SV"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-au">
+
+<head>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="Jag är jeff och detta är ett helvete. 
+	Jag jobbar här med min gode vän och kompanjon same bergöm.
+	En sak jag lärt mig under mina 10 minuter i branchen är att en halv korv är bättre än ingen.">
+	<link rel="canonical" href="https://echeveria-chile.firebaseapp.com/" />
+
+	<title>Echeveria</title>
+
+	<link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png" />
+	<link rel="manifest" href="../config/site.webmanifest" />
+	<link rel="mask-icon" href="../images/safari-pinned-tab.svg" color="#43b583" />
+	<meta name="apple-mobile-web-app-title" content="Aeoni" />
+	<meta name="application-name" content="Aeoni" />
+	<meta name="msapplication-TileColor" content="#43b583" />
+	<meta name="theme-color" content="#43b583" />
+
+	<script src="/__/firebase/5.0.4/firebase-app.js"></script>
+	<!-- include only the Firebase features as you need -->
+	<script defer src="/__/firebase/5.0.4/firebase-auth.js"></script>
+	<script defer src="/__/firebase/5.0.4/firebase-firestore.js"></script>
+	<script defer src="/__/firebase/5.0.4/firebase-messaging.js"></script>
+	<script defer src="/__/firebase/5.0.4/firebase-storage.js"></script>
+	<!-- initialize the SDK after all desired features are loaded -->
+	<script defer src="/__/firebase/init.js"></script>
+
+	<script defer src="js/ripple.js"></script>
+	<script defer src="js/main.js"></script>
+
+	<link href="https://fonts.googleapis.com/css?family=Cabin:400,500&subset=latin-ext" rel="stylesheet" media="none" onload="media='all'">
+	<!-- Not used anymore but mighht be brought back 
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" media="none" onload="media='all'"> 
+	-->
+	<link href="css/main.css" rel="stylesheet" media="none" onload="media='all'" />
+	<link href="css/field.css" rel="stylesheet" media="none" onload="media='all'" />
+
+
+	<style>
+		html,
+		body {
+			font-family: "Cabin", sans-serif;
+			background-color: #2d966b;
+			overflow-x: hidden;
+			min-height: 100%;
+		}
+
+		* {
+			margin: 0;
+		}
+
+		#hamburger {
+			margin: 8px;
+			padding: 12px;
+			float: left;
+		}
+
+		#menu-button {
+			float: right;
+			margin: 8px;
+			padding: 12px 8px;
+		}
+
+		#app-title {
+			color: #fafafa;
+			text-align: center;
+			line-height: 64px;
+			position: absolute;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			top: 50vh;
+			margin-top: -128px;
+			font-size: 64px;
+			transform: scale(2);
+			opacity: 0;
+		}
+
+		#splash-logo {
+			transition: 550ms cubic-bezier(0.4, 0, 1, 1);
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			margin: auto;
+			width: 40vh;
+			height: 40vh;
+		}
+
+		#login,
+		body:not(.loaded) svg,
+		body:not(.loaded) #bottom-navigation,
+		body:not(.loaded) main {
+			display: none;
+			color: #2d966b;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="app-title">Echeveria</div>
+
+	<form id="login">
+		<div class="body-2" style="padding-bottom: 16px;">Sign up/in</div>
+		<div class="form-element form-input" style="margin-right: 16px">
+			<input id="email" class="form-element-field" placeholder="Skriv din email tjockis" type="input" required/>
+			<div class="form-element-bar"></div>
+			<label class="form-element-label" for="email">Email</label>
+		</div>
+
+		<div class="form-element form-input" style="margin-right: 16px">
+			<input id="password" class="form-element-field" placeholder="Önskas korv med senapen?" type="password" onkeydown="validate_form_if_enter(event)"
+			    required/>
+			<div class="form-element-bar"></div>
+			<label class="form-element-label" for="password">Lösenord</label>
+		</div>
+
+		<div class="raised-white-button ripple" onclick="google_sign_in()" tabindex=0>
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="alternative-login-logo"
+			    style="margin-top: 9px;">
+				<g>
+					<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+					<path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+					<path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+					<path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+					<path fill="none" d="M0 0h48v48H0z"></path>
+				</g>
+			</svg>
+			Google
+		</div>
+
+		<div class="raised-white-button ripple" onclick="github_sign_in()" tabindex=0>
+			<svg class="alternative-login-logo" style="margin-top: 9px; width: 18px" aria-labelledby="simpleicons-github-icon" role="img"
+			    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+				<title id="simpleicons-github-icon">GitHub icon</title>
+				<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+				/>
+			</svg>
+			GitHub
+		</div>
+
+		<hr class="divider">
+		<div class="button-flat ripple" style="float: right;" onclick="submit_signup_form(this)" tabindex=0>Submit</div>
+	</form>
+
+
+	<main>
+
+		<section id="map-screen" class="top-level-destination">
+			här ska kartan vara
+		</section>
+
+		<section id="chat-screen" class="top-level-destination">
+			<!--<div class="subheader">Kontakter</div>-->
+			<div id="contact-list">
+				<div class="contact">
+					<img class="contact-image" alt="Steven Pinker" src="https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F4%2F4c%2FSteven_Pinker_2011.jpg%2F1200px-Steven_Pinker_2011.jpg&f=1"
+					/>
+					<section class="contact-text">
+						<div class="contact-name">Ass</div>
+						<div class="contact-last-message">HAha jef supa li poka ni pi kon jo jo lon insa anu la pona pi kili len jaki li open jo e ante awen pi ilo monsi nanpa
+							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken len ike li monsi e utala li awen moli tan ijo pi pona loje open
+							tan mute la kepeken pi pali kili sina li nimi li lupa sama ma lon ike. moku pi kasi waso waso li tan ma alasa pi mute
+							suli awen poka lon wan. insa pini pi jan nanpa lete li kama telo kepeken kon.
+						</div>
+					</section>
+				</div>
+				<div class="contact">
+					<img class="contact-image" alt="Steven Pinker" src="https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fpbs.twimg.com%2Fprofile_images%2F724683824655929344%2FtDzZoOU9.jpg&f=1"
+					/>
+					<section class="contact-text">
+						<div class="contact-name">Barry Allen</div>
+						<div class="contact-last-message">Jef bra meem</div>
+					</section>
+				</div>
+				<div class="contact">
+					<img class="contact-image" alt="Steven Pinker" src="https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mezcotoyz.com%2Fmas_assets%2Fcache%2Fimage%2F9%2Ff%2F2%2F2546.Jpg&f=1"
+					/>
+					<section class="contact-text">
+						<div class="contact-name">Fattest man alive</div>
+						<div class="contact-last-message">Ja, jef</div>
+					</section>
+				</div>
+				<div class="contact">
+					<img class="contact-image" alt="Steven Pinker" src="https://vignette.wikia.nocookie.net/sml/images/c/c9/Jeffo.png/revision/latest?cb=20180114184504"
+					/>
+					<section class="contact-text">
+						<div class="contact-name">Jeffo</div>
+						<div class="contact-last-message">Jef fem</div>
+					</section>
+				</div>
+				<div class="contact">
+					<img class="contact-image" alt="Steven Pinker" src="https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mezcotoyz.com%2Fmas_assets%2Fcache%2Fimage%2F9%2Ff%2F2%2F2546.Jpg&f=1"
+					/>
+					<section class="contact-text">
+						<div class="contact-name">Fattest man alive</div>
+						<div class="contact-last-message">Ja, jef</div>
+					</section>
+				</div>
+				<div class="contact">
+					<img class="contact-image" alt="Steven Pinker" src="https://vignette.wikia.nocookie.net/sml/images/c/c9/Jeffo.png/revision/latest?cb=20180114184504"
+					/>
+					<section class="contact-text">
+						<div class="contact-name">Jeffo</div>
+						<div class="contact-last-message">Jef fem</div>
+					</section>
+				</div>
+				<div class="contact">
+					<img class="contact-image" alt="Steven Pinker" src="https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mezcotoyz.com%2Fmas_assets%2Fcache%2Fimage%2F9%2Ff%2F2%2F2546.Jpg&f=1"
+					/>
+					<section class="contact-text">
+						<div class="contact-name">Fattest man alive</div>
+						<div class="contact-last-message">Ja, jef</div>
+					</section>
+				</div>
+				<div class="contact">
+					<img class="contact-image" alt="Steven Pinker" src="https://vignette.wikia.nocookie.net/sml/images/c/c9/Jeffo.png/revision/latest?cb=20180114184504"
+					/>
+					<section class="contact-text">
+						<div class="contact-name">Jeffo</div>
+						<div class="contact-last-message">Jef fem</div>
+					</section>
+				</div>
+
+			</div>
+
+			<!-- >tfw no frens -->
+
+
+			<div id="fab">
+				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+				    height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+					<g id="Sharp" fill="#fff">
+						<path stroke="#fff" d="M15,12c2.21,0,4-1.79,4-4s-1.79-4-4-4s-4,1.79-4,4S12.79,12,15,12z M6,10V7H4v3H1v2h3v3h2v-3h3v-2H6z M15,14
+				   c-2.67,0-8,1.34-8,4v2h16v-2C23,15.34,17.67,14,15,14z" />
+					</g>
+				</svg>
+			</div>
+		</section>
+
+		<section id="account-screen" class="top-level-destination">
+			<!-- Todo: fix this destination doeasent display when lciicked i t still jhas display: none lole-->
+			<div class="button-flat ripple" style="float: right;" onclick="sign_out()" tabindex=0>Sign out</div>
+			<br style="clear: both"> Här e ju profilen kanske ska börja här o sen ta kontakterna för då vet jag ju hur hela systemet ska fungera osv.
+		</section>
+
+	</main>
+
+	<nav id="bottom-navigation">
+		<section class="bottom-navigation-destination" data-destination-color="#fbbc05">
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+			    height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+				<g fill="rgba(255, 255, 255, 0.54)">
+					<path stroke="rgba(255, 255, 255, 0.54)" d="M15,5.1L9,3L3,5.02v16.2l6-2.33l6,2.1l6-2.02V2.77L15,5.1z M15,18.89l-6-2.11V5.11l6,2.11V18.89z"
+					/>
+				</g>
+			</svg>
+
+			<span class="bottom-navigation-label">Map</span>
+		</section>
+
+		<section class="bottom-navigation-destination active" data-destination-color="#34a853">
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+			    height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+				<g fill="rgba(255, 255, 255, 0.54)">
+					<path stroke="rgba(255, 255, 255, 0.54)" d="M22,6h-3v9H6v3h12l4,4V6z M17,13V2H2v15l4-4H17z" />
+				</g>
+			</svg>
+
+			<span class="bottom-navigation-label">Chat</span>
+		</section>
+
+		<section class="bottom-navigation-destination">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<g fill="rgba(255, 255, 255, 0.54)">
+					<path stroke="rgba(255, 255, 255, 0.54)" d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,5c1.66,0,3,1.34,3,3s-1.34,3-3,3S9,9.66,9,8
+		S10.34,5,12,5z M12,19.2c-2.5,0-4.71-1.28-6-3.22c0.03-1.99,4-3.08,6-3.08c1.99,0,5.97,1.09,6,3.08C16.71,17.92,14.5,19.2,12,19.2z
+		" />
+				</g>
+			</svg>
+
+			<span class="bottom-navigation-label">Account</span>
+		</section>
+	</nav>
+
+</body>
+
+</html>
