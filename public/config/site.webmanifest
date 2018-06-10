@@ -1,6 +1,6 @@
 {
-    "name": "Aeoni",
-    "short_name": "Aeoni",
+    "name": "Echer",
+    "short_name": "Echer",
     "icons": [
         {
             "src": "../images/android-chrome-192x192.png",
@@ -15,6 +15,6 @@
     ],
     "theme_color": "#2d966b",
     "background_color": "#2d966b",
-    "start_url": "https://aeoni-b7fe2.firebaseapp.com/",
+    "start_url": "https://echeveria-chile.firebaseapp.com/app",
     "display": "fullscreen"
 }
