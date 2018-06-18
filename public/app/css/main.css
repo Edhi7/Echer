@@ -23,8 +23,8 @@ main {
 }
 
 #contact-list {
-    margin-top: 16px;
-    padding-bottom: 64px;
+    margin-top: 8px;
+    padding-bottom: 56px;
 }
 
 .conversation {
@@ -32,37 +32,33 @@ main {
     top: 100%;
     height: 100vh;
     width: 100vw;
-    background: #2d966b;
-    left: 0;   
-    transition: 200ms cubic-bezier(0.4, 0.0, 1, 1) 50ms;
+    background: #eaeaea;
+    left: 0;
+    transition: 200ms cubic-bezier(0.4, 0, 1, 1) 50ms;
     z-index: 8;
-
 }
 
 .conversation.open {
     top: 0;
-    transition: 175ms cubic-bezier(0.0, 0.0, 0.2, 1) 50ms;
+    transition: 225ms cubic-bezier(0, 0, 0.2, 1) 50ms;
 }
 
 .conversation-toolbar {
     width: 100%;
     height: 56px;
-    background-color: #288760;
+    background: #2d966b;
     line-height: 56px;
 }
 
 .close-conversation {
     padding: 8px;
-    margin: 8px;
+    margin: 2px;
     float: left;
     cursor: pointer;
 }
 
-
-.converation-name {
-    content: "cop";
+.conversation-name {
     font-size: 24px;
-    font-weight: 500;
     color: #f5f5f5;
 }
 
@@ -73,7 +69,7 @@ main {
     width: 100%;
     min-height: 64px;
     margin-bottom: 8px;
-    margin-top: 24px;
+    margin-top: 16px;
     opacity: 0;
     transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
@@ -97,7 +93,7 @@ main {
     margin-left: 16px;
     padding: 8px 0;
     float: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    /* border-bottom: 1px solid rgba(255, 255, 255, 0.87); */
 }
 
 .contact:last-of-type .contact-text {
@@ -106,8 +102,8 @@ main {
 
 .contact-name {
     margin: 3px 0;
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.7);
 }
 
 .contact-last-message {
@@ -124,7 +120,7 @@ main {
 .top-level-destination {
     display: none;
     position: absolute;
-    top: 96px;
+    top: 24px;
     left: 0;
     width: 100vw;
     box-sizing: border-box;
@@ -134,7 +130,7 @@ main {
 
 .top-level-destination.active {
     transition: 250ms cubic-bezier(0, 0, 0.2, 1);
-    top: 72px;
+    top: 0;
     opacity: 1;
 }
 
@@ -145,7 +141,7 @@ main {
     border-radius: 56px;
     position: fixed;
     bottom: -56px;
-    right: 16px;
+    right: 8px;
     margin: auto;
     background-color: #3f51b5;
     color: #fff;
@@ -160,7 +156,7 @@ main {
 }
 
 .top-level-destination.active #fab {
-    bottom: 72px;
+    bottom: 64px;
 }
 
 #fab:active {
@@ -181,13 +177,13 @@ body #login {
     background-color: #efefef;
     color: #646464;
     border-radius: 2px;
-    padding: 24px 8px 8px 24px;
+    padding: 8px;
     transition: opacity 120ms cubic-bezier(0.4, 0.0, 1, 1), top 360ms cubic-bezier(0.4, 0.0, 1, 1);
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 .divider {
-    margin: 8px -8px 8px -24px;
+    margin: 8px -8px;
     border: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.14);
 }
@@ -209,9 +205,8 @@ body #login {
     opacity: 1;
 }
 
-#app-title.slide-up {
-    top: 8px;
-    margin-top: 0;
+#app-title.fade-out {
+    opacity: 0;
 }
 
 .material-icons {
@@ -278,7 +273,7 @@ body .raised-white-button {
     padding: 0 16px;
     text-transform: uppercase;
     font-size: 14px;
-    border-radius: 2px;
+    border-radius: 4px;
     transition: 300ms;
     cursor: pointer;
     user-select: none;
@@ -297,7 +292,7 @@ body .raised-white-button {
 .button-flat {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0.12);
     -moz-tap-highlight-color: rgba(0, 0, 0, 0.12);
-    -webkit-appearance: none; 
+    -webkit-appearance: none;
 }
 
 .button:active,
@@ -361,15 +356,13 @@ body .raised-white-button {
 
 #bottom-navigation {
     overflow: hidden;
-    background-color: #006740;
+    background-color: #2d966b;
     transition: all 200ms cubic-bezier(0, 0, 0.2, 1), top 120ms cubic-bezier(0.4, 0, 1, 1), left 120ms cubic-bezier(0.4, 0, 1, 1);
     position: fixed;
     height: 56px;
     width: 100%;
     bottom: -56px;
     right: 0;
-    /* box-shadow: 0 3px 14px 3px rgba(0, 0, 0, 0.12),
-        0 4px 15px rgba(0, 0, 0, 0.2); */
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -380,12 +373,13 @@ body .raised-white-button {
 #bottom-navigation.slide-in {
     transition: all 200ms cubic-bezier(0, 0, 0.2, 1), top 120ms cubic-bezier(0, 0, 0.2, 1), left 120ms cubic-bezier(0, 0, 0.2, 1);
     bottom: 0;
-    opacity: 0.95;
+    opacity: 1;
+    box-shadow: 0 7px 8px -4px rgba(0, 0, 0, 0.2), 0 12px 17px 2px rgba(0, 0, 0, 0.14), 0 5px 22px 4px rgba(0, 0, 0, 0.12);
 }
 
 #bottom-navigation .bottom-navigation-destination {
-    padding: 16px 0 16px 0;
-    flex: 3;
+    padding: 8px 8px 0 8px;
+    flex: 1;
     text-align: center;
     flex-grow: 1;
     font-size: 12px;
@@ -396,13 +390,11 @@ body .raised-white-button {
 }
 
 #bottom-navigation .bottom-navigation-destination.active {
-    padding: 6px 8px 10px 8px;
-    flex: 2;
+    padding: 6px 8px 0 8px;
 }
 
 .bottom-navigation-destination.active path {
     fill: #ffffff;
-    stroke: #ffffff;
 }
 
 #bottom-navigation .bottom-navigation-destination path {
@@ -410,24 +402,25 @@ body .raised-white-button {
 }
 
 .bottom-navigation-label {
-    opacity: 0;
     transition: 225ms cubic-bezier(0.4, 0.2, 0, 1);
-    text-transform: uppercase;
     font-weight: 500;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.54);
 }
 
 .bottom-navigation-destination.active .bottom-navigation-label {
-    font-size: 14px;
-    opacity: 1;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.87);
 }
 
 #bottom-navigation .bottom-navigation-destination svg {
     font-size: 24px;
     z-index: 4;
     display: block;
-    margin: 0 auto 4px auto;
-    transition: stroke 10s;
+    margin: 0 auto 2px auto;
 }
+
+#bottom-navigation .bottom-navigation-destination.active svg {}
 
 .ripple {
     position: relative;
@@ -686,15 +679,20 @@ body .raised-white-button {
         margin: 0;
     }
     #fab {
-        right: 16px;
+        right: 8px;
+    }
+    .top-level-destination {
+        left: 64px;
+        right: 0;
+        width: auto;
     }
     .top-level-destination.active #fab {
-        bottom: 16px;
+        bottom: 8px;
     }
     main {
         padding-left: 56px;
     }
-    #app-title.slide-up {
+    #app-title.fade-down {
         top: 16px;
     }
     .snackbar.slideUp {

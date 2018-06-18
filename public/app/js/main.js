@@ -7,11 +7,14 @@ function main() {
 	//register_service_worker();
 	set_text_color();
 	scale_in_title();
-	window.setTimeout(slide_up_title, 500);
+	window.setTimeout(() => {
+		fade_out_title();
+		set_bottom_navigation_click();
+		check_logged_in();
+	}, 500);
 	// Don't have a menu button yet
 	// set_menu_button_click();
-	set_bottom_navigation_click();
-	check_logged_in();
+
 }
 
 function set_menu_button_click() {
@@ -99,17 +102,17 @@ function contact_click() {
 	node.classList.add("conversation")
 	node.innerHTML = `<div class="conversation-toolbar">
 		<div class="close-conversation" onclick="this.parentNode.parentNode.classList.remove('open')">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
-				 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="36px"
+				 height="36px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 				<g id="Bounding_Boxes">
 					<path fill="none" d="M0,0h24v24H0V0z"/>
 				</g>
-				<g id="Sharp" fill="#fff">
-					<path stroke="#fff" d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/>
+				<g id="Sharp">
+					<path fill="#f5f5f5" d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/>
 				</g>
 			</svg>
 		</div>
-		<div class="converation-name">${name}</div>
+		<div class="conversation-name">${name}</div>
 	</div>`;
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() => document.body.lastChild.classList.add("open"));
@@ -120,12 +123,16 @@ function scale_in_title() {
 	document.getElementById("app-title").classList.add("scale-in");
 }
 
-function slide_up_title() {
+function fade_out_title() {
 	document.body.classList.add("loaded");
 	// Had to do this twice?
 	requestAnimationFrame(function () {
 		requestAnimationFrame(function () {
-			document.getElementById("app-title").classList.add("slide-up");
+			const app_title = document.getElementById("app-title");
+			app_title.classList.add("fade-out");
+			/*window.setTimeout(() => {
+				app_title.parentNode.removeChild(app_title);
+			}, 255); */
 		});
 	});
 }
@@ -199,15 +206,17 @@ function logged_in(user) {
 }
 
 function display_logged_in_ui() {
-	slide_up_title();
+	fade_out_title();
 	document.getElementById("bottom-navigation").classList.add("slide-in");
 	hide_login_form();
 	requestAnimationFrame(() => login.style.display = "none");
 	window.setTimeout(display_chat, 250);
-	move_app_title();
+	//Not used anymore since title is removed after loading finishes 
+	//move_app_title();
 }
 
 function move_app_title() {
+	// Not used anymore since title is removed after loading finishes
 	const title = document.getElementById("app-title");
 	title.parentNode.removeChild(title);
 	document.getElementsByTagName("main")[0].prepend(title);
@@ -215,18 +224,16 @@ function move_app_title() {
 
 function validate_login_form(form) {
 	"use strict";
-	const inputs = Array.prototype.slice.call(
-		form.getElementsByTagName("input")
-	);
+	const inputs = form.getElementsByTagName("input");
 	let valid = true;
 	let values = [];
-	inputs.forEach((input) => {
+	for(const input of inputs)  {
 		if (input.validity.valid) {
 			values.push(input.value);
 		} else {
 			valid = false;
 		}
-	});
+	};
 	// Return false if form is invalid, else return form values
 	return valid ? values : valid;
 }
@@ -234,8 +241,7 @@ function validate_login_form(form) {
 
 function set_text_color() {
 	// Display the fonts initally hidden
-	document.getElementById("app-title").style.color = "#fafafa";
-	document.body.parentNode.style.color = "#fafafa";
+	document.body.parentNode.style.color = "rgba(0, 0, 0, 0.9)";
 }
 
 function display_snackbar(message) {
