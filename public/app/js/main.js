@@ -29,7 +29,7 @@ function set_bottom_navigation_click() {
 	const targets = document
 		.getElementsByClassName("bottom-navigation-destination");
 	for (const target of targets) {
-		target.addEventListener("click", bottom_navigation_click, event);
+		target.addEventListener("click", bottom_navigation_click);
 	}
 }
 
@@ -101,7 +101,7 @@ function contact_click() {
 	const node = document.createElement('div');
 	node.classList.add("conversation")
 	node.innerHTML = `<div class="conversation-toolbar">
-		<div class="close-conversation" onclick="this.parentNode.parentNode.classList.remove('open')">
+		<div class="close-conversation" onclick="close_conversation(this)">
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="36px"
 				 height="36px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 				<g id="Bounding_Boxes">
@@ -117,6 +117,10 @@ function contact_click() {
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() => document.body.lastChild.classList.add("open"));
 	// TODOO FIXE DIS STUFFE :^)
+}
+
+function close_conversation(button) {
+	button.parentNode.parentNode.classList.remove("open")
 }
 
 function scale_in_title() {
@@ -198,16 +202,18 @@ function logged_in(user) {
 	display_logged_in_ui();
 	console.log("Logged in as " + email +
 		"\nUser id: " + uid +
-		"\nDisplayname : " + user.displayName +
+		"\nDisplayname: " + user.displayName +
 		"\nPhoto url: " + photoURL +
-		"\nEmail verified " + emailVerified +
-		"\n" + providerData);
+		"\nEmail verified: " + emailVerified);
 	// TODO
 }
 
 function display_logged_in_ui() {
 	fade_out_title();
 	document.getElementById("bottom-navigation").classList.add("slide-in");
+	document.getElementById("bottom-navigation").classList.remove("slide-in");
+	requestAnimationFrame(() => 
+		document.getElementById("bottom-navigation").classList.add("slide-in"));
 	hide_login_form();
 	requestAnimationFrame(() => login.style.display = "none");
 	window.setTimeout(display_chat, 250);
@@ -320,9 +326,8 @@ function github_sign_in() {
 }
 
 function submit_signup_form(button) {
+	console.log("Attempting login...")
 	const form = button.parentNode;
-	const login_container = form.parentNode;
-
 	const form_vailidation = validate_login_form(form);
 	if (form_vailidation === false) {
 		display_snackbar("Form input is invalid, please try again");
