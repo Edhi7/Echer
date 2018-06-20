@@ -658,44 +658,56 @@ body .raised-white-button {
         right: initial;
         display: initial;
     }
+
     #bottom-navigation.slide-in {
         left: 0;
     }
+
     #bottom-navigation .bottom-navigation-destination {
         color: rgba(256, 256, 256, 0.54);
         padding: 16px;
     }
+
     /* No need for label on side nav */
     .bottom-navigation-label {
         display: none;
     }
+
     #bottom-navigation .bottom-navigation-destination.active {
         color: rgba(256, 256, 256, 0.87);
         padding: 16px;
     }
+
     #bottom-navigation .bottom-navigation-destination .material-icons {
         margin: 0;
     }
+
     #fab {
         right: 8px;
     }
+
     .top-level-destination {
         left: 64px;
         right: 0;
         width: auto;
     }
+
     .top-level-destination.active #fab {
         bottom: 8px;
     }
+
     main {
         padding-left: 56px;
     }
+
     #app-title.fade-down {
         top: 16px;
     }
+
     .snackbar.slideUp {
         bottom: 8px;
     }
+    
     .top-level-destination {
         width: 64vw;
         left: 56px;
