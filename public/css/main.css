@@ -94,6 +94,6 @@ a:visited {
         width: 80vw !important;
     }
     article {
-        width: 78vw;
+        width: 100%;
     }
 }

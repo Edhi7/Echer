@@ -97,6 +97,7 @@ function set_contact_on_click() {
 }
 
 function contact_click() {
+	close_all_conversations();
 	const name = this.getElementsByClassName("contact-name")[0].innerHTML;
 	const node = document.createElement('div');
 	node.classList.add("conversation")
@@ -115,12 +116,20 @@ function contact_click() {
 		<div class="conversation-name">${name}</div>
 	</div>`;
 	document.getElementsByTagName('body')[0].append(node);
-	requestAnimationFrame(() => document.body.lastChild.classList.add("open"));
-	// TODOO FIXE DIS STUFFE :^)
+	requestAnimationFrame(() => 
+		requestAnimationFrame(() =>  document.body.lastChild.classList.add("open"))
+	);
+}
+
+function close_all_conversations() {
+	const conversations = document.getElementsByClassName("conversation");
+	for(const c of conversations) {
+		c.parentNode.removeChild(c);
+	}
 }
 
 function close_conversation(button) {
-	button.parentNode.parentNode.classList.remove("open")
+	button.parentNode.parentNode.classList.remove("open");
 }
 
 function scale_in_title() {
@@ -330,7 +339,7 @@ function submit_signup_form(button) {
 	const form = button.parentNode;
 	const form_vailidation = validate_login_form(form);
 	if (form_vailidation === false) {
-		display_snackbar("Form input is invalid, please try again");
+		display_snackbar("Ursäkta mig, herrn, men ni har fel format på lösenord eller typ email på något vis o.s.v.");
 	} else {
 		const email = form_vailidation[0];
 		const password = form_vailidation[1];
