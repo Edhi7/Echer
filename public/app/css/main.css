@@ -746,3 +746,13 @@ body .raised-white-button {
         display: none;
     }
 }
+
+@media screen and (min-width: 965px) {
+    #chat-screen {
+        width: 386px;
+    }
+
+    .conversation {
+        width: calc(100vw - 442px)
+    }
+}
