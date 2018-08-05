@@ -104,22 +104,25 @@ function contact_click() {
 	node.innerHTML = `<div class="conversation-toolbar">
 		<div class="close-conversation" onclick="close_conversation(this)">
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
-				 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-				<g id="Sharp">
-					<path fill="#f5f5f5" d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/>
+			height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+				<g id="Bounding_Boxes">
+					<path fill="none" d="M0,0h24v24H0V0z"/>
 				</g>
-			</svg>
+				<g id="Sharp">
+					<path fill="#69AD84" d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/>
+				</g>
+   			</svg>
 		</div>
 		<div class="conversation-name">${name}</div>
 	</div>`;
 	document.getElementsByTagName('body')[0].append(node);
-	requestAnimationFrame(() => 
+	requestAnimationFrame(() =>
 		requestAnimationFrame(() => document.body.lastChild.classList.add("open")));
 }
 
 function close_all_conversations() {
 	const conversations = document.getElementsByClassName("conversation");
-	for(const c of conversations) {
+	for (const c of conversations) {
 		c.parentNode.removeChild(c);
 	}
 }
@@ -221,12 +224,14 @@ function display_logged_in_ui() {
 	document.getElementById("bottom-navigation").classList.add("slide-in");
 	document.getElementById("bottom-navigation").classList.remove("slide-in");
 	hide_login_form();
-	window.setTimeout(display_chat, 250);
+	window.setTimeout(() => {
+		display_chat();
+		login.style.display = "none";
+	}, 250);
 	window.setTimeout(() => {
 		document.getElementById("bottom-navigation").classList.add("slide-in")
 	}, 480);
-	requestAnimationFrame(() => login.style.display = "none");
-	
+
 	//Not used anymore since title is removed after loading finishes 
 	//move_app_title();
 }
@@ -243,7 +248,7 @@ function validate_login_form(form) {
 	const inputs = form.getElementsByTagName("input");
 	let valid = true;
 	let values = [];
-	for(const input of inputs)  {
+	for (const input of inputs) {
 		if (input.validity.valid) {
 			values.push(input.value);
 		} else {
@@ -265,15 +270,17 @@ function display_snackbar(message) {
 	snackbar.classList.add("snackbar");
 	snackbar.innerText = message;
 	document.body.appendChild(snackbar);
-	requestAnimationFrame(function () {
-		snackbar.classList.add("slideUp");
-		window.setTimeout(function () {
-			snackbar.classList.remove("slideUp");
-			window.setTimeout(function () {
-				snackbar.parentNode.removeChild(snackbar);
-			}, 225);
-		}, 3500);
-	});
+	requestAnimationFrame(() =>
+		requestAnimationFrame(() => {
+			snackbar.classList.add("slideUp");
+			window.setTimeout(() => {
+				snackbar.classList.remove("slideUp");
+				window.setTimeout(() => {
+					snackbar.parentNode.removeChild(snackbar);
+				}, 225);
+			}, 3500);
+		})
+	);
 }
 
 function display_loader_in_form(form) {
@@ -336,12 +343,12 @@ function github_sign_in() {
 }
 
 function set_form_onsubmit() {
-	document.getElementById("login").addEventListener("submit", 
+	document.getElementById("login").addEventListener("submit",
 		(e) => submit_login_form(e));
 };
 
 function submit_login_form(event) {
-	if(event)
+	if (event)
 		event.preventDefault();
 	console.log("Attempting login...")
 	const form = document.getElementById("login");
