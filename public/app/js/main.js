@@ -7,6 +7,7 @@ function main() {
 	//register_service_worker();
 	set_text_color();
 	scale_in_title();
+	set_form_onsubmit();
 	window.setTimeout(() => {
 		fade_out_title();
 		set_bottom_navigation_click();
@@ -26,8 +27,7 @@ function set_menu_button_click() {
 
 function set_bottom_navigation_click() {
 	// Set onclick for each destination
-	const targets = document
-		.getElementsByClassName("bottom-navigation-destination");
+	const targets = document.getElementsByClassName("bottom-navigation-destination");
 	for (const target of targets) {
 		target.addEventListener("click", bottom_navigation_click);
 	}
@@ -36,8 +36,7 @@ function set_bottom_navigation_click() {
 function bottom_navigation_click(event) {
 	// Give only clicked destination active class and remove it from others 
 	const element = event.currentTarget;
-	const siblings = element.parentNode
-		.getElementsByClassName("bottom-navigation-destination");
+	const siblings = element.parentNode.getElementsByClassName("bottom-navigation-destination");
 	let clicked_el_index;
 	for (let i = 0; i < siblings.length; i++) {
 		siblings[i].classList.remove("active");
@@ -47,7 +46,8 @@ function bottom_navigation_click(event) {
 	}
 	hide_top_level_destinations();
 	element.classList.add("active");
-	//  Call corresponding displaying function
+	// Call corresponding displaying function
+	// but wait until exit animation finishes
 	window.setTimeout([display_map, display_chat, display_account][clicked_el_index], 125);
 }
 
@@ -58,7 +58,7 @@ function hide_top_level_destinations() {
 		destination.classList.remove("active");
 	}
 
-	// Actually hide content
+	// Actually hide
 	window.setTimeout(() => {
 		for (const destination of destinations) {
 			destination.style.display = "none";
@@ -100,14 +100,11 @@ function contact_click() {
 	close_all_conversations();
 	const name = this.getElementsByClassName("contact-name")[0].innerHTML;
 	const node = document.createElement('div');
-	node.classList.add("conversation")
+	node.classList.add("conversation");
 	node.innerHTML = `<div class="conversation-toolbar">
 		<div class="close-conversation" onclick="close_conversation(this)">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="36px"
-				 height="36px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-				<g id="Bounding_Boxes">
-					<path fill="none" d="M0,0h24v24H0V0z"/>
-				</g>
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+				 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 				<g id="Sharp">
 					<path fill="#f5f5f5" d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/>
 				</g>
@@ -117,8 +114,7 @@ function contact_click() {
 	</div>`;
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() => 
-		requestAnimationFrame(() =>  document.body.lastChild.classList.add("open"))
-	);
+		requestAnimationFrame(() => document.body.lastChild.classList.add("open")));
 }
 
 function close_all_conversations() {
@@ -130,6 +126,7 @@ function close_all_conversations() {
 
 function close_conversation(button) {
 	button.parentNode.parentNode.classList.remove("open");
+	window.setTimeout(close_all_conversations, 100);
 }
 
 function scale_in_title() {
@@ -174,6 +171,7 @@ function check_logged_in() {
 }
 
 function sign_out() {
+	console.log("asihjodasjofgeiajgaodsjpijjipgda!");
 	firebase.auth().signOut().then(function () {
 		display_snackbar("Signed out");
 	}).catch(function (error) {
@@ -191,6 +189,7 @@ function display_login_form() {
 function hide_login_form() {
 	const login = document.getElementById("login");
 	login.classList.remove("fade-in");
+	login.style.display = "none";
 }
 
 function validate_form_if_enter(event) {
@@ -221,11 +220,13 @@ function display_logged_in_ui() {
 	fade_out_title();
 	document.getElementById("bottom-navigation").classList.add("slide-in");
 	document.getElementById("bottom-navigation").classList.remove("slide-in");
-	requestAnimationFrame(() => 
-		document.getElementById("bottom-navigation").classList.add("slide-in"));
 	hide_login_form();
-	requestAnimationFrame(() => login.style.display = "none");
 	window.setTimeout(display_chat, 250);
+	window.setTimeout(() => {
+		document.getElementById("bottom-navigation").classList.add("slide-in")
+	}, 480);
+	requestAnimationFrame(() => login.style.display = "none");
+	
 	//Not used anymore since title is removed after loading finishes 
 	//move_app_title();
 }
@@ -334,9 +335,16 @@ function github_sign_in() {
 	});
 }
 
-function submit_signup_form(button) {
+function set_form_onsubmit() {
+	document.getElementById("login").addEventListener("submit", 
+		(e) => submit_login_form(e));
+};
+
+function submit_login_form(event) {
+	if(event)
+		event.preventDefault();
 	console.log("Attempting login...")
-	const form = button.parentNode;
+	const form = document.getElementById("login");
 	const form_vailidation = validate_login_form(form);
 	if (form_vailidation === false) {
 		display_snackbar("Ursäkta mig, herrn, men ni har fel format på lösenord eller typ email på något vis o.s.v.");
@@ -351,7 +359,7 @@ function submit_signup_form(button) {
 					display_snackbar(error.message);
 				});
 			} else {
-				console.log(error.code)
+				console.log(error.code);
 				display_snackbar(error.message);
 			}
 		});

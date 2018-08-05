@@ -7,7 +7,7 @@ function ripple_bounce(element, event, size) {
         element.style.transform = "scale(" + size * 1.1 + ")";
         window.setTimeout(function () {
             element.style.transform = "scale(" + size + ")";
-            // Check again
+            // Check again if element is still alive
             if (element)
                 window.setTimeout(ripple_bounce, 1200, element, event, size);
         }, 1200);
@@ -86,9 +86,7 @@ function ripple_event_handler(event) {
     }
 }
 
-add_ripple_eventhandlers();
-
-function add_ripple_eventhandlers() {
+function ripple_init() {
     "use strict";
     const ripple_containers = [].slice.call(
         document.getElementsByClassName("ripple")
