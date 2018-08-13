@@ -75,6 +75,7 @@ main {
     opacity: 0;
     transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    border-radius: 4px;
 }
 
 .contact:active {
@@ -671,6 +672,7 @@ body .raised-white-button {
         top: 0;
         right: initial;
         display: initial;
+        border-radius: 0;
     }
     #bottom-navigation.slide-in {
         left: 0;
@@ -746,10 +748,8 @@ body .raised-white-button {
 }
 
 @media screen and (min-width: 965px) {
-    /*#chat-screen {
-        width: 386px;
-    }
+    #chat-screen,
     .conversation {
-        width: calc(100vw - 442px)
-    }*/
+        width: 617.6px;
+    }
 }

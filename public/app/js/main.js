@@ -5,7 +5,6 @@ window.onload = main;
 function main() {
 	// Serviceworker is anoying during debugging
 	//register_service_worker();
-	set_text_color();
 	scale_in_title();
 	set_form_onsubmit();
 	window.setTimeout(() => {
