@@ -1,5 +1,5 @@
 {
-    "name": "Echer",
+    "name": "Echeveria Runyonii",
     "short_name": "Echer",
     "icons": [
         {
@@ -13,8 +13,8 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#2d966b",
-    "background_color": "#2d966b",
-    "start_url": "https://echeveria-chile.firebaseapp.com/",
+    "theme_color": "#64aa80",
+    "background_color": "#f5f5f5",
+    "start_url": "https://echeveria-runyonii.firebaseapp.com/",
     "display": "fullscreen"
 }

@@ -29,9 +29,10 @@
     right: 0;
     display: none;
     opacity: 0;
+    max-height: calc(100vh - 128px);
     margin-top: 24px;
     padding-top: 32px;
-    transition: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tab-content.active {
@@ -41,6 +42,9 @@
 }
 
 article {
+    max-height: calc(100vh - 256px);
+    box-sizing: border-box;
+    overflow-y: auto;
     width: 560px;
     margin: 24px auto;
     padding: 8px 12px;
@@ -64,7 +68,7 @@ article {
 
 .button:active {
     box-shadow:0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
-    background-color: #279b59;
+    background-color: #64aa80;
 }
 
 .button section::after {
@@ -82,15 +86,16 @@ article {
 }
 
 a {
-    color: #2da861;
+    color: #64aa80;
 }
 
 a:visited {
     color: purple
 }
 
-@media (max-width: 700px) {
+@media (max-width: 608px) {
     #toolbar {
+        position: fixed !important;
         bottom: 0;
         top: unset !important;
         width: 100% !important;
@@ -99,8 +104,20 @@ a:visited {
         z-index: 24;
     }
 
+    .tab-content {
+        max-height: calc(100% - 56px);
+        top: 0;
+        padding: 0;
+    }
+
+    .tab-content:first-of-type {
+        padding-top: 24px;
+    }
+
     article {
-        width: 100%;
+        margin: 8px auto;
+        max-height: calc(100% - 128px);
+        width: calc(100% - 16px);
     }
 
     .title {
