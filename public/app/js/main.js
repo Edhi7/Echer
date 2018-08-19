@@ -116,7 +116,9 @@ function contact_click() {
 	</div>`;
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() =>
-		requestAnimationFrame(() => document.body.lastChild.classList.add("open")));
+		requestAnimationFrame(() =>
+			document.body.lastChild.classList.add("open")));
+	
 }
 
 function close_all_conversations() {
@@ -154,7 +156,7 @@ function register_service_worker() {
 		navigator.serviceWorker
 			.register('/app/js/sw.js')
 			.then(function (registration) {
-				//console.log('Service Worker Registered');
+				console.log('Service Worker Registered');
 			});
 		navigator.serviceWorker.ready.then(function (registration) {
 			console.log('Service Worker Ready');
@@ -173,7 +175,6 @@ function check_logged_in() {
 }
 
 function sign_out() {
-	console.log("asihjodasjofgeiajgaodsjpijjipgda!");
 	firebase.auth().signOut().then(function () {
 		display_snackbar("Signed out");
 	}).catch(function (error) {

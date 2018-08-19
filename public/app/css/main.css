@@ -32,18 +32,19 @@ main {
     width: 100vw;
     background: #fafafa;
     left: 0;
-    transition: 125ms cubic-bezier(0.4, 0, 1, 1);
+    transition: 112ms cubic-bezier(0.4, 0, 1, 1);
     z-index: 8;
     opacity: 0.7;
-    transform: scale(0.96);
-    border-radius: 4px;
+    transform: scale(0.8);
+    border-radius: 64px;
     box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
 .conversation.open {
     opacity: 1;
     transform: scale(1);
-    transition: 115ms cubic-bezier(0, 0, 0.2, 1);
+    border-radius: 0;
+    transition: 96ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .conversation-toolbar {
@@ -744,7 +745,13 @@ body .raised-white-button {
         margin: auto;
         height: auto;
         width: 64vw;
-        border-radius: 8px;
+        border-radius: 8px !important;
+    }
+    
+    .snackbar {
+        width: 512px;
+        left: 8px;
+        right: 8px;
     }
 }
 
