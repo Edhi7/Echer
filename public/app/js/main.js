@@ -47,7 +47,7 @@ function bottom_navigation_click(event) {
 	element.classList.add("active");
 	// Call corresponding displaying function
 	// but wait until exit animation finishes
-	window.setTimeout([display_map, display_chat, display_account][clicked_el_index], 125);
+	requestAnimationFrame([display_map, display_chat, display_account][clicked_el_index]);
 }
 
 function hide_top_level_destinations() {
@@ -56,13 +56,16 @@ function hide_top_level_destinations() {
 	for (const destination of destinations) {
 		destination.classList.remove("active");
 	}
-
+	const contacts = document.getElementById("contact-list").children;
+	for(let contact of contacts)
+		contact.classList.remove("active");
 	// Actually hide
 	window.setTimeout(() => {
 		for (const destination of destinations) {
-			destination.style.display = "none";
+			if(!destination.classList.contains("active"))
+				destination.style.display = "none";
 		}
-	}, 120);
+	}, 50);
 }
 
 function display_map() {
@@ -73,11 +76,15 @@ function display_map() {
 }
 
 function display_chat() {
-	document.getElementById("chat-screen").style.display = "block";
-	window.setTimeout(() => {
-		document.getElementById("chat-screen").classList.add("active");
-	}, 25);
-
+	const chat_screen = document.getElementById("chat-screen");
+	const contacts = document.getElementById("contact-list").children;
+	chat_screen.style.display = "block";
+	for(let i = 0; i < contacts.length; i++) {
+		window.setTimeout(() => {
+			contacts[i].classList.add("active");
+		}, 25 * i);
+	}
+	window.setTimeout(() => {chat_screen.classList.add("active")}, 25)
 	set_contact_on_click();
 }
 
@@ -192,7 +199,6 @@ function display_login_form() {
 function hide_login_form() {
 	const login = document.getElementById("login");
 	login.classList.remove("fade-in");
-	login.style.display = "none";
 }
 
 function validate_form_if_enter(event) {
@@ -221,8 +227,6 @@ function logged_in(user) {
 
 function display_logged_in_ui() {
 	fade_out_title();
-	document.getElementById("bottom-navigation").classList.add("slide-in");
-	document.getElementById("bottom-navigation").classList.remove("slide-in");
 	hide_login_form();
 	window.setTimeout(() => {
 		display_chat();

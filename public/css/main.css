@@ -116,7 +116,7 @@ a:visited {
 
     article {
         margin: 8px auto;
-        max-height: calc(100% - 128px);
+        max-height: calc(100vh - 72px);
         width: calc(100% - 16px);
     }
 
