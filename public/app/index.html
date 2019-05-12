@@ -25,22 +25,16 @@
 	<meta name="theme-color" content="#43b583" />
 
 	<script src="/__/firebase/5.0.4/firebase-app.js"></script>
-	<!-- include only the Firebase features as you need -->
 	<script defer src="/__/firebase/5.0.4/firebase-auth.js"></script>
 	<script defer src="/__/firebase/5.0.4/firebase-firestore.js"></script>
 	<script defer src="/__/firebase/5.0.4/firebase-messaging.js"></script>
 	<script defer src="/__/firebase/5.0.4/firebase-storage.js"></script>
-	<!-- initialize the SDK after all desired features are loaded -->
 	<script defer src="/__/firebase/init.js"></script>
 
-	<!-- Deactivated for now 
-		<script defer src="js/ripple.js"></script>-->
+	<script defer src="js/ripple.js"></script>
 	<script defer src="js/main.js"></script>
 
 	<link href="https://fonts.googleapis.com/css?family=Cabin:400,500&subset=latin-ext" rel="stylesheet" media="none" onload="media='all'">
-	<!-- Not used anymore but mighht be brought back 
-		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" media="none" onload="media='all'"> 
-	-->
 	<link href="css/main.css" rel="stylesheet" media="none" onload="media='all'" />
 	<link href="css/field.css" rel="stylesheet" media="none" onload="media='all'" />
 
@@ -71,7 +65,7 @@
 		}
 
 		#app-title {
-			color: rgba(0, 0, 0, 0.54);
+			color: #404040;
 			font-weight: 500;
 			text-align: center;
 			position: absolute;
@@ -98,7 +92,7 @@
 		}
 
 		#login,
-		body:not(.loaded) svg,
+		/*body:not(.loaded) svg,*/
 		body:not(.loaded) #bottom-navigation,
 		body:not(.loaded) main {
 			display: none;
@@ -112,7 +106,7 @@
 	<div id="app-title">Runyonii</div>
 
 	<form id="login" onsubmit="submit_login_form()">
-		<div class="body-2" style="padding-bottom: 16px;">Sign up/in</div>
+		<h2 style="padding-bottom: 16px;">Sign up/in</h2>
 		<div class="form-element form-input">
 			<input id="email" class="form-element-field" placeholder="Skriv din email tjockis" type="input" required/>
 			<div class="form-element-bar"></div>
@@ -126,7 +120,8 @@
 			<label class="form-element-label" for="password">Lösenord</label>
 		</div>
 
-		<div class="raised-white-button ripple" onclick="google_sign_in()" tabindex=0>
+		<!-- no longer supporting these
+			<div class="raised-button ripple" onclick="google_sign_in()" tabindex=0>
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="alternative-login-logo"
 				style="margin-top: 9px;">
 				<g>
@@ -140,7 +135,7 @@
 			Google
 		</div>
 
-		<div class="raised-white-button ripple" onclick="github_sign_in()" tabindex=0>
+		<div class="raised-button ripple" onclick="github_sign_in()" tabindex=0>
 			<svg class="alternative-login-logo" style="margin-top: 9px; width: 18px" aria-labelledby="simpleicons-github-icon" role="img"
 				viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 				<title id="simpleicons-github-icon">GitHub icon</title>
@@ -148,7 +143,7 @@
 				/>
 			</svg>
 			GitHub
-		</div>
+		</div> -->
 
 		<hr class="divider">
 		<div class="button-flat" style="float: right;" onclick="submit_login_form()" tabindex=0>Submit</div>
@@ -259,46 +254,8 @@
 						<div class="contact-last-message">Jef fem</div>
 					</section>
 				</div>
-				<div class="contact">
-					<img class="contact-image" alt="Steven Pinker" src="/images/pinkere.jpg"
-					/>
-					<section class="contact-text">
-						<div class="contact-name">Ass</div>
-						<div class="contact-last-message">HAha jef supa li poka ni pi kon jo jo lon insa anu la pona pi kili len jaki li open jo e ante awen pi ilo monsi nanpa
-							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken len ike li monsi e utala li awen moli tan ijo pi pona loje open
-							tan mute la kepeken pi pali kili sina li nimi li lupa sama ma lon ike. moku pi kasi waso waso li tan ma alasa pi mute
-							suli awen poka lon wan. insa pini pi jan nanpa lete li kama telo kepeken kon.
-						</div>
-					</section>
-				</div>
-				<div class="contact">
-					<img class="contact-image" alt="Steven Pinker" src="/images/barrry.jpg"
-					/>
-					<section class="contact-text">
-						<div class="contact-name">Barry Allen</div>
-						<div class="contact-last-message">Jef mem</div>
-					</section>
-				</div>
-				<div class="contact">
-					<img class="contact-image" alt="Steven Pinker" src="/images/allen.jpg"
-					/>
-					<section class="contact-text">
-						<div class="contact-name">Fattest man alive</div>
-						<div class="contact-last-message">Ja, jef</div>
-					</section>
-				</div>
-				<div class="contact">
-					<img class="contact-image" alt="Steven Pinker" src="/images/jeffo.png"
-					/>
-					<section class="contact-text">
-						<div class="contact-name">Jeffo</div>
-						<div class="contact-last-message">Jef fem</div>
-					</section>
-				</div>
-			</div>
-
+			
 			<!-- >tfw no frens -->
-
 
 			<!--<div id="fab">
 				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"

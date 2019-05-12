@@ -2,19 +2,17 @@
 
 window.onload = main;
 
+let fs = firebase.firestore();
+
 function main() {
 	// Serviceworker is anoying during debugging
 	//register_service_worker();
 	scale_in_title();
 	set_form_onsubmit();
 	window.setTimeout(() => {
-		fade_out_title();
 		set_bottom_navigation_click();
 		check_logged_in();
 	}, 500);
-	// Don't have a menu button yet
-	// set_menu_button_click();
-
 }
 
 function set_menu_button_click() {
@@ -158,6 +156,12 @@ function fade_out_title() {
 	});
 }
 
+function float_title() {
+	document.getElementById("app-title")
+		.classList
+		.add("float-up");
+}
+
 function register_service_worker() {
 	if ('serviceWorker' in navigator) {
 		navigator.serviceWorker
@@ -176,6 +180,7 @@ function check_logged_in() {
 		if (user) {
 			logged_in(user);
 		} else {
+			float_title();
 			display_login_form();
 		}
 	});
@@ -199,6 +204,7 @@ function display_login_form() {
 function hide_login_form() {
 	const login = document.getElementById("login");
 	login.classList.remove("fade-in");
+	fade_out_title();
 }
 
 function validate_form_if_enter(event) {
