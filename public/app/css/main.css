@@ -14,6 +14,12 @@ main {
     outline: none;
 }
 
+a {
+    font-size: 14px;
+    color: #2a2a2a;
+    font-weight: 500;
+}
+
 .subheader {
     color: rgba(255, 255, 255, 0.87);
     margin: 16px;
@@ -22,8 +28,7 @@ main {
 }
 
 #contact-list {
-    margin-top: 8px;
-    padding-bottom: 56px;
+    padding: 16px 0 56px 0;
 }
 
 .conversation {
@@ -81,6 +86,12 @@ main {
 
 .contact:active {
     background-color: #e3e3e3;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.12),
+        0px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.contact:active .contact-text {
+    border: none;
 }
 
 .contact.active {
@@ -181,13 +192,15 @@ main {
     background-color: #303f9f;
 }
 
-body #login {
+body #authentication {
     display: block;
     position: fixed;
     margin: auto;
     top: 50vh;
     width: 256px;
-    height: 238px;
+    height: 356px;
+    overflow: -moz-hidden-unscrollable;
+    overflow: hidden;
     bottom: 0;
     left: 0;
     right: 0;
@@ -198,25 +211,48 @@ body #login {
     padding: 12px 16px;
     transition: opacity 120ms cubic-bezier(0.4, 0, 1, 1),
         top 360ms cubic-bezier(0.4, 0, 1, 1);
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+#authentication form {
+    transition: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#authentication.float-up form:first-of-type {
+    margin-top: -368px;
+}
+
+#authentication.float-up {
+    height: 304px;
 }
 
 .divider {
     margin: 12px -16px;
+    height: 1px;
     border: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.14);
 }
 
 h2 {
-    font-size: 38px;
+    font-size: 48px;
     font-weight: 700;
 }
 
-#login > h2  {
+#authentication h2  {
     text-align: center;
 }
 
-#login.fade-in {
+#authentication form {
+    margin-bottom: 8px;
+}
+
+#authentication a {
+    color: #5a9271;
+    margin-right: 2px;
+    display: inline-block;
+}
+
+#authentication.fade-in {
     transition: 250ms cubic-bezier(0, 0, 0.2, 1);
     top: 0px;
     opacity: 1;
@@ -231,7 +267,7 @@ h2 {
 }
 
 #app-title.float-up {
-    margin-top: -256px;
+    margin-top: -292px;
 }
 
 #app-title.fade-out {
@@ -306,12 +342,13 @@ body .raised-button {
     transition: 300ms;
     cursor: pointer;
     user-select: none;
+    -moz-user-select: -moz-none;
     text-align: center;
     font-weight: 700;
 }
 
 .button {
-    background: #2196f3;
+    background: #5a9271;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2);
     -webkit-tap-highlight-color: #1a77c9;
     -moz-tap-highlight-color: #1a77c9;
@@ -321,6 +358,7 @@ body .raised-button {
 .button-flat {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0.12);
     -moz-tap-highlight-color: rgba(0, 0, 0, 0.12);
+    color: #5a9271;
     -webkit-appearance: none;
 }
 

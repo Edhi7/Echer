@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//SV"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//SV" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-au">
 
@@ -34,7 +34,8 @@
 	<script defer src="js/ripple.js"></script>
 	<script defer src="js/main.js"></script>
 
-	<link href="https://fonts.googleapis.com/css?family=Cabin:400,500&subset=latin-ext" rel="stylesheet" media="none" onload="media='all'">
+	<link href="https://fonts.googleapis.com/css?family=Cabin:400,500&subset=latin-ext"
+		rel="stylesheet" media="none" onload="media='all'">
 	<link href="css/main.css" rel="stylesheet" media="none" onload="media='all'" />
 	<link href="css/field.css" rel="stylesheet" media="none" onload="media='all'" />
 
@@ -65,7 +66,7 @@
 		}
 
 		#app-title {
-			color: #404040;
+			color: #3a3a3a;
 			font-weight: 500;
 			text-align: center;
 			position: absolute;
@@ -74,7 +75,7 @@
 			margin: 0 auto;
 			top: 50vh;
 			margin-top: -128px;
-			font-size: 48px;
+			font-size: 64px;
 			transform: scale(2);
 			opacity: 0;
 		}
@@ -91,7 +92,7 @@
 			height: 40vh;
 		}
 
-		#login,
+		#authentication,
 		/*body:not(.loaded) svg,*/
 		body:not(.loaded) #bottom-navigation,
 		body:not(.loaded) main {
@@ -105,22 +106,33 @@
 
 	<div id="app-title">Runyonii</div>
 
-	<form id="login" onsubmit="submit_login_form()">
-		<h2 style="padding-bottom: 16px;">Sign up/in</h2>
-		<div class="form-element form-input">
-			<input id="email" class="form-element-field" placeholder="Skriv din email tjockis" type="input" required/>
-			<div class="form-element-bar"></div>
-			<label class="form-element-label" for="email">Email</label>
-		</div>
+	<div id=authentication>
+		<form id="signup" onsubmit="submit_login_form()">
+			<h2 style="padding-bottom: 16px;">Sign up</h2>
+			<div class="form-element form-input">
+				<input id="email" class="form-element-field"
+					placeholder="Type your email, bucko" type="email"
+					required />
+				<div class="form-element-bar"></div>
+				<label class="form-element-label" for="email">Email</label>
+			</div>
 
-		<div class="form-element form-input">
-			<input id="password" class="form-element-field" placeholder="Önskas korv med senapen?" type="password" onkeydown="validate_form_if_enter(event)"
-				required/>
-			<div class="form-element-bar"></div>
-			<label class="form-element-label" for="password">Lösenord</label>
-		</div>
+			<div class="form-element form-input">
+				<input id="password" class="form-element-field" placeholder="Any format you want" type="password"
+					onkeydown="validate_form_if_enter(event)" required />
+				<div class="form-element-bar"></div>
+				<label class="form-element-label" for="password">Password</label>
+			</div>
+			
+			<div class="form-element form-input">
+				<input id="password" class="form-element-field"
+					placeholder="そらまめ" type="input"
+					onkeydown="validate_form_if_enter(event)" required />
+				<div class="form-element-bar"></div>
+				<label class="form-element-label" for="name">Display name</label>
+			</div>
 
-		<!-- no longer supporting these
+			<!-- no longer supporting these
 			<div class="raised-button ripple" onclick="google_sign_in()" tabindex=0>
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="alternative-login-logo"
 				style="margin-top: 9px;">
@@ -145,13 +157,45 @@
 			GitHub
 		</div> -->
 
-		<hr class="divider">
-		<div class="button-flat" style="float: right;" onclick="submit_login_form()" tabindex=0>Submit</div>
-		<input type="submit" 
-       style="position: absolute; left: -9999px; width: 1px; height: 1px;"
-       tabindex="-1" />
+			<div class="button-flat" style="float: right;" onclick="submit_login_form()" tabindex=0>Submit</div>
+			<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1"/>
+			<br clear="all"/>
+			<hr class="divider"></hr>
+			Already have an account? <b class="button-flat" style="padding: 0 14px;"
+			onclick="display_sign_in()">LOG IN</b>
+			<a href="/help">Help</a>
+			<a href="/tos">Terms</a>
+		</form>
 
-	</form>
+		<form id="login" onsubmit="submit_login_form()">
+			<h2 style="padding-bottom: 16px;">Sign in</h2>
+			<div class="form-element form-input">
+				<input id="email" class="form-element-field" placeholder="Type your email, bucko" type="input"
+					required />
+				<div class="form-element-bar"></div>
+				<label class="form-element-label" for="email">Email</label>
+			</div>
+
+			<div class="form-element form-input">
+				<input id="password" class="form-element-field" placeholder="Any format you want" type="password"
+					onkeydown="validate_form_if_enter(event)" required />
+				<div class="form-element-bar"></div>
+				<label class="form-element-label" for="password">Password</label>
+			</div>
+
+			<div class="button-flat" style="float: right;" onclick="submit_login_form()" tabindex=0>Submit</div>
+			<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
+			<br clear="both"/>
+			<hr class="divider"/>
+			No account? <b class="button-flat"
+			onclick="display_sign_in()">SIGN UP</b>
+			<br style="margin-top: 16px;" clear="all"/>
+			<a href="/help">Help</a>
+			<a href="/tos">Terms</a>
+		</form>
+
+
+	</div>
 
 	<main>
 
@@ -190,74 +234,80 @@
 		<section id="chat-screen" class="top-level-destination">
 			<!--<div class="subheader">Kontakter</div>-->
 			<div id="contact-list">
-				<div class="contact">
+				<div class="contact ripple">
 					<img class="contact-image" alt="Steven Pinker" src="/images/pinkere.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Ass</div>
-						<div class="contact-last-message">HAha jef supa li poka ni pi kon jo jo lon insa anu la pona pi kili len jaki li open jo e ante awen pi ilo monsi nanpa
-							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken len ike li monsi e utala li awen moli tan ijo pi pona loje open
-							tan mute la kepeken pi pali kili sina li nimi li lupa sama ma lon ike. moku pi kasi waso waso li tan ma alasa pi mute
+						<div class="contact-last-message">HAha jef supa li poka ni pi kon jo jo lon insa anu la pona pi
+							kili len jaki li open jo e ante awen pi ilo monsi nanpa
+							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken len ike li monsi e utala li awen moli
+							tan ijo pi pona loje open
+							tan mute la kepeken pi pali kili sina li nimi li lupa sama ma lon ike. moku pi kasi waso
+							waso li tan ma alasa pi mute
 							suli awen poka lon wan. insa pini pi jan nanpa lete li kama telo kepeken kon.
 						</div>
 					</section>
 				</div>
-				<div class="contact">
+				<div class="contact ripple">
 					<img class="contact-image" alt="Steven Pinker" src="/images/barrry.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Barry Allen</div>
 						<div class="contact-last-message">Jef mem</div>
 					</section>
 				</div>
-				<div class="contact">
+				<div class="contact ripple">
 					<img class="contact-image" alt="Steven Pinker" src="/images/allen.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Fattest man alive</div>
 						<div class="contact-last-message">Ja, jef</div>
 					</section>
 				</div>
-				<div class="contact">
+				<div class="contact ripple">
 					<img class="contact-image" alt="Steven Pinker" src="/images/jeffo.png" />
 					<section class="contact-text">
 						<div class="contact-name">Jeffo</div>
 						<div class="contact-last-message">Jef fem</div>
 					</section>
 				</div>
-				<div class="contact">
+				<div class="contact ripple">
 					<img class="contact-image" alt="Steven Pinker" src="/images/pinkere.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Ass</div>
-						<div class="contact-last-message">HAha jef supa li poka ni pi kon jo jo lon insa anu la pona pi kili len jaki li open jo e ante awen pi ilo monsi nanpa
-							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken len ike li monsi e utala li awen moli tan ijo pi pona loje open
-							tan mute la kepeken pi pali kili sina li nimi li lupa sama ma lon ike. moku pi kasi waso waso li tan ma alasa pi mute
+						<div class="contact-last-message">HAha jef supa li poka ni pi kon jo jo lon insa anu la pona pi
+							kili len jaki li open jo e ante awen pi ilo monsi nanpa
+							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken len ike li monsi e utala li awen moli
+							tan ijo pi pona loje open
+							tan mute la kepeken pi pali kili sina li nimi li lupa sama ma lon ike. moku pi kasi waso
+							waso li tan ma alasa pi mute
 							suli awen poka lon wan. insa pini pi jan nanpa lete li kama telo kepeken kon.
 						</div>
 					</section>
 				</div>
-				<div class="contact">
+				<div class="contact ripple">
 					<img class="contact-image" alt="Steven Pinker" src="/images/barrry.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Barry Allen</div>
 						<div class="contact-last-message">Jef mem</div>
 					</section>
 				</div>
-				<div class="contact">
+				<div class="contact ripple">
 					<img class="contact-image" alt="Steven Pinker" src="/images/allen.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Fattest man alive</div>
 						<div class="contact-last-message">Ja, jef</div>
 					</section>
 				</div>
-				<div class="contact">
+				<div class="contact ripple">
 					<img class="contact-image" alt="Steven Pinker" src="/images/jeffo.png" />
 					<section class="contact-text">
 						<div class="contact-name">Jeffo</div>
 						<div class="contact-last-message">Jef fem</div>
 					</section>
 				</div>
-			
-			<!-- >tfw no frens -->
 
-			<!--<div id="fab">
+				<!-- >tfw no frens -->
+
+				<!--<div id="fab">
 				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
 				    height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 					<g id="Sharp" fill="#fff">
@@ -270,19 +320,21 @@
 
 		<section id="account-screen" class="top-level-destination">
 			<!-- Todo: fix this destination doeasent display when lciicked i t still jhas display: none lole-->
-			<div class="button-flat ripple" style="float: right;" onclick="sign_out()" tabindex=0>Sign out</div>
-			<br style="clear: both"/>
-			Här e ju profilen men den e inte klar så liksom hoppsan där va lole :^)
+			<div class="button-flat" style="float: right;" onclick="sign_out()" tabindex=0>Sign out</div>
+			<br style="clear: both" />
+			Här e ju profilen men den e inte klar hoppsan där va lole :^)
 		</section>
-		
+
 	</main>
 
 	<nav id="bottom-navigation">
 		<section class="bottom-navigation-destination">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
-				height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+				y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24"
+				xml:space="preserve">
 				<g>
-					<path d="M15,5.1L9,3L3,5.02v16.2l6-2.33l6,2.1l6-2.02V2.77L15,5.1z M15,18.89l-6-2.11V5.11l6,2.11V18.89z" />
+					<path
+						d="M15,5.1L9,3L3,5.02v16.2l6-2.33l6,2.1l6-2.02V2.77L15,5.1z M15,18.89l-6-2.11V5.11l6,2.11V18.89z" />
 				</g>
 			</svg>
 
@@ -290,8 +342,9 @@
 		</section>
 
 		<section class="bottom-navigation-destination active">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
-				height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+				y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24"
+				xml:space="preserve">
 				<g>
 					<path d="M22,6h-3v9H6v3h12l4,4V6z M17,13V2H2v15l4-4H17z" />
 				</g>

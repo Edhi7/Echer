@@ -9,6 +9,7 @@ function main() {
 	//register_service_worker();
 	scale_in_title();
 	set_form_onsubmit();
+	ripple_init();
 	window.setTimeout(() => {
 		set_bottom_navigation_click();
 		check_logged_in();
@@ -196,13 +197,13 @@ function sign_out() {
 }
 
 function display_login_form() {
-	const form = document.getElementById("login");
+	const form = document.getElementById("authentication");
 	form.classList.add("fade-in");
 	form.getElementsByTagName("input")[0].click();
 }
 
 function hide_login_form() {
-	const login = document.getElementById("login");
+	const login = document.getElementById("authentication");
 	login.classList.remove("fade-in");
 	fade_out_title();
 }
@@ -244,6 +245,10 @@ function display_logged_in_ui() {
 
 	//Not used anymore since title is removed after loading finishes 
 	//move_app_title();
+}
+
+function display_sign_in() {
+	document.getElementById("authentication").classList.toggle("float-up");
 }
 
 function move_app_title() {
@@ -294,7 +299,6 @@ function display_snackbar(message) {
 }
 
 function display_loader_in_form(form) {
-	// fug :D:D:D :D:D
 	window.setTimeout(() => {
 		form.parentNode.innerHTML += `<div class="preloader-wrapper active centered">
 						<div class="spinner-layer">
@@ -353,7 +357,7 @@ function github_sign_in() {
 }
 
 function set_form_onsubmit() {
-	document.getElementById("login").addEventListener("submit",
+	document.getElementById("authentication").addEventListener("submit",
 		(e) => submit_login_form(e));
 };
 
@@ -361,15 +365,20 @@ function submit_login_form(event) {
 	if (event)
 		event.preventDefault();
 	console.log("Attempting login...")
-	const form = document.getElementById("login");
+	const form = document.getElementById("authentication");
 	const form_vailidation = validate_login_form(form);
 	if (form_vailidation === false) {
-		display_snackbar("Ursäkta mig, herrn, men ni har fel format på lösenord eller typ email på något vis o.s.v.");
+		display_snackbar("Excuse me, sir, your email or password format is completely wrong.");
 	} else {
 		const email = form_vailidation[0];
 		const password = form_vailidation[1];
 		// Form was valid
-		firebase.auth().createUserWithEmailAndPassword(email, password).catch((error) => {
+		firebase.auth().createUserWithEmailAndPassword(email, password)
+		.then(() => {
+			fs.collection("users").add({
+				// display form for adding user
+			});
+		}).catch((error) => {
 			if (error.code == "auth/email-already-in-use") {
 				// Sign in if singup not successful
 				firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {

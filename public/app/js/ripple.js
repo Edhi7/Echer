@@ -49,8 +49,6 @@ function applyStylesToRipple(element, event) {
 }
 
 function ripple_cleanup(ripple) {
-    // Ripperino ripple you will be mised
-    // f f f f f f f f f f f f f f f f f
     ripple.setAttribute("removal-scheduled", "f");
     window.setTimeout(function () {
         ripple.style.transition = "1200ms cubic-bezier(0, 0, 0.2, 1)";
@@ -96,17 +94,14 @@ function ripple_init() {
     ripple_containers.forEach(function (element) {
         element.addEventListener("mousedown", function (event) {
             ripple_event_handler(event);
-            event.stopPropagation();
         });
 
         element.addEventListener("touchstart", function (event) {
             ripple_event_handler(event);
-            event.stopPropagation();
         });
 
         element.addEventListener("mouseleave", function (event) {
             delete_all_ripples();
-            event.stopPropagation();
         });
     });
     set_up_ripple_cleanup();
@@ -143,12 +138,10 @@ function set_up_ripple_cleanup() {
     document.addEventListener("mouseup", function (event) {
         delete_all_ripples();
         //hide_menu(event);
-        event.stopPropagation();
     });
 
     document.addEventListener("touchend", function (event) {
         delete_all_ripples();
         //hide_menu();
-        event.stopPropagation();
     });
 }

@@ -1,12 +1,16 @@
 .form-element {
     position: relative;
-    margin: 24px 0;
+    margin: 24px 0 16px 0;
+}
+
+.form-element:first-of-type {
+    margin-top: 16px;
 }
 
 .form-element-bar {
     position: relative;
     height: 1px;
-    background: #999;
+    background: rgba(0, 0, 0, 0.12);
     display: block;
 }
 
