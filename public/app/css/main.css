@@ -198,7 +198,7 @@ body #authentication {
     margin: auto;
     top: 50vh;
     width: 256px;
-    height: 356px;
+    height: 352px;
     overflow: -moz-hidden-unscrollable;
     overflow: hidden;
     bottom: 0;
@@ -219,11 +219,11 @@ body #authentication {
 }
 
 #authentication.float-up form:first-of-type {
-    margin-top: -368px;
+    margin-top: -362px;
 }
 
 #authentication.float-up {
-    height: 304px;
+    height: 308px;
 }
 
 .divider {

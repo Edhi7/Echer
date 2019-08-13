@@ -1,14 +1,15 @@
 "use strict";
 
 window.onload = main;
-
-let fs = firebase.firestore();
+ 
+const fs = firebase.firestore();
+const settings = { timestampsInSnapshots: true };
+fs.settings(settings);
 
 function main() {
 	// Serviceworker is anoying during debugging
 	//register_service_worker();
 	scale_in_title();
-	set_form_onsubmit();
 	ripple_init();
 	window.setTimeout(() => {
 		set_bottom_navigation_click();
@@ -190,6 +191,7 @@ function check_logged_in() {
 function sign_out() {
 	firebase.auth().signOut().then(function () {
 		display_snackbar("Signed out");
+		location.reload();
 	}).catch(function (error) {
 		display_snackbar(error.message);
 	});
@@ -206,13 +208,6 @@ function hide_login_form() {
 	const login = document.getElementById("authentication");
 	login.classList.remove("fade-in");
 	fade_out_title();
-}
-
-function validate_form_if_enter(event) {
-	if (event.key === "Enter") {
-		const form = event.currentTarget.parentNode.parentNode;
-		validate_login_form(form);
-	}
 }
 
 function logged_in(user) {
@@ -341,34 +336,56 @@ function google_sign_in() {
 function github_sign_in() {
 	const provider = new firebase.auth.GithubAuthProvider();
 	firebase.auth().signInWithPopup(provider).then(function (result) {
-		// This gives you a GitHub Access Token. You can use it to access the GitHub API.
 		const token = result.credential.accessToken;
-		// The signed-in user info.
 		const user = result.user;
 	}).catch(function (error) {
-		// Handle Errors here.
 		const error_code = error.code;
 		const error_message = error.message;
-		// The email of the user's account used.
 		const email = error.email;
-		// The firebase.auth.AuthCredential type that was used.
 		const credential = error.credential;
 	});
 }
 
-function set_form_onsubmit() {
-	document.getElementById("authentication").addEventListener("submit",
-		(e) => submit_login_form(e));
-};
-
-function submit_login_form(event) {
-	if (event)
-		event.preventDefault();
-	console.log("Attempting login...")
-	const form = document.getElementById("authentication");
+function submit_signup_form(event) {
+	const form = document.getElementById("signup");
 	const form_vailidation = validate_login_form(form);
 	if (form_vailidation === false) {
-		display_snackbar("Excuse me, sir, your email or password format is completely wrong.");
+		display_snackbar("Your form values are incorrectly formated.");
+	} else {
+		const email = form_vailidation[0];
+		const password = form_vailidation[1];
+		const display = form_vailidation[2];
+		// Form was valid
+		firebase.auth().createUserWithEmailAndPassword(email, password)
+		.then(() => {
+			// TODO add user in database
+			fs.collection("users").add({
+				email: email,
+				display: display,
+				friends: [null],
+				groups: [null],
+			})
+			.then((ref) => console.log(ref.id))
+			.catch((e) => console.log(e));
+		}).catch((error) => {
+			if (error.code == "auth/email-already-in-use") {
+				// Sign in if singup not successful
+				firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+					display_snackbar(error.message);
+				});
+			} else {
+				console.log(error.code);
+				display_snackbar(error.message);
+			}
+		});
+	}
+}
+
+function submit_login_form(event) {
+	const form = document.getElementById("login");
+	const form_vailidation = validate_login_form(form);
+	if (form_vailidation === false) {
+		display_snackbar("Your email or password format is completely wrong.");
 	} else {
 		const email = form_vailidation[0];
 		const password = form_vailidation[1];
