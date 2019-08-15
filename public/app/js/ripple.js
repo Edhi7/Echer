@@ -103,8 +103,16 @@ function ripple_init() {
         element.addEventListener("mouseleave", function (event) {
             delete_all_ripples();
         });
+
+        // Clean up ripples if mouseup or touchend occurs outside element
+        document.addEventListener("mouseup", function (event) {
+            delete_all_ripples();
+        });
+    
+        document.addEventListener("touchend", function (event) {
+            delete_all_ripples();
+        });
     });
-    set_up_ripple_cleanup();
 }
 
 // To stop both events from firing
@@ -132,16 +140,4 @@ function hide_menu(event) {
             .classList.remove("active");
         // Todo: Make it gain activity as well
     }
-}
-
-function set_up_ripple_cleanup() {
-    document.addEventListener("mouseup", function (event) {
-        delete_all_ripples();
-        //hide_menu(event);
-    });
-
-    document.addEventListener("touchend", function (event) {
-        delete_all_ripples();
-        //hide_menu();
-    });
 }

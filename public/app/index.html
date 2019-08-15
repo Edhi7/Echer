@@ -1,7 +1,6 @@
-<!DOCTYPE html
-	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//SV" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-au">
+<html lang="en-US">
 
 <head>
 
@@ -10,25 +9,33 @@
 	<meta name="description" content="Jag är jeff och detta är ett helvete. 
 	Jag jobbar här med min gode vän och kompanjon same bergöm.
 	En sak jag lärt mig under mina 10 minuter i branchen är att en halv korv är bättre än ingen.">
-	<link rel="canonical" href="https://echeveria-runyonii.firebaseapp.com/" />
+	<link rel="canonical" href="https://echeveria-runyonii.firebaseapp.com/app/" />
+ <!-- add stuff here tp avoid caching a
 
+as
+d
+asd
+
+
+-->
 	<title>Runyonii</title>
 
-	<link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
-	<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png" />
-	<link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png" />
-	<link rel="manifest" href="../config/site.webmanifest" />
-	<link rel="mask-icon" href="../images/safari-pinned-tab.svg" color="#43b583" />
-	<meta name="apple-mobile-web-app-title" content="Runyonii" />
-	<meta name="application-name" content="Runyonii" />
-	<meta name="msapplication-TileColor" content="#43b583" />
-	<meta name="theme-color" content="#43b583" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+	<link rel="manifest" href="/app/config/site.webmanifest">
+	<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5a9271">
+	<meta name="apple-mobile-web-app-title" content="Runyonii">
+	<meta name="application-name" content="Runyonii">
+	<meta name="msapplication-TileColor" content="#5a9271">
+	<meta name="theme-color" content="#5a9271">
+	<meta name="twitter:card" content="Runyonii, the free messaging platform" />
 
-	<script src="/__/firebase/5.0.4/firebase-app.js"></script>
-	<script defer src="/__/firebase/5.0.4/firebase-auth.js"></script>
-	<script defer src="/__/firebase/5.0.4/firebase-firestore.js"></script>
-	<script defer src="/__/firebase/5.0.4/firebase-messaging.js"></script>
-	<script defer src="/__/firebase/5.0.4/firebase-storage.js"></script>
+	<script src="/__/firebase/6.3.5/firebase-app.js"></script>
+	<script defer src="/__/firebase/6.3.5/firebase-auth.js"></script>
+	<script defer src="/__/firebase/6.3.5/firebase-firestore.js"></script>
+	<script defer src="/__/firebase/6.3.5/firebase-messaging.js"></script>
+	<script defer src="/__/firebase/6.3.5/firebase-storage.js"></script>
 	<script defer src="/__/firebase/init.js"></script>
 
 	<script defer src="js/ripple.js"></script>
@@ -125,7 +132,7 @@
 			</div>
 			
 			<div class="form-element form-input">
-				<input id="password" class="form-element-field"
+				<input id="display-name" class="form-element-field"
 					placeholder="そらまめ" type="input"
 					required />
 				<div class="form-element-bar"></div>
@@ -170,14 +177,14 @@
 		<form id="login" onsubmit="submit_login_form()">
 			<h2 style="padding-bottom: 16px;">Sign in</h2>
 			<div class="form-element form-input">
-				<input id="email" class="form-element-field" placeholder="Type your email, bucko" type="input"
+				<input id="login-email" class="form-element-field" placeholder="Type your email, bucko" type="input"
 					required />
 				<div class="form-element-bar"></div>
 				<label class="form-element-label" for="email">Email</label>
 			</div>
 
 			<div class="form-element form-input">
-				<input id="password" class="form-element-field" placeholder="Any format you want" type="password"
+				<input id="login-password" class="form-element-field" placeholder="Any format you want" type="password"
 					 required />
 				<div class="form-element-bar"></div>
 				<label class="form-element-label" for="password">Password</label>

@@ -3,16 +3,14 @@
 window.onload = main;
  
 const fs = firebase.firestore();
-const settings = { timestampsInSnapshots: true };
-fs.settings(settings);
 
 function main() {
 	// Serviceworker is anoying during debugging
-	//register_service_worker();
+	register_service_worker();
 	scale_in_title();
 	ripple_init();
+	set_bottom_navigation_click();
 	window.setTimeout(() => {
-		set_bottom_navigation_click();
 		check_logged_in();
 	}, 500);
 }
@@ -98,7 +96,12 @@ function display_account() {
 function set_contact_on_click() {
 	const contacts = document.getElementsByClassName("contact");
 	for (const contact of contacts) {
-		contact.onclick = contact_click;
+		// For some reason click works only about half of the time
+		// It sometimes stops working for a while and then it works again
+		// Using these other event listeners and it seems to be working fine
+		contact.addEventListener("click", contact_click, false);
+		contact.addEventListener("mouseup", contact_click, false);
+		contact.addEventListener("touchend", contact_click, false);
 	}
 }
 
@@ -115,17 +118,36 @@ function contact_click() {
 					<path fill="none" d="M0,0h24v24H0V0z"/>
 				</g>
 				<g id="Sharp">
-					<path fill="#69AD84" d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/>
+					<path fill="#5a9271" d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/>
 				</g>
    			</svg>
 		</div>
 		<div class="conversation-name">${name}</div>
+	</div>
+	<div class="form-input conversation-input-container">
+		<input id="message-input" class="form-element-field" placeholder="" type="input" required />
+		<div class="form-element-bar"></div>
+		<label class="form-element-label" for="message-input">Type a message</label>
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+			<path fill="#cacaca" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+			<path d="M0 0h24v24H0z" fill="none"/>
+		</svg>
 	</div>`;
 	document.getElementsByTagName('body')[0].append(node);
-	requestAnimationFrame(() =>
-		requestAnimationFrame(() =>
-			document.body.lastChild.classList.add("open")));
-	
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			document.getElementsByClassName("conversation")[0]
+				.classList.add("open");
+			document.getElementsByClassName("conversation")[0]
+				.getElementsByTagName("input")[0]
+				.addEventListener("keydown", (e) => {
+					requestAnimationFrame(() => {
+						(type_message_on_keydown(e))
+					});
+				});
+			
+		});
+	});
 }
 
 function close_all_conversations() {
@@ -138,6 +160,17 @@ function close_all_conversations() {
 function close_conversation(button) {
 	button.parentNode.parentNode.classList.remove("open");
 	window.setTimeout(close_all_conversations, 100);
+}
+
+function type_message_on_keydown(event) {
+	//console.log(event.currentTarget.value)
+	if (event.target.value != "") {
+		event.target.parentNode.getElementsByTagName("svg")[0]
+			.classList.add("active");
+	} else {
+		event.target.parentNode.getElementsByTagName("svg")[0]
+			.classList.remove("active");
+	}
 }
 
 function scale_in_title() {
@@ -167,13 +200,15 @@ function float_title() {
 function register_service_worker() {
 	if ('serviceWorker' in navigator) {
 		navigator.serviceWorker
-			.register('/app/js/sw.js')
+			.register('/app/sw.js')
 			.then(function (registration) {
-				console.log('Service Worker Registered');
+				console.log('Service Worker Registered at scope ', registration.scope);
 			});
 		navigator.serviceWorker.ready.then(function (registration) {
 			console.log('Service Worker Ready');
 		});
+	} else {
+		console.log("Service worker is unavailable");
 	}
 }
 
@@ -224,7 +259,7 @@ function logged_in(user) {
 		"\nDisplayname: " + user.displayName +
 		"\nPhoto url: " + photoURL +
 		"\nEmail verified: " + emailVerified);
-	// TODO
+	// TODO fetch user data from firestore
 }
 
 function display_logged_in_ui() {
@@ -323,7 +358,6 @@ function google_sign_in() {
 		console.log("Google sign in failed");
 		// Handle Errors here.
 		const error_code = error.code;
-		console.log(error_code);
 		const error_message = error.message;
 		console.log(errorMessage);
 		// The email of the user's account used.
@@ -354,14 +388,16 @@ function submit_signup_form(event) {
 	} else {
 		const email = form_vailidation[0];
 		const password = form_vailidation[1];
-		const display = form_vailidation[2];
+		const display_name = form_vailidation[2];
 		// Form was valid
 		firebase.auth().createUserWithEmailAndPassword(email, password)
 		.then(() => {
+			const user_id = firebase.auth().currentUser.uid;
 			// TODO add user in database
 			fs.collection("users").add({
+				uid: user_id,
 				email: email,
-				display: display,
+				display: display_name,
 				friends: [null],
 				groups: [null],
 			})
@@ -385,7 +421,7 @@ function submit_login_form(event) {
 	const form = document.getElementById("login");
 	const form_vailidation = validate_login_form(form);
 	if (form_vailidation === false) {
-		display_snackbar("Your email or password format is completely wrong.");
+		display_snackbar("Your email or password format is wrong.");
 	} else {
 		const email = form_vailidation[0];
 		const password = form_vailidation[1];

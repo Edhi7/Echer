@@ -20,7 +20,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: #2d966b;
+    background: #5a9271;
     height: 2px;
     display: block;
     transform: rotateY(90deg);
@@ -80,7 +80,7 @@
 }
 
 .form-element-field:focus~.form-element-label {
-    color: #2d966b;
+    color: #5a9271;
 }
 
 .form-element-field.-hasvalue,
@@ -107,11 +107,11 @@
 
 .form-is-success .form-element-label.form-element-label,
 .form-is-success .form-element-hint {
-    color: #259337;
+    color: #5a9271;
 }
 
 .form-is-success .form-element-bar::after {
-    background: #259337;
+    background: #5a9271;
 }
 
 input.form-element-field:not(:placeholder-shown),
