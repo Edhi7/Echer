@@ -83,6 +83,7 @@ function display_chat() {
 		}, 25 * i);
 	}
 	window.setTimeout(() => {chat_screen.classList.add("active")}, 25)
+	set_add_fren_on_click();
 	set_contact_on_click();
 }
 
@@ -91,6 +92,17 @@ function display_account() {
 	window.setTimeout(() => {
 		document.getElementById("account-screen").classList.add("active");
 	}, 25);
+}
+
+function set_add_fren_on_click() {
+	const botan = document.getElementById("add_fren");
+	botan.addEventListener("click", display_add_fren, {passive: true});
+	botan.addEventListener("mouseup", display_add_fren, {passive: true});
+	botan.addEventListener("touchend", display_add_fren, {passive: true});
+}
+
+function display_add_fren() {
+	open_dialog("not relevant", ``);
 }
 
 function set_contact_on_click() {
@@ -106,12 +118,25 @@ function set_contact_on_click() {
 }
 
 function contact_click() {
-	close_all_conversations();
-	const name = this.getElementsByClassName("contact-name")[0].innerHTML;
+	open_dialog(this.getElementsByClassName("contact-name")[0].innerText,
+	`<div class="form-input
+		conversation-input-container">
+		<input id="message-input" class="form-element-field" placeholder="" type="input" required />
+		<div class="form-element-bar"></div>
+		<label class="form-element-label" for="message-input">Type a message</label>
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+			<path fill="#cacaca" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+			<path d="M0 0h24v24H0z" fill="none"/>
+		</svg>
+	</div>`);
+}
+
+function open_dialog(title, content) {
+	close_all_dialogs();
 	const node = document.createElement('div');
-	node.classList.add("conversation");
-	node.innerHTML = `<div class="conversation-toolbar">
-		<div class="close-conversation" onclick="close_conversation(this)">
+	node.classList.add("dialog");
+	node.innerHTML = `<div class="dialog-toolbar">
+		<div class="close-dialog" onclick="close_dialog(this)">
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
 			height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 				<g id="Bounding_Boxes">
@@ -122,44 +147,35 @@ function contact_click() {
 				</g>
    			</svg>
 		</div>
-		<div class="conversation-name">${name}</div>
+		<div class="dialog-name">${title}</div>
 	</div>
-	<div class="form-input conversation-input-container">
-		<input id="message-input" class="form-element-field" placeholder="" type="input" required />
-		<div class="form-element-bar"></div>
-		<label class="form-element-label" for="message-input">Type a message</label>
-		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-			<path fill="#cacaca" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-			<path d="M0 0h24v24H0z" fill="none"/>
-		</svg>
-	</div>`;
+	` + content;
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() => {
 		requestAnimationFrame(() => {
-			document.getElementsByClassName("conversation")[0]
+			document.getElementsByClassName("dialog")[0]
 				.classList.add("open");
-			document.getElementsByClassName("conversation")[0]
+			document.getElementsByClassName("dialog")[0]
 				.getElementsByTagName("input")[0]
 				.addEventListener("keydown", (e) => {
 					requestAnimationFrame(() => {
 						(type_message_on_keydown(e))
 					});
 				});
-			
 		});
 	});
 }
 
-function close_all_conversations() {
-	const conversations = document.getElementsByClassName("conversation");
-	for (const c of conversations) {
+function close_all_dialogs() {
+	const dialog = document.getElementsByClassName("dialog");
+	for (const c of dialog) {
 		c.parentNode.removeChild(c);
 	}
 }
 
-function close_conversation(button) {
+function close_dialog(button) {
 	button.parentNode.parentNode.classList.remove("open");
-	window.setTimeout(close_all_conversations, 100);
+	window.setTimeout(close_all_dialogs, 100);
 }
 
 function type_message_on_keydown(event) {
