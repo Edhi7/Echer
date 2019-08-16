@@ -6,7 +6,7 @@ const fs = firebase.firestore();
 
 function main() {
 	// Serviceworker is anoying during debugging
-	register_service_worker();
+	// register_service_worker();
 	scale_in_title();
 	ripple_init();
 	set_bottom_navigation_click();
@@ -246,20 +246,21 @@ function hide_login_form() {
 }
 
 function logged_in(user) {
-	const displayName = user.displayName;
-	const email = user.email;
-	const emailVerified = user.emailVerified;
-	const photoURL = user.photoURL;
-	const isAnonymous = user.isAnonymous;
-	const uid = user.uid;
-	const providerData = user.providerData;
 	display_logged_in_ui();
-	console.log("Logged in as " + email +
-		"\nUser id: " + uid +
+	console.log("Logged in as " + user.email +
+		"\nUser id: " + user.uid +
 		"\nDisplayname: " + user.displayName +
-		"\nPhoto url: " + photoURL +
-		"\nEmail verified: " + emailVerified);
+		"\nPhoto url: " + user.photoURL +
+		"\nEmail verified: " + user.emailVerified);
+	if (user.displayName != null)
+		display_snackbar("Signed in as " + user.displayName);
 	// TODO fetch user data from firestore
+	fs.collection("users").doc(user.uid).get().then((doc) => {
+		if (doc.exists)
+			console.log(doc.data());
+	}).catch((e) => {
+		console.log(error);
+	});
 }
 
 function display_logged_in_ui() {
@@ -353,7 +354,7 @@ function google_sign_in() {
 		const token = result.credential.accessToken;
 		// The signed-in user info.
 		const user = result.user;
-		user.naem = "jef :)";
+		user.name = "hakase";
 	}).catch(function (error) {
 		console.log("Google sign in failed");
 		// Handle Errors here.
@@ -394,8 +395,12 @@ function submit_signup_form(event) {
 		.then(() => {
 			const user_id = firebase.auth().currentUser.uid;
 			// TODO add user in database
-			fs.collection("users").add({
-				uid: user_id,
+			const user = firebase.auth().currentUser;
+			user.updateProfile({
+				displayName: display_name,
+				photoURL: "/images/jeffo.png"
+			});
+			fs.collection("users").doc(user_id).set({
 				email: email,
 				display: display_name,
 				friends: [null],
@@ -405,10 +410,7 @@ function submit_signup_form(event) {
 			.catch((e) => console.log(e));
 		}).catch((error) => {
 			if (error.code == "auth/email-already-in-use") {
-				// Sign in if singup not successful
-				firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
-					display_snackbar(error.message);
-				});
+				display_snackbar(error.message);
 			} else {
 				console.log(error.code);
 				display_snackbar(error.message);
@@ -425,22 +427,11 @@ function submit_login_form(event) {
 	} else {
 		const email = form_vailidation[0];
 		const password = form_vailidation[1];
-		// Form was valid
-		firebase.auth().createUserWithEmailAndPassword(email, password)
-		.then(() => {
-			fs.collection("users").add({
-				// display form for adding user
-			});
-		}).catch((error) => {
-			if (error.code == "auth/email-already-in-use") {
-				// Sign in if singup not successful
-				firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
-					display_snackbar(error.message);
-				});
-			} else {
-				console.log(error.code);
-				display_snackbar(error.message);
-			}
+		firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+			display_snackbar(error.message);
 		});
+		console.log(error.code);
+		display_snackbar(error.message);
 	}
+
 }

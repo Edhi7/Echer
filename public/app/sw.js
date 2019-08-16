@@ -3,7 +3,7 @@
 importScripts('/app/js/cache-polyfill.js');
 
 
-const version = "0.0.7";
+const version = "0.0.9";
 const cacheName = `Runyonii-${version}`;
 self.addEventListener('install', e => {
   const timeStamp = Date.now();

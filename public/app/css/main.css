@@ -27,13 +27,9 @@ a {
     font-weight: 500;
 }
 
-#contact-list {
-    padding: 16px 0 56px 0;
-}
-
 .conversation {
     position: fixed;
-    height: 100vh;
+    height: 100%;
     width: 100vw;
     background: #fafafa;
     left: 0;
@@ -102,6 +98,41 @@ a {
     float: left;
     font-size: 24px;
     line-height: 52px;
+}
+
+#add_fren {
+    width: 100%;
+    height: 48px;
+    padding: 4px 16px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: inline-block;
+    box-sizing: border-box;
+    transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #5a9271;
+}
+
+#add_fren:active {
+    background-color: #4a775d;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.12),
+        0px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#add_fren svg {
+    padding: 8px;
+}
+
+#add_fren .add_fren_text {
+    position: absolute;
+    top: 0;
+    left: 72px;
+    line-height: 48px;
+    color: #fafafa;
+}
+
+#contact-list {
+    padding: 16px 0 56px 0;
 }
 
 .contact {
@@ -849,6 +880,6 @@ body .raised-button {
 @media screen and (min-width: 965px) {
     #chat-screen,
     .conversation {
-        width: 617.6px;
+        width: 618px;
     }
 }
