@@ -1,7 +1,7 @@
 "use strict";
 
 window.onload = main;
- 
+
 const fs = firebase.firestore();
 
 function main() {
@@ -33,7 +33,8 @@ function set_bottom_navigation_click() {
 function bottom_navigation_click(event) {
 	// Give only clicked destination active class and remove it from others 
 	const element = event.currentTarget;
-	const siblings = element.parentNode.getElementsByClassName("bottom-navigation-destination");
+	const siblings = element.parentNode
+		.getElementsByClassName("bottom-navigation-destination");
 	let clicked_el_index;
 	for (let i = 0; i < siblings.length; i++) {
 		siblings[i].classList.remove("active");
@@ -41,26 +42,27 @@ function bottom_navigation_click(event) {
 			clicked_el_index = i;
 		}
 	}
-	hide_top_level_destinations();
 	element.classList.add("active");
+	hide_top_level_destinations();
 	// Call corresponding displaying function
-	// but wait until exit animation finishes
-	requestAnimationFrame([display_map, display_chat, display_account][clicked_el_index]);
+	[display_map, display_chat, display_account][clicked_el_index]();
+
 }
 
 function hide_top_level_destinations() {
-	// Display hide animation
-	const destinations = document.getElementsByClassName("top-level-destination");
+	// Display hiding animation
+	const destinations = document
+		.getElementsByClassName("top-level-destination");
 	for (const destination of destinations) {
 		destination.classList.remove("active");
 	}
 	const contacts = document.getElementById("contact-list").children;
-	for(let contact of contacts)
+	for (let contact of contacts)
 		contact.classList.remove("active");
 	// Actually hide
 	window.setTimeout(() => {
 		for (const destination of destinations) {
-			if(!destination.classList.contains("active"))
+			if (!destination.classList.contains("active"))
 				destination.style.display = "none";
 		}
 	}, 50);
@@ -70,19 +72,19 @@ function display_map() {
 	document.getElementById("map-screen").style.display = "block";
 	window.setTimeout(() => {
 		document.getElementById("map-screen").classList.add("active");
-	}, 25);
+	}, 40);
 }
 
 function display_chat() {
 	const chat_screen = document.getElementById("chat-screen");
 	const contacts = document.getElementById("contact-list").children;
 	chat_screen.style.display = "block";
-	for(let i = 0; i < contacts.length; i++) {
+	for (let i = 0; i < contacts.length; i++) {
 		window.setTimeout(() => {
 			contacts[i].classList.add("active");
 		}, 25 * i);
 	}
-	window.setTimeout(() => {chat_screen.classList.add("active")}, 25)
+	window.setTimeout(() => { chat_screen.classList.add("active") }, 25)
 	set_add_fren_on_click();
 	set_contact_on_click();
 }
@@ -95,14 +97,58 @@ function display_account() {
 }
 
 function set_add_fren_on_click() {
-	const botan = document.getElementById("add_fren");
-	botan.addEventListener("click", display_add_fren, {passive: true});
-	botan.addEventListener("mouseup", display_add_fren, {passive: true});
-	botan.addEventListener("touchend", display_add_fren, {passive: true});
+	const botan = document.getElementById("add-fren");
+	botan.addEventListener("mouseup", display_add_fren, { passive: true });
 }
 
 function display_add_fren() {
-	open_dialog("not relevant", ``);
+	open_dialog("Add a new friend", `<div class="add-fren form-input">
+			<input id="friend_search_bar" class="form-element-field" placeholder="" 
+			type="input" required />
+			<div class="form-element-bar"></div>
+			<label class="form-element-label" for="friend-search-bar">Enter the name of your friend</label>
+		</div>
+		<div class="add-fren-results">
+
+		</div>`);
+	const dialog = document.getElementsByClassName("dialog")[0];
+	const input = dialog.getElementsByTagName("input")[0];
+	input.addEventListener("keydown", (e) => requestAnimationFrame(() => search_for_frens(e)));
+}
+
+function search_for_frens(e) {
+	const name = e.target.value;
+	const results = e.target.parentNode.parentNode
+		.getElementsByClassName("add-fren-results")[0];
+	const users = fs.collection("users");
+	const query = users.where("display", "==", name);
+	query.get().then((qs) => {
+		results.innerHTML = "";
+		qs.forEach((doc) => {
+			const data = doc.data();
+			const user_id = firebase.auth().currentUser.uid;
+			// You can't become friends with yourself
+			if (doc.id != user_id) {
+				results.innerHTML += `<div class="contact active"
+					onclick="add_fren_to_friendlist('${doc.id}')">
+					<img class="contact-image" src="${data.image}"/>
+					<section class="contact-text">
+						<div class="contact-name">${data.display}</div>
+						<div class="contact-last-message">Add to your friendlist</div>
+					</section>
+				</div>`;
+				console.log(doc.id);
+				console.log(doc.data());
+			}
+		});
+	}).catch((e) => console.log(e));
+}
+
+function add_fren_to_friendlist(uid) {
+	const user_id = firebase.auth().currentUser.uid;
+	fs.collection("users").doc(user_id).update({
+		friends: firebase.firestore.FieldValue.arrayUnion(uid)
+	});
 }
 
 function set_contact_on_click() {
@@ -111,15 +157,13 @@ function set_contact_on_click() {
 		// For some reason click works only about half of the time
 		// It sometimes stops working for a while and then it works again
 		// Using these other event listeners and it seems to be working fine
-		contact.addEventListener("click", contact_click, false);
 		contact.addEventListener("mouseup", contact_click, false);
-		contact.addEventListener("touchend", contact_click, false);
 	}
 }
 
 function contact_click() {
 	open_dialog(this.getElementsByClassName("contact-name")[0].innerText,
-	`<div class="form-input
+		`<div class="form-input
 		conversation-input-container">
 		<input id="message-input" class="form-element-field" placeholder="" type="input" required />
 		<div class="form-element-bar"></div>
@@ -129,6 +173,14 @@ function contact_click() {
 			<path d="M0 0h24v24H0z" fill="none"/>
 		</svg>
 	</div>`);
+	requestAnimationFrame(() => {
+		const dialog = document.getElementsByClassName("dialog")[0]; dialog.getElementsByTagName("input")[0]
+			.addEventListener("keydown", (e) => {
+				requestAnimationFrame(() => {
+					type_message_on_keydown(e);
+				});
+			});
+	});
 }
 
 function open_dialog(title, content) {
@@ -153,17 +205,11 @@ function open_dialog(title, content) {
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() => {
 		requestAnimationFrame(() => {
-			document.getElementsByClassName("dialog")[0]
-				.classList.add("open");
-			document.getElementsByClassName("dialog")[0]
-				.getElementsByTagName("input")[0]
-				.addEventListener("keydown", (e) => {
-					requestAnimationFrame(() => {
-						(type_message_on_keydown(e))
-					});
-				});
+			const dialog = document.getElementsByClassName("dialog")[0];
+			dialog.classList.add("open");
 		});
 	});
+
 }
 
 function close_all_dialogs() {
@@ -262,7 +308,6 @@ function hide_login_form() {
 }
 
 function logged_in(user) {
-	display_logged_in_ui();
 	console.log("Logged in as " + user.email +
 		"\nUser id: " + user.uid +
 		"\nDisplayname: " + user.displayName +
@@ -272,10 +317,40 @@ function logged_in(user) {
 		display_snackbar("Signed in as " + user.displayName);
 	// TODO fetch user data from firestore
 	fs.collection("users").doc(user.uid).get().then((doc) => {
-		if (doc.exists)
-			console.log(doc.data());
+		if (doc.exists) {
+			populate_contact_list(user.uid);
+		}
 	}).catch((e) => {
-		console.log(error);
+		console.log(e);
+	});
+	display_logged_in_ui();
+}
+
+function populate_contact_list(user_id) {
+	// pouplate friends view
+	const contact_container = document.getElementById("contact-list");
+	const users_ref = fs.collection("users")
+	users_ref.doc(user_id).get().then((doc) => {
+		const friend_list = doc.data().friends;
+		friend_list.forEach((friend) => {
+			if (friend != null) {
+				users_ref.doc(friend).get().then((fdoc) => {
+					console.log(friend)
+					if (fdoc.exists)
+						console.log("dokumentet existerar som fan")
+					const data = fdoc.data();
+					contact_container.innerHTML += `<div class="contact ripple active">
+						<img class="contact-image" alt="Profile picture"
+							src="${data.image}" />
+						<section class="contact-text">
+							<div class="contact-name">${data.display}</div>
+							<div class="contact-last-message>Hej feto</div>
+						</section>
+					</div>`
+					requestAnimationFrame(display_chat);
+				});
+			}
+		});
 	});
 }
 
@@ -408,31 +483,32 @@ function submit_signup_form(event) {
 		const display_name = form_vailidation[2];
 		// Form was valid
 		firebase.auth().createUserWithEmailAndPassword(email, password)
-		.then(() => {
-			const user_id = firebase.auth().currentUser.uid;
-			// TODO add user in database
-			const user = firebase.auth().currentUser;
-			user.updateProfile({
-				displayName: display_name,
-				photoURL: "/images/jeffo.png"
+			.then(() => {
+				// TODO add user in database
+				const user = firebase.auth().currentUser;
+				const user_id = user.uid;
+				user.updateProfile({
+					displayName: display_name,
+					photoURL: "/images/jeffo.png"
+				});
+				fs.collection("users").doc(user_id).set({
+					email: email,
+					display: display_name,
+					friends: [null],
+					groups: [null],
+					image: "/images/apple-touch-icon.png",
+				})
+					.catch((e) => console.log(e));
+			}).catch((error) => {
+				if (error.code == "auth/email-already-in-use") {
+					display_snackbar(error.message);
+				} else {
+					console.log(error.code);
+					display_snackbar(error.message);
+				}
 			});
-			fs.collection("users").doc(user_id).set({
-				email: email,
-				display: display_name,
-				friends: [null],
-				groups: [null],
-			})
-			.then((ref) => console.log(ref.id))
-			.catch((e) => console.log(e));
-		}).catch((error) => {
-			if (error.code == "auth/email-already-in-use") {
-				display_snackbar(error.message);
-			} else {
-				console.log(error.code);
-				display_snackbar(error.message);
-			}
-		});
 	}
+	return false;
 }
 
 function submit_login_form(event) {
@@ -449,5 +525,5 @@ function submit_login_form(event) {
 		console.log(error.code);
 		display_snackbar(error.message);
 	}
-
+	return false;
 }

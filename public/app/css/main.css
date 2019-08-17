@@ -81,7 +81,7 @@ a {
 }
 
 .conversation-input-container svg path:first-of-type {
-    transition: fill 250ms;
+    transition: fill 150ms;
 }
 
 .conversation-input-container svg.active path:first-of-type {
@@ -100,12 +100,12 @@ a {
     line-height: 52px;
 }
 
-#add_fren {
-    width: 100%;
+#add-fren {
+    width: calc(100% - 16px);
     height: 48px;
-    padding: 4px 16px;
-    border-radius: 4px;
-    margin-bottom: 8px;
+    padding: 4px 8px;
+    margin: 0 8px 8px 8px;
+    border-radius: 48px;
     cursor: pointer;
     display: inline-block;
     box-sizing: border-box;
@@ -113,36 +113,44 @@ a {
     background-color: #5a9271;
 }
 
-#add_fren:active {
+#add-fren:active {
     background-color: #4a775d;
     box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.12),
         0px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-#add_fren svg {
+#add-fren svg {
     padding: 8px;
 }
 
-#add_fren .add_fren_text {
+#add-fren .add-fren-text {
     position: absolute;
     top: 0;
-    left: 72px;
+    left: 64px;
     line-height: 48px;
     color: #fafafa;
 }
 
+.add-fren {
+    margin: 32px 16px 16px 16px;
+    width: calc(100% - 32px);
+    position: relative;
+}
+
 #contact-list {
-    padding: 16px 0 56px 0;
+    padding: 8px 0 56px 0;
 }
 
 .contact {
-    padding-left: 16px;
+    padding-left: 8px;
     display: inline-block;
     box-sizing: border-box;
-    width: 100%;
-    min-height: 64px;
+    width: calc(100% - 16px);
+    height: 64px;
+    padding-top: 4px;
     margin-bottom: 0px;
     margin-top: 16px;
+    margin-left: 8px;
     opacity: 0;
     transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
@@ -866,7 +874,7 @@ body .raised-button {
         bottom: 8px;
         margin: auto;
         height: auto;
-        width: 64vw;
+        width: 66vw;
         border-radius: 8px !important;
     }
     

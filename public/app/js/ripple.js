@@ -100,6 +100,7 @@ function ripple_init() {
             ripple_event_handler(event);
         });
 
+        // Delete ripple if the mouse leaves the container
         element.addEventListener("mouseleave", function (event) {
             delete_all_ripples();
         });
