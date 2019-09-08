@@ -144,10 +144,15 @@ function search_for_frens(e) {
 	}).catch((e) => console.log(e));
 }
 
-function add_fren_to_friendlist(uid) {
+function send_friend_rerquest(uid) {
 	const user_id = firebase.auth().currentUser.uid;
-	fs.collection("users").doc(user_id).update({
-		friends: firebase.firestore.FieldValue.arrayUnion(uid)
+	// make som transaction or smth ye
+	fs.collection("friend-requests").doc(user_id).get().then((doc) => {
+		if (doc.exists) {
+			
+		} else {
+
+		}
 	});
 }
 
@@ -335,16 +340,13 @@ function populate_contact_list(user_id) {
 		friend_list.forEach((friend) => {
 			if (friend != null) {
 				users_ref.doc(friend).get().then((fdoc) => {
-					console.log(friend)
-					if (fdoc.exists)
-						console.log("dokumentet existerar som fan")
 					const data = fdoc.data();
 					contact_container.innerHTML += `<div class="contact ripple active">
 						<img class="contact-image" alt="Profile picture"
 							src="${data.image}" />
 						<section class="contact-text">
 							<div class="contact-name">${data.display}</div>
-							<div class="contact-last-message>Hej feto</div>
+							<div class="contact-last-message">Hej feto</div>
 						</section>
 					</div>`
 					requestAnimationFrame(display_chat);

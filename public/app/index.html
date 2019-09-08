@@ -5,46 +5,73 @@
 <head>
 
 	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta name="description" content="Jag är jeff och detta är ett helvete. 
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1" />
+	<meta name="description"
+		content="Jag är jeff och detta är ett helvete. 
 	Jag jobbar här med min gode vän och kompanjon same bergöm.
 	En sak jag lärt mig under mina 10 minuter i branchen är att en halv korv är bättre än ingen.">
-	<link rel="canonical" href="https://echeveria-runyonii.firebaseapp.com/app/" />
- <!-- add stuff here tp avoid caching a
-
-as
-d
-asd
-
-
--->
+	<link rel="canonical"
+		href="https://echeveria-runyonii.firebaseapp.com/app/" />
 	<title>Runyonii</title>
 
-	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
-	<link rel="manifest" href="/app/config/site.webmanifest">
-	<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5a9271">
-	<meta name="apple-mobile-web-app-title" content="Runyonii">
-	<meta name="application-name" content="Runyonii">
-	<meta name="msapplication-TileColor" content="#5a9271">
-	<meta name="theme-color" content="#5a9271">
-	<meta name="twitter:card" content="Runyonii, the free messaging platform" />
+	<link rel="apple-touch-icon"
+		sizes="180x180"
+		href="/images/apple-touch-icon.png">
+	<link rel="icon"
+		type="image/png"
+		sizes="32x32"
+		href="/images/favicon-32x32.png">
+	<link rel="icon"
+		type="image/png"
+		sizes="16x16"
+		href="/images/favicon-16x16.png">
+	<link rel="manifest"
+		href="/app/config/site.webmanifest">
+	<link rel="mask-icon"
+		href="/images/safari-pinned-tab.svg"
+		color="#5a9271">
+	<meta name="apple-mobile-web-app-title"
+		content="Runyonii">
+	<meta name="application-name"
+		content="Runyonii">
+	<meta name="msapplication-TileColor"
+		content="#5a9271">
+	<meta name="theme-color"
+		content="#5a9271">
+	<meta name="twitter:card"
+		content="Runyonii, the free messaging platform" />
 
 	<script src="/__/firebase/6.3.5/firebase-app.js"></script>
-	<script defer src="/__/firebase/6.3.5/firebase-auth.js"></script>
-	<script defer src="/__/firebase/6.3.5/firebase-firestore.js"></script>
-	<script defer src="/__/firebase/6.3.5/firebase-messaging.js"></script>
-	<script defer src="/__/firebase/6.3.5/firebase-storage.js"></script>
-	<script defer src="/__/firebase/init.js"></script>
+	<script defer
+		src="/__/firebase/6.3.5/firebase-auth.js"></script>
+	<script defer
+		src="/__/firebase/6.3.5/firebase-firestore.js"></script>
+	<script defer
+		src="/__/firebase/6.3.5/firebase-messaging.js"></script>
+	<script defer
+		src="/__/firebase/6.3.5/firebase-storage.js"></script>
+	<script defer
+		src="/__/firebase/init.js"></script>
 
-	<script defer src="js/ripple.js"></script>
-	<script defer src="js/main.js"></script>
+	<script defer
+		src="js/ripple.js"></script>
+	<script defer
+		src="js/main.js"></script>
 
-	<link href="https://fonts.googleapis.com/css?family=Cabin:400,500&subset=latin-ext"
-		rel="stylesheet" media="none" onload="media='all'">
-	<link href="css/main.css" rel="stylesheet" media="none" onload="media='all'" />
-	<link href="css/field.css" rel="stylesheet" media="none" onload="media='all'" />
+	<link
+		href="https://fonts.googleapis.com/css?family=Cabin:400,500&subset=latin-ext"
+		rel="stylesheet"
+		media="none"
+		onload="media='all'">
+	<link href="css/main.css"
+		rel="stylesheet"
+		media="none"
+		onload="media='all'" />
+	<link href="css/field.css"
+		rel="stylesheet"
+		media="none"
+		onload="media='all'" />
 
 
 	<style>
@@ -114,29 +141,40 @@ asd
 	<div id="app-title">Runyonii</div>
 
 	<div id=authentication>
-		<form id="signup" onsubmit="return submit_signup_form()">
+		<form id="signup"
+			onsubmit="return submit_signup_form()">
 			<h2 style="padding-bottom: 16px;">Sign up</h2>
 			<div class="form-element form-input">
-				<input id="email" class="form-element-field"
-					placeholder="Type your email, bucko" type="email"
+				<input id="email"
+					class="form-element-field"
+					placeholder="Type your email, bucko"
+					type="email"
 					required />
 				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="email">Email</label>
+				<label class="form-element-label"
+					for="email">Email</label>
 			</div>
 
 			<div class="form-element form-input">
-				<input id="password" class="form-element-field" placeholder="Any format you want" type="password"
+				<input id="password"
+					class="form-element-field"
+					placeholder="Any format you want"
+					type="password"
 					required />
 				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="password">Password</label>
+				<label class="form-element-label"
+					for="password">Password</label>
 			</div>
-			
+
 			<div class="form-element form-input">
-				<input id="display-name" class="form-element-field"
-					placeholder="そらまめ" type="input"
+				<input id="display-name"
+					class="form-element-field"
+					placeholder="そらまめ"
+					type="input"
 					required />
 				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="name">Display name</label>
+				<label class="form-element-label"
+					for="name">Display name</label>
 			</div>
 
 			<!-- no longer supporting these
@@ -164,39 +202,64 @@ asd
 			GitHub
 		</div> -->
 
-			<div class="button-flat" style="float: right;" onclick="submit_signup_form()" tabindex=0>Submit</div>
-			<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1"/>
-			<br clear="all"/>
-			<hr class="divider" style="margin-bottom: 16px;"></hr>
-			Already have an account? <b class="button-flat" style="float: right;
-			margin-top: -6px;  padding: 0 14px;" onclick="display_sign_in()">LOG IN</b>
-			<a href="/help" style="margin-top: 8px;">Help</a>
+			<div class="button-flat"
+				style="float: right;"
+				onclick="submit_signup_form()"
+				tabindex=0>Submit</div>
+			<input type="submit"
+				style="position: absolute; left: -9999px; width: 1px; height: 1px;"
+				tabindex="-1" />
+			<br clear="all" />
+			<hr class="divider"
+				style="margin-bottom: 16px;">
+			</hr>
+			Already have an account? <b class="button-flat"
+				style="float: right;
+			margin-top: -6px;  padding: 0 14px;"
+				onclick="display_sign_in()">LOG IN</b>
+			<a href="/help"
+				style="margin-top: 8px;">Help</a>
 			<a href="/tos">Terms</a>
 		</form>
 
-		<form id="login" onsubmit="return submit_login_form()">
+		<form id="login"
+			onsubmit="return submit_login_form()">
 			<h2 style="padding-bottom: 16px;">Sign in</h2>
 			<div class="form-element form-input">
-				<input id="login-email" class="form-element-field" placeholder="Type your email, bucko" type="input"
+				<input id="login-email"
+					class="form-element-field"
+					placeholder="Type your email, bucko"
+					type="input"
 					required />
 				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="email">Email</label>
+				<label class="form-element-label"
+					for="email">Email</label>
 			</div>
 
 			<div class="form-element form-input">
-				<input id="login-password" class="form-element-field" placeholder="Any format you want" type="password"
-					 required />
+				<input id="login-password"
+					class="form-element-field"
+					placeholder="Any format you want"
+					type="password"
+					required />
 				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="password">Password</label>
+				<label class="form-element-label"
+					for="password">Password</label>
 			</div>
 
-			<div class="button-flat" style="float: right;" onclick="submit_login_form()" tabindex=0>Submit</div>
-			<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
-			<br clear="both"/>
-			<hr class="divider"/>
+			<div class="button-flat"
+				style="float: right;"
+				onclick="submit_login_form()"
+				tabindex=0>Submit</div>
+			<input type="submit"
+				style="position: absolute; left: -9999px; width: 1px; height: 1px;"
+				tabindex="-1" />
+			<br clear="both" />
+			<hr class="divider" />
 			No account? <b class="button-flat"
-			onclick="display_sign_in()">SIGN UP</b>
-			<br style="margin-top: 16px;" clear="all"/>
+				onclick="display_sign_in()">SIGN UP</b>
+			<br style="margin-top: 16px;"
+				clear="all" />
 			<a href="/help">Help</a>
 			<a href="/tos">Terms</a>
 		</form>
@@ -206,8 +269,10 @@ asd
 
 	<main>
 
-		<section id="map-screen" class="top-level-destination">
-			KARTAN ÄR INTE PRIORITERAD!!! LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
+		<section id="map-screen"
+			class="top-level-destination">
+			KARTAN ÄR INTE PRIORITERAD!!! LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
+			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
 			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
 			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
 			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
@@ -238,81 +303,66 @@ asd
 			<br>LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
 		</section>
 
-		<section id="chat-screen" class="top-level-destination">
+		<section id="chat-screen"
+			class="top-level-destination">
 			<!--<div class="subheader">Kontakter</div>-->
 			<div id="contact-list">
-				<div id="add-fren" class="ripple">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-						<path fill="#fafafa" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-						<path d="M0 0h24v24H0z" fill="none"/>
+				<div id="add-fren"
+					class="ripple">
+					<svg xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24">
+						<path fill="#fafafa"
+							d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+						<path d="M0 0h24v24H0z"
+							fill="none" />
 					</svg>
 					<div class="add-fren-text">Add friends</div>
 				</div>
 				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/pinkere.jpg" />
+					<img class="contact-image"
+						alt="Steven Pinker"
+						src="/images/pinkere.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Ass</div>
-						<div class="contact-last-message">HAha jef supa li poka ni pi kon jo jo lon insa anu la pona pi
-							kili len jaki li open jo e ante awen pi ilo monsi nanpa
-							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken len ike li monsi e utala li awen moli
+						<div class="contact-last-message">HAha jef supa li poka
+							ni pi kon jo jo lon insa anu la pona pi
+							kili len jaki li open jo e ante awen pi ilo monsi
+							nanpa
+							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken
+							len ike li monsi e utala li awen moli
 							tan ijo pi pona loje open
-							tan mute la kepeken pi pali kili sina li nimi li lupa sama ma lon ike. moku pi kasi waso
+							tan mute la kepeken pi pali kili sina li nimi li
+							lupa sama ma lon ike. moku pi kasi waso
 							waso li tan ma alasa pi mute
-							suli awen poka lon wan. insa pini pi jan nanpa lete li kama telo kepeken kon.
+							suli awen poka lon wan. insa pini pi jan nanpa lete
+							li kama telo kepeken kon.
 						</div>
 					</section>
 				</div>
 				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/barrry.jpg" />
+					<img class="contact-image"
+						alt="Steven Pinker"
+						src="/images/barrry.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Barry Allen</div>
 						<div class="contact-last-message">Jef mem</div>
 					</section>
 				</div>
 				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/allen.jpg" />
+					<img class="contact-image"
+						alt="Steven Pinker"
+						src="/images/allen.jpg" />
 					<section class="contact-text">
 						<div class="contact-name">Fattest man alive</div>
 						<div class="contact-last-message">Ja, jef</div>
 					</section>
 				</div>
 				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/jeffo.png" />
-					<section class="contact-text">
-						<div class="contact-name">Jeffo</div>
-						<div class="contact-last-message">Jef fem</div>
-					</section>
-				</div>
-				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/pinkere.jpg" />
-					<section class="contact-text">
-						<div class="contact-name">Ass</div>
-						<div class="contact-last-message">HAha jef supa li poka ni pi kon jo jo lon insa anu la pona pi
-							kili len jaki li open jo e ante awen pi ilo monsi nanpa
-							e sin pi ilo anpa kama tan tomo. ike ijo pi kepeken len ike li monsi e utala li awen moli
-							tan ijo pi pona loje open
-							tan mute la kepeken pi pali kili sina li nimi li lupa sama ma lon ike. moku pi kasi waso
-							waso li tan ma alasa pi mute
-							suli awen poka lon wan. insa pini pi jan nanpa lete li kama telo kepeken kon.
-						</div>
-					</section>
-				</div>
-				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/barrry.jpg" />
-					<section class="contact-text">
-						<div class="contact-name">Barry Allen</div>
-						<div class="contact-last-message">Jef mem</div>
-					</section>
-				</div>
-				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/allen.jpg" />
-					<section class="contact-text">
-						<div class="contact-name">Fattest man alive</div>
-						<div class="contact-last-message">Ja, jef</div>
-					</section>
-				</div>
-				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/jeffo.png" />
+					<img class="contact-image"
+						alt="Steven Pinker"
+						src="/images/jeffo.png" />
 					<section class="contact-text">
 						<div class="contact-name">Jeffo</div>
 						<div class="contact-last-message">Jef fem</div>
@@ -321,20 +371,15 @@ asd
 
 				<!-- >tfw no frens -->
 
-				<!--<div id="fab">
-				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
-				    height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-					<g id="Sharp" fill="#fff">
-						<path stroke="#fff" d="M15,12c2.21,0,4-1.79,4-4s-1.79-4-4-4s-4,1.79-4,4S12.79,12,15,12z M6,10V7H4v3H1v2h3v3h2v-3h3v-2H6z M15,14
-				   c-2.67,0-8,1.34-8,4v2h16v-2C23,15.34,17.67,14,15,14z" />
-					</g>
-				</svg>
-			</div>-->
 		</section>
 
-		<section id="account-screen" class="top-level-destination">
+		<section id="account-screen"
+			class="top-level-destination">
 			<!-- Todo: fix this destination doeasent display when lciicked i t still jhas display: none lole-->
-			<div class="button-flat" style="float: right;" onclick="sign_out()" tabindex=0>Sign out</div>
+			<div class="button-flat"
+				style="float: right;"
+				onclick="sign_out()"
+				tabindex=0>Sign out</div>
 			<br style="clear: both" />
 			Här e ju profilen men den e inte klar hoppsan där va lole :^)
 		</section>
@@ -343,8 +388,15 @@ asd
 
 	<nav id="bottom-navigation">
 		<section class="bottom-navigation-destination">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
-				y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24"
+			<svg version="1.1"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+				x="0px"
+				y="0px"
+				width="24px"
+				height="24px"
+				viewBox="0 0 24 24"
+				enable-background="new 0 0 24 24"
 				xml:space="preserve">
 				<g>
 					<path
@@ -356,8 +408,15 @@ asd
 		</section>
 
 		<section class="bottom-navigation-destination active">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
-				y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24"
+			<svg version="1.1"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+				x="0px"
+				y="0px"
+				width="24px"
+				height="24px"
+				viewBox="0 0 24 24"
+				enable-background="new 0 0 24 24"
 				xml:space="preserve">
 				<g>
 					<path d="M22,6h-3v9H6v3h12l4,4V6z M17,13V2H2v15l4-4H17z" />
@@ -368,7 +427,10 @@ asd
 		</section>
 
 		<section class="bottom-navigation-destination">
-			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+			<svg xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24">
 				<g>
 					<path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,5c1.66,0,3,1.34,3,3s-1.34,3-3,3S9,9.66,9,8
 		S10.34,5,12,5z M12,19.2c-2.5,0-4.71-1.28-6-3.22c0.03-1.99,4-3.08,6-3.08c1.99,0,5.97,1.09,6,3.08C16.71,17.92,14.5,19.2,12,19.2z
