@@ -7,8 +7,7 @@ service cloud.firestore {
     }
     match /friend-requests/{recipient} {
       allow create, update, delete: if request.auth.uid == recipient;
-      allow update: if request.auth.uid in request.resource.uid;
-      //allow read, update;
+      allow update: if request.auth.uid in request.resource.data.sender;
     }
   }
 }

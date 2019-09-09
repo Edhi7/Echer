@@ -123,6 +123,7 @@ function search_for_frens(e) {
 		.getElementsByClassName("add-fren-results")[0];
 	const users = fs.collection("users");
 	const query = users.where("display", "==", name);
+	let i = 0;
 	query.get().then((qs) => {
 		results.innerHTML = "";
 		qs.forEach((doc) => {
@@ -134,14 +135,23 @@ function search_for_frens(e) {
 					<img class="contact-image"/>
 					<section class="contact-text">
 						<div class="contact-name"></div>
-						<div class="contact-last-message">Add to your friendlist</div>
+						<div class="contact-last-message">
+							Add to your friendlist</div>
 					</section>
 				</div>`;
-				results.lastChild.onclick = `send_friend_request(${doc.id})`;
-				results.lastChild.querySelector(".contact-image").src = data.image;
-				results.lastChild.querySelector(".contact-name").innerText = data.display;
-				console.log(doc.id);
-				console.log(doc.data());
+				requestAnimationFrame(() => {
+					/* todo: add animation */
+					results.getElementsByClassName("contact")[i]
+						.addEventListener("click",
+							() => send_friend_request(doc.id));
+					results.getElementsByClassName("contact-image")[i]
+						.src = data.image;
+					results.getElementsByClassName("contact-name")[i]
+						.innerText = data.display;
+					i++;
+					console.log(doc.id);
+					console.log(doc.data());
+				});
 			}
 		});
 	}).catch((e) => console.log(e));
@@ -150,8 +160,10 @@ function search_for_frens(e) {
 function send_friend_request(uid) {
 	const user_id = firebase.auth().currentUser.uid;
 	const frq = fs.collection("friend-requests").doc(uid);
-	frq.set({ uid: firebase.firestore.FieldValue.arrayUnion(user_id) },
+	frq.set({ sender: firebase.firestore.FieldValue.arrayUnion(user_id) },
 		{ merge: true });
+	fs.collection("users").doc(uid).get()
+		.then((doc) => console.log("Sent friend request to " + doc.data().display));
 }
 
 function set_contact_on_click() {
