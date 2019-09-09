@@ -106,7 +106,8 @@ function display_add_fren() {
 			<input id="friend_search_bar" class="form-element-field" placeholder="" 
 			type="input" required />
 			<div class="form-element-bar"></div>
-			<label class="form-element-label" for="friend-search-bar">Enter the name of your friend</label>
+			<label class="form-element-label" for="friend-search-bar">
+				Enter the name of your friend</label>
 		</div>
 		<div class="add-fren-results">
 
@@ -129,14 +130,16 @@ function search_for_frens(e) {
 			const user_id = firebase.auth().currentUser.uid;
 			// You can't become friends with yourself
 			if (doc.id != user_id) {
-				results.innerHTML += `<div class="contact active"
-					onclick="add_fren_to_friendlist('${doc.id}')">
-					<img class="contact-image" src="${data.image}"/>
+				results.innerHTML += `<div class="contact active">
+					<img class="contact-image"/>
 					<section class="contact-text">
-						<div class="contact-name">${data.display}</div>
+						<div class="contact-name"></div>
 						<div class="contact-last-message">Add to your friendlist</div>
 					</section>
 				</div>`;
+				results.lastChild.onclick = `send_friend_request(${doc.id})`;
+				results.lastChild.querySelector(".contact-image").src = data.image;
+				results.lastChild.querySelector(".contact-name").innerText = data.display;
 				console.log(doc.id);
 				console.log(doc.data());
 			}
@@ -144,16 +147,11 @@ function search_for_frens(e) {
 	}).catch((e) => console.log(e));
 }
 
-function send_friend_rerquest(uid) {
+function send_friend_request(uid) {
 	const user_id = firebase.auth().currentUser.uid;
-	// make som transaction or smth ye
-	fs.collection("friend-requests").doc(user_id).get().then((doc) => {
-		if (doc.exists) {
-			
-		} else {
-
-		}
-	});
+	const frq = fs.collection("friend-requests").doc(uid);
+	frq.set({ uid: firebase.firestore.FieldValue.arrayUnion(user_id) },
+		{ merge: true });
 }
 
 function set_contact_on_click() {
@@ -447,7 +445,7 @@ function google_sign_in() {
 		const token = result.credential.accessToken;
 		// The signed-in user info.
 		const user = result.user;
-		user.name = "hakase";
+		user.name = "はかせ";
 	}).catch(function (error) {
 		console.log("Google sign in failed");
 		// Handle Errors here.
@@ -524,8 +522,6 @@ function submit_login_form(event) {
 		firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
 			display_snackbar(error.message);
 		});
-		console.log(error.code);
-		display_snackbar(error.message);
 	}
 	return false;
 }
