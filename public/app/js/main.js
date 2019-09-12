@@ -86,6 +86,7 @@ function display_chat() {
 	}
 	window.setTimeout(() => { chat_screen.classList.add("active") }, 25)
 	set_add_fren_on_click();
+	set_view_request_on_click();
 	set_contact_on_click();
 }
 
@@ -97,8 +98,31 @@ function display_account() {
 }
 
 function set_add_fren_on_click() {
-	const botan = document.getElementById("add-fren");
-	botan.addEventListener("mouseup", display_add_fren, { passive: true });
+	const ボタン = document.getElementById("add-fren");
+	ボタン.addEventListener("mouseup", display_add_fren, { passive: true });
+}
+
+function set_view_request_on_click() {
+	/*const 友達 = document.getElementById("view-fren-request");
+	友達.addEventListener("mouseup", display_fren_requests, { passive: true });*/
+}
+
+function display_fren_requests() {
+	open_dialog("View friend requests", `<div class="friend-requests"></div>`);
+	const uid = firebase.auth().currentUser.uid;
+	let friends = false;
+	const frq = document.getElementsByClassName("dialog")[0]
+		.getElementsByClassName("friend-requests")[0];
+	fs.collection("friend-requests").doc(uid).get().then((res) => {
+		if (res.exists) {
+			console.log(res.data());
+			for (const sdr of Array.from(res.data().sender)) {
+				friends = true;
+				console.log(sdr);
+			}
+		}
+		if (!friends) console.log("友達がありません");
+	});
 }
 
 function display_add_fren() {
@@ -109,12 +133,11 @@ function display_add_fren() {
 			<label class="form-element-label" for="friend-search-bar">
 				Enter the name of your friend</label>
 		</div>
-		<div class="add-fren-results">
-
-		</div>`);
+		<div class="add-fren-results"></div>`);
 	const dialog = document.getElementsByClassName("dialog")[0];
 	const input = dialog.getElementsByTagName("input")[0];
-	input.addEventListener("keydown", (e) => requestAnimationFrame(() => search_for_frens(e)));
+	input.addEventListener("keydown",
+		(e) => requestAnimationFrame(() => search_for_frens(e)));
 }
 
 function search_for_frens(e) {
@@ -163,7 +186,7 @@ function send_friend_request(uid) {
 	frq.set({ sender: firebase.firestore.FieldValue.arrayUnion(user_id) },
 		{ merge: true });
 	fs.collection("users").doc(uid).get()
-		.then((doc) => console.log("Sent friend request to " + doc.data().display));
+		.then((doc) => display_snackbar("Sent friend request to " + doc.data().display));
 }
 
 function set_contact_on_click() {
@@ -188,35 +211,28 @@ function contact_click() {
 			<path d="M0 0h24v24H0z" fill="none"/>
 		</svg>
 	</div>`);
-	requestAnimationFrame(() => {
-		const dialog = document.getElementsByClassName("dialog")[0]; dialog.getElementsByTagName("input")[0]
-			.addEventListener("keydown", (e) => {
-				requestAnimationFrame(() => {
-					type_message_on_keydown(e);
-				});
-			});
-	});
+	requestAnimationFrame(() =>
+		document.getElementsByClassName("dialog")[0].getElementsByTagName("input")[0]
+			.addEventListener("keydown", (e) =>
+				requestAnimationFrame(() =>
+					type_message_on_keydown(e))));
 }
 
 function open_dialog(title, content) {
 	close_all_dialogs();
 	const node = document.createElement('div');
 	node.classList.add("dialog");
-	node.innerHTML = `<div class="dialog-toolbar">
+	node.innerHTML = `<div class="dialog-footer">
 		<div class="close-dialog" onclick="close_dialog(this)">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
-			height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-				<g id="Bounding_Boxes">
-					<path fill="none" d="M0,0h24v24H0V0z"/>
-				</g>
-				<g id="Sharp">
-					<path fill="#5a9271" d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11z"/>
-				</g>
-   			</svg>
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+				<path fill = #f5f5f5 d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+				<path d="M0 0h24v24H0z" fill="none"/>
+			</svg>
 		</div>
 		<div class="dialog-name">${title}</div>
 	</div>
 	` + content;
+	hide_footer();
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() => {
 		requestAnimationFrame(() => {
@@ -224,7 +240,6 @@ function open_dialog(title, content) {
 			dialog.classList.add("open");
 		});
 	});
-
 }
 
 function close_all_dialogs() {
@@ -232,11 +247,24 @@ function close_all_dialogs() {
 	for (const c of dialog) {
 		c.parentNode.removeChild(c);
 	}
+	show_footer();
 }
 
 function close_dialog(button) {
 	button.parentNode.parentNode.classList.remove("open");
 	window.setTimeout(close_all_dialogs, 100);
+}
+
+function hide_footer() {
+	document.getElementById("bottom-navigation")
+		.classList
+		.remove("slide-in");
+}
+
+function show_footer() {
+	document.getElementById("bottom-navigation")
+		.classList
+		.add("slide-in");
 }
 
 function type_message_on_keydown(event) {
