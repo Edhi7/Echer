@@ -59,6 +59,8 @@ function hide_top_level_destinations() {
 	const contacts = document.getElementById("contact-list").children;
 	for (let contact of contacts)
 		contact.classList.remove("active");
+	document.getElementById("add-fren")
+		.classList.remove("active");
 	// Actually hide
 	window.setTimeout(() => {
 		for (const destination of destinations) {
@@ -78,6 +80,8 @@ function display_map() {
 function display_chat() {
 	const chat_screen = document.getElementById("chat-screen");
 	const contacts = document.getElementById("contact-list").children;
+	document.getElementById("add-fren")
+		.classList.add("active");
 	chat_screen.style.display = "block";
 	for (let i = 0; i < contacts.length; i++) {
 		window.setTimeout(() => {
@@ -86,7 +90,6 @@ function display_chat() {
 	}
 	window.setTimeout(() => { chat_screen.classList.add("active") }, 25)
 	set_add_fren_on_click();
-	set_view_request_on_click();
 	set_contact_on_click();
 }
 
@@ -100,11 +103,6 @@ function display_account() {
 function set_add_fren_on_click() {
 	const ボタン = document.getElementById("add-fren");
 	ボタン.addEventListener("mouseup", display_add_fren, { passive: true });
-}
-
-function set_view_request_on_click() {
-	/*const 友達 = document.getElementById("view-fren-request");
-	友達.addEventListener("mouseup", display_fren_requests, { passive: true });*/
 }
 
 function display_fren_requests() {
@@ -126,18 +124,51 @@ function display_fren_requests() {
 }
 
 function display_add_fren() {
-	open_dialog("Add a new friend", `<div class="add-fren form-input">
-			<input id="friend_search_bar" class="form-element-field" placeholder="" 
-			type="input" required />
-			<div class="form-element-bar"></div>
-			<label class="form-element-label" for="friend-search-bar">
-				Enter the name of your friend</label>
+	open_dialog("Add a new friend", `<div class="dialog-header">
+			<div class="dialog-tab active" data-target="send">Send</div>
+			<div class="dialog-tab" data-target="recieve">Recieve</div>
 		</div>
-		<div class="add-fren-results"></div>`);
+		<div class="dialog-destination active" data-name="send">
+			<div class="add-fren form-element form-input">
+				<input id="friend_search_bar" class="form-element-field" placeholder="" 
+				type="input" required />
+				<div class="form-element-bar"></div>
+				<label class="form-element-label" for="friend-search-bar">
+					Search for friends</label>
+			</div>
+			<div class="add-fren-results"></div>
+		</div>
+		<div class="dialog-destination" data-name="recieve">
+			誰もあなたの友達になるたくない。
+		</div>
+		`);
 	const dialog = document.getElementsByClassName("dialog")[0];
 	const input = dialog.getElementsByTagName("input")[0];
+	const tabs = dialog.getElementsByClassName("dialog-tab");
 	input.addEventListener("keydown",
 		(e) => requestAnimationFrame(() => search_for_frens(e)));
+	for (let tab of tabs)
+		tab.addEventListener("click", display_dialog_tab);
+}
+
+function display_dialog_tab(e) {
+	const tab = e.target;
+	const tabs = document.getElementsByClassName("dialog-tab");
+	const target = tab.getAttribute("data-target");
+	const dst = document.getElementsByClassName("dialog-destination");
+	for (let t of tabs)
+		t.classList.remove("active");
+	tab.classList.add("active");
+	for (let d of dst) {
+		console.log(d);
+		if (d.getAttribute("data-name") != target) {
+			d.classList.remove("active");
+			d.setAttribute("style", "display: none;");
+		} else {
+			d.setAttribute("style", "display: block;");
+			window.setTimeout(() => d.classList.add("active"), 100);
+		}
+	}
 }
 
 function search_for_frens(e) {

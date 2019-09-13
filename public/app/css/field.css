@@ -63,6 +63,10 @@
     will-change: opacity;
 }
 
+.form-input {
+    position: relative;
+}
+
 .form-element-field:-ms-input-placeholder {
     color: rgba(0, 0, 0, 0.5);
     transform: scale(0.9);
