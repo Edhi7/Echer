@@ -59,8 +59,6 @@ function hide_top_level_destinations() {
 	const contacts = document.getElementById("contact-list").children;
 	for (let contact of contacts)
 		contact.classList.remove("active");
-	document.getElementById("add-fren")
-		.classList.remove("active");
 	// Actually hide
 	window.setTimeout(() => {
 		for (const destination of destinations) {
@@ -80,8 +78,6 @@ function display_map() {
 function display_chat() {
 	const chat_screen = document.getElementById("chat-screen");
 	const contacts = document.getElementById("contact-list").children;
-	document.getElementById("add-fren")
-		.classList.add("active");
 	chat_screen.style.display = "block";
 	for (let i = 0; i < contacts.length; i++) {
 		window.setTimeout(() => {
@@ -101,7 +97,7 @@ function display_account() {
 }
 
 function set_add_fren_on_click() {
-	const ボタン = document.getElementById("add-fren");
+	const ボタン = document.getElementById("add-friend");
 	ボタン.addEventListener("mouseup", display_add_fren, { passive: true });
 }
 
@@ -138,7 +134,7 @@ function display_add_fren() {
 			</div>
 			<div class="add-fren-results"></div>
 		</div>
-		<div class="dialog-destination" data-name="recieve">
+		<div class="dialog-destination" data-name="recieve" style="display: none;">
 			誰もあなたの友達になるたくない。
 		</div>
 		`);
@@ -160,7 +156,6 @@ function display_dialog_tab(e) {
 		t.classList.remove("active");
 	tab.classList.add("active");
 	for (let d of dst) {
-		console.log(d);
 		if (d.getAttribute("data-name") != target) {
 			d.classList.remove("active");
 			d.setAttribute("style", "display: none;");
@@ -225,15 +220,15 @@ function set_contact_on_click() {
 	for (const contact of contacts) {
 		// For some reason click works only about half of the time
 		// It sometimes stops working for a while and then it works again
-		// Using these other event listeners and it seems to be working fine
+		// I'm using a mouseup event listener instead
+		// and it seems to be working fine
 		contact.addEventListener("mouseup", contact_click, false);
 	}
 }
 
 function contact_click() {
 	open_dialog(this.getElementsByClassName("contact-name")[0].innerText,
-		`<div class="form-input
-		conversation-input-container">
+		`<div class="conversation-input-container">
 		<input id="message-input" class="form-element-field" placeholder="" type="input" required />
 		<div class="form-element-bar"></div>
 		<label class="form-element-label" for="message-input">Type a message</label>
