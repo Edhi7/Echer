@@ -82,7 +82,7 @@ function display_chat() {
 	for (let i = 0; i < contacts.length; i++) {
 		window.setTimeout(() => {
 			contacts[i].classList.add("active");
-		}, 25 * i);
+		}, 35 * (i + 1));
 	}
 	window.setTimeout(() => { chat_screen.classList.add("active") }, 25)
 	set_add_fren_on_click();
@@ -101,24 +101,6 @@ function set_add_fren_on_click() {
 	ボタン.addEventListener("mouseup", display_add_fren, { passive: true });
 }
 
-function display_fren_requests() {
-	open_dialog("View friend requests", `<div class="friend-requests"></div>`);
-	const uid = firebase.auth().currentUser.uid;
-	let friends = false;
-	const frq = document.getElementsByClassName("dialog")[0]
-		.getElementsByClassName("friend-requests")[0];
-	fs.collection("friend-requests").doc(uid).get().then((res) => {
-		if (res.exists) {
-			console.log(res.data());
-			for (const sdr of Array.from(res.data().sender)) {
-				friends = true;
-				console.log(sdr);
-			}
-		}
-		if (!friends) console.log("友達がありません");
-	});
-}
-
 function display_add_fren() {
 	open_dialog("Add a new friend", `<div class="dialog-header">
 			<div class="dialog-tab active" data-target="send">Send</div>
@@ -126,16 +108,17 @@ function display_add_fren() {
 		</div>
 		<div class="dialog-destination active" data-name="send">
 			<div class="add-fren form-element form-input">
-				<input id="friend_search_bar" class="form-element-field" placeholder="" 
-				type="input" required />
+				<input id="friend_search_bar" class="form-element-field"
+					placeholder="" type="input" required />
 				<div class="form-element-bar"></div>
 				<label class="form-element-label" for="friend-search-bar">
 					Search for friends</label>
 			</div>
 			<div class="add-fren-results"></div>
 		</div>
-		<div class="dialog-destination" data-name="recieve" style="display: none;">
-			誰もあなたの友達になるたくない。
+		<div class="dialog-destination"
+			data-name="recieve" style="display: none;">
+			No one wants to be your friend.
 		</div>
 		`);
 	const dialog = document.getElementsByClassName("dialog")[0];
@@ -145,6 +128,55 @@ function display_add_fren() {
 		(e) => requestAnimationFrame(() => search_for_frens(e)));
 	for (let tab of tabs)
 		tab.addEventListener("click", display_dialog_tab);
+	display_friend_requests(dialog);
+}
+
+function display_friend_requests(dialog) {
+	const container = dialog
+		.querySelector(".dialog-destination[data-name='recieve']");
+	const user_id = firebase.auth().currentUser.uid;
+	let i = 0;
+	fs.collection("friend-requests").doc(user_id).get().then((doc) => {
+		if (doc.exists) {
+			const 可能な友達 = doc.data().sender;
+			for (const snd of 可能な友達) {
+				fs.collection("users").doc(snd).get().then(ユーザー => {
+					if (ユーザー.exists) {
+						if (i == 0)
+							container.innerText = "";
+						container.innerHTML += `<div class="contact active">
+							<img class="contact-image"/>
+								<section class="contact-text">
+									<div class="contact-name"></div>
+									<div class="contact-last-message">
+										Accept friend request
+									</div>
+								</section>
+							</div>`;
+						const data = ユーザー.data();
+						container.getElementsByClassName("contact-image")[i]
+							.src = data.image;
+						container.getElementsByClassName("contact-name")[i]
+							.innerText = data.display;
+						container.getElementsByClassName("contact")[i]
+							.addEventListener("click", (e) =>
+								accept_friend_request(e, snd));
+						i++;
+					}
+				});
+			}
+		}
+	});
+}
+
+function accept_friend_request(e, uid) {
+	const user_id = firebase.auth().currentUser.uid;
+	fs.collection("friendlists").doc(user_id).set({
+		uid: firebase.firestore.FieldValue.arrayUnion(uid)
+	}, { merge: true });
+	fs.collection("accepted-friends").doc(user_id).set({
+		uid: firebase.firestore.FieldValue.arrayUnion(uid)
+	}, { merge: true });
 }
 
 function display_dialog_tab(e) {
@@ -185,7 +217,7 @@ function search_for_frens(e) {
 					<section class="contact-text">
 						<div class="contact-name"></div>
 						<div class="contact-last-message">
-							Add to your friendlist</div>
+							Send a friend-request</div>
 					</section>
 				</div>`;
 				requestAnimationFrame(() => {
@@ -198,8 +230,6 @@ function search_for_frens(e) {
 					results.getElementsByClassName("contact-name")[i]
 						.innerText = data.display;
 					i++;
-					console.log(doc.id);
-					console.log(doc.data());
 				});
 			}
 		});
@@ -209,10 +239,14 @@ function search_for_frens(e) {
 function send_friend_request(uid) {
 	const user_id = firebase.auth().currentUser.uid;
 	const frq = fs.collection("friend-requests").doc(uid);
+	const prq = fs.collection("private-requests").doc(user_id);
 	frq.set({ sender: firebase.firestore.FieldValue.arrayUnion(user_id) },
 		{ merge: true });
+	prq.set({ recipent: firebase.firestore.FieldValue.arrayUnion(uid) },
+		{ merge: true });
 	fs.collection("users").doc(uid).get()
-		.then((doc) => display_snackbar("Sent friend request to " + doc.data().display));
+		.then((doc) =>
+			display_snackbar("Sent friend request to " + doc.data().display));
 }
 
 function set_contact_on_click() {
@@ -393,19 +427,35 @@ function logged_in(user) {
 		console.log(e);
 	});
 	display_logged_in_ui();
+	check_friend_requests();
+}
+
+function check_friend_requests() {
+	const user_id = firebase.auth().currentUser.uid;
+	const query = fs.collection("accepted-friends")
+		.where("uid", "array-contains", user_id);
+	query.get().then((snp) => {
+		snp.forEach((doc) => {
+			fs.collection("friendlists").doc(user_id).set({
+				uid: firebase.firestore.FieldValue.arrayUnion(doc.id)
+			}, { merge: true });
+		});
+	});
 }
 
 function populate_contact_list(user_id) {
-	// pouplate friends view
 	const contact_container = document.getElementById("contact-list");
-	const users_ref = fs.collection("users")
-	users_ref.doc(user_id).get().then((doc) => {
-		const friend_list = doc.data().friends;
-		friend_list.forEach((friend) => {
-			if (friend != null) {
-				users_ref.doc(friend).get().then((fdoc) => {
+	fs.collection("friendlists").doc(user_id).get().then((doc) => {
+		const friendlist = doc.data().uid;
+		if (!doc.exists || friendlist == undefined)
+			return;
+		/* todo: make a screen telling the user that he has no friends */
+		for (const friend of friendlist) {
+			if (friend != undefined) {
+				fs.collection("users").doc(friend).get().then((fdoc) => {
 					const data = fdoc.data();
-					contact_container.innerHTML += `<div class="contact ripple active">
+					contact_container.innerHTML +=
+						`<div class="contact ripple active">
 						<img class="contact-image" alt="Profile picture"
 							src="${data.image}" />
 						<section class="contact-text">
@@ -416,7 +466,7 @@ function populate_contact_list(user_id) {
 					requestAnimationFrame(display_chat);
 				});
 			}
-		});
+		};
 	});
 }
 
@@ -430,9 +480,6 @@ function display_logged_in_ui() {
 	window.setTimeout(() => {
 		document.getElementById("bottom-navigation").classList.add("slide-in")
 	}, 480);
-
-	//Not used anymore since title is removed after loading finishes 
-	//move_app_title();
 }
 
 function display_sign_in() {
@@ -513,14 +560,9 @@ function google_sign_in() {
 		const user = result.user;
 		user.name = "はかせ";
 	}).catch(function (error) {
-		console.log("Google sign in failed");
-		// Handle Errors here.
 		const error_code = error.code;
 		const error_message = error.message;
-		console.log(errorMessage);
-		// The email of the user's account used.
 		const email = error.email;
-		// The firebase.auth.AuthCredential type that was used.
 		const credential = error.credential;
 	});
 }
@@ -558,20 +600,13 @@ function submit_signup_form(event) {
 					photoURL: "/images/jeffo.png"
 				});
 				fs.collection("users").doc(user_id).set({
-					email: email,
 					display: display_name,
-					friends: [null],
-					groups: [null],
 					image: "/images/apple-touch-icon.png",
 				})
-					.catch((e) => console.log(e));
 			}).catch((error) => {
-				if (error.code == "auth/email-already-in-use") {
-					display_snackbar(error.message);
-				} else {
+				if (!error.code == "auth/email-already-in-use")
 					console.log(error.code);
-					display_snackbar(error.message);
-				}
+				display_snackbar(error.message);
 			});
 	}
 	return false;
