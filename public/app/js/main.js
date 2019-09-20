@@ -268,21 +268,31 @@ function set_contact_on_click() {
 
 function contact_click(e) {
 	const group_id = e.currentTarget.getAttribute("data-id");
-	open_dialog(e.currentTarget.getElementsByClassName("contact-name")[0].innerText,
+	open_dialog(e.currentTarget
+		.getElementsByClassName("contact-name")[0].innerText,
 		`<div class="conversation-input-container">
-		<input id="message-input" class="form-element-field" placeholder="" type="input" required />
+		<input id="message-input" class="form-element-field" placeholder=""
+			type="input" required />
 		<div class="form-element-bar"></div>
-		<label class="form-element-label" for="message-input">Type a message</label>
-		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+		<label class="form-element-label" for="message-input">
+			Type a message</label>
+		<svg class="send-message" xmlns="http://www.w3.org/2000/svg"
+			width="24" height="24" viewBox="0 0 24 24">
 			<path fill="#cacaca" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
 			<path d="M0 0h24v24H0z" fill="none"/>
 		</svg>
 	</div>`);
-	requestAnimationFrame(() =>
-		document.getElementsByClassName("dialog")[0].getElementsByTagName("input")[0]
-			.addEventListener("keydown", (e) =>
-				requestAnimationFrame(() =>
-					type_message_on_keydown(e, group_id))));
+	requestAnimationFrame(() => {
+		const dialog = document.getElementsByClassName("dialog")[0];
+		const input = dialog.getElementsByTagName("input")[0];
+		const arrow = dialog.getElementsByClassName("send-message")[0];
+		input.addEventListener("keydown", (e) =>
+			requestAnimationFrame(() =>
+				type_message_on_keydown(e, group_id)));
+		arrow.addEventListener("click", () =>
+			requestAnimationFrame(() =>
+				send_message(group_id, input.value)));
+	});
 	// TODO: await messages
 }
 
@@ -336,7 +346,6 @@ function show_footer() {
 }
 
 function type_message_on_keydown(e, group_id) {
-	//console.log(event.currentTarget.value)
 	// TODO make send message button send messages
 	if (e.target.value != "") {
 		e.target.parentNode.getElementsByTagName("svg")[0]
@@ -374,9 +383,6 @@ function fade_out_title() {
 		requestAnimationFrame(function () {
 			const app_title = document.getElementById("app-title");
 			app_title.classList.add("fade-out");
-			/*window.setTimeout(() => {
-				app_title.parentNode.removeChild(app_title);
-			}, 255); */
 		});
 	});
 }

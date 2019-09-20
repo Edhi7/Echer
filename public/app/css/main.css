@@ -138,22 +138,22 @@ a {
 	width: calc(100% - 56px);
 }
 
-.conversation-input-container svg {
+.conversation-input-container .send-message {
 	position: absolute;
 	bottom: 0;
 	right: -8px;
 	padding: 16px 16px;
 }
 
-.conversation-input-container svg.active {
+.conversation-input-container .send-message {
 	cursor: pointer;
 }
 
-.conversation-input-container svg path:first-of-type {
+.conversation-input-container .send-message path:first-of-type {
 	transition: fill 150ms;
 }
 
-.conversation-input-container svg.active path:first-of-type {
+.conversation-input-container .send-message path:first-of-type {
 	fill: #5a9271;
 }
 
