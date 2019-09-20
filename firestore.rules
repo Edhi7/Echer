@@ -1,24 +1,40 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
   	match /users/{user_id} {
-    	allow read, write, update, delete: if request.auth.uid == user_id;
-      allow read: if request.auth.uid != null;
-    }
-    match /friend-requests/{recipient} {
-      allow read, write, update, delete: if request.auth.uid == recipient;
-      allow create, update: if request.auth.uid in request.resource.data.sender;
-    }
-    match /private-requests/{user_id} {
-      allow read, write, update, delete: if request.auth.uid == user_id;
-    }
-    match /accepted-friends/{user_id} {
-      allow read, write, update, delete: if request.auth.uid == user_id;
-      allow read: if request.auth.uid != null;
-      //in resource.data.sender;
-    }
-    match /friendlists/{user_id} {
-      allow read, write, update, delete: if request.auth.uid == user_id;
-    }
+		allow read, write: if request.auth.uid == user_id;
+		allow read: if request.auth.uid != null;
+	}
+	match /friend-requests/{recipient} {
+		allow read, write: if request.auth.uid == recipient;
+		allow create, update: if request.auth.uid in request.resource.data.sender;
+		allow list;
+	}
+	match /private-requests/{user_id} {
+		allow read, write: if request.auth.uid == user_id;
+	}
+	match /accepted-friends/{user_id} {
+		allow read, write: if request.auth.uid == user_id;
+		allow read: if request.auth.uid in resource.data.uids;
+	}
+	match /friendlists/{user_id} {
+		allow read, write: if request.auth.uid == user_id;
+	}
+	match /groups/{group_id} {
+	  	allow read, write: if request.auth.uid != null
+		  && request.atuh.uid in resource.data.admins;
+		allow read: if request.auth.uid in resource.data.members;
+	  	allow create: if request.auth.uid != null;
+		allow list;
+		// Allow editing messages and last_message
+		allow read, update:
+			if request.resource.data.admins  == resource.data.admins
+			&& request.resource.data.members == resource.data.members
+			&& request.resource.data.image   == resource.data.image;
+	}
+	match /grouplists/{user_id} {
+		allow read, write: if request.auth.uid == user_id;
+	}
   }
 }

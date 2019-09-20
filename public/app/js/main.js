@@ -118,7 +118,7 @@ function display_add_fren() {
 		</div>
 		<div class="dialog-destination"
 			data-name="recieve" style="display: none;">
-			No one wants to be your friend.
+			Loading...
 		</div>
 		`);
 	const dialog = document.getElementsByClassName("dialog")[0];
@@ -139,6 +139,8 @@ function display_friend_requests(dialog) {
 	fs.collection("friend-requests").doc(user_id).get().then((doc) => {
 		if (doc.exists) {
 			const 可能な友達 = doc.data().sender;
+			if (可能な友達.length == 0)
+				no_friend_requests(container);
 			for (const snd of 可能な友達) {
 				fs.collection("users").doc(snd).get().then(ユーザー => {
 					if (ユーザー.exists) {
@@ -165,8 +167,12 @@ function display_friend_requests(dialog) {
 					}
 				});
 			}
-		}
+		} else no_friend_requests(container);
 	});
+}
+
+function no_friend_requests(container) {
+	container.innerText = "No one wants to be your friend";
 }
 
 function accept_friend_request(e, uid) {
@@ -175,7 +181,7 @@ function accept_friend_request(e, uid) {
 		uid: firebase.firestore.FieldValue.arrayUnion(uid)
 	}, { merge: true });
 	fs.collection("accepted-friends").doc(user_id).set({
-		uid: firebase.firestore.FieldValue.arrayUnion(uid)
+		uids: firebase.firestore.FieldValue.arrayUnion(uid)
 	}, { merge: true });
 }
 
@@ -260,8 +266,9 @@ function set_contact_on_click() {
 	}
 }
 
-function contact_click() {
-	open_dialog(this.getElementsByClassName("contact-name")[0].innerText,
+function contact_click(e) {
+	const group_id = e.currentTarget.getAttribute("data-id");
+	open_dialog(e.currentTarget.getElementsByClassName("contact-name")[0].innerText,
 		`<div class="conversation-input-container">
 		<input id="message-input" class="form-element-field" placeholder="" type="input" required />
 		<div class="form-element-bar"></div>
@@ -275,7 +282,8 @@ function contact_click() {
 		document.getElementsByClassName("dialog")[0].getElementsByTagName("input")[0]
 			.addEventListener("keydown", (e) =>
 				requestAnimationFrame(() =>
-					type_message_on_keydown(e))));
+					type_message_on_keydown(e, group_id))));
+	// TODO: await messages
 }
 
 function open_dialog(title, content) {
@@ -327,15 +335,32 @@ function show_footer() {
 		.add("slide-in");
 }
 
-function type_message_on_keydown(event) {
+function type_message_on_keydown(e, group_id) {
 	//console.log(event.currentTarget.value)
-	if (event.target.value != "") {
-		event.target.parentNode.getElementsByTagName("svg")[0]
+	// TODO make send message button send messages
+	if (e.target.value != "") {
+		e.target.parentNode.getElementsByTagName("svg")[0]
 			.classList.add("active");
+		if (e.key == "Enter")
+			send_message(group_id, e.target.value);
 	} else {
-		event.target.parentNode.getElementsByTagName("svg")[0]
+		e.target.parentNode.getElementsByTagName("svg")[0]
 			.classList.remove("active");
 	}
+}
+
+function send_message(group, msg) {
+	const user_id = firebase.auth().currentUser.uid;
+	fs.collection("groups").doc(group).update({
+		messages: firebase.firestore.FieldValue.arrayUnion({
+			text: msg,
+			sender: user_id,
+			time: firebase.firestore.Timestamp.now()
+		})
+	});
+	fs.collection("groups").doc(group).update({
+		"last_message": msg 
+	});
 }
 
 function scale_in_title() {
@@ -428,46 +453,112 @@ function logged_in(user) {
 	});
 	display_logged_in_ui();
 	check_friend_requests();
+	add_groups_to_grouplists();
 }
 
 function check_friend_requests() {
 	const user_id = firebase.auth().currentUser.uid;
 	const query = fs.collection("accepted-friends")
-		.where("uid", "array-contains", user_id);
+		.where("uids", "array-contains", user_id);
 	query.get().then((snp) => {
 		snp.forEach((doc) => {
-			fs.collection("friendlists").doc(user_id).set({
-				uid: firebase.firestore.FieldValue.arrayUnion(doc.id)
-			}, { merge: true });
+			/* Check if friend has been added to avoid trying to create a
+			group twice. */
+			fs.collection("friendlists").doc(user_id).get().then((frl) => {
+				let found = false;
+				if (frl.exists) {
+					for (const d of frl.data().uid)
+						if (d == doc.id) found = true;
+				}
+				if (!found) {
+					fs.collection("friendlists").doc(user_id).set({
+						uid: firebase.firestore.FieldValue.arrayUnion(doc.id)
+					}, { merge: true });
+					fs.collection("groups").doc().set({
+						members: [user_id, doc.id],
+						admins: null,
+						last_message: "",
+						messages: [],
+						name: null,
+						image: "/images/apple-touch-icon.png"
+					}).catch((e) => console.log(e));
+				}
+			});
 		});
 	});
 }
 
+function add_groups_to_grouplists() {
+	const user_id = firebase.auth().currentUser.uid;
+	fs.collection("groups").where("members", "array-contains", user_id)
+		.get().then((snp) => {
+			snp.forEach(grp => {
+				fs.collection("grouplists").doc(user_id).get().then((doc) => {
+					let found = false;
+					if (doc.exists)
+						for (const stored of doc.data().groups)
+							if (stored.id == grp.id)
+								found = true;
+					if (!found && grp.data().admins != null)
+						fs.collection("grouplists").doc(user_id).set({
+							groups: firebase.firestore.FieldValue
+								.arrayUnion({
+									id: grp.id,
+									name: "New group"
+								})
+						}, { merge: true });
+					else {
+						// Only two memebers
+						let friend = undefined;
+						for (const m of grp.data().members) {
+							if (m != user_id) friend = m;
+						}
+						fs.collection("users").doc(friend).get().then((frn) => {
+							const name = frn.data().display;
+							fs.collection("grouplists").doc(user_id).set({
+								groups: firebase.firestore.FieldValue
+									.arrayUnion({
+										id: grp.id,
+										name: name
+									})
+							});
+						});
+					}
+				});
+			});
+		}).catch(e => console.log(e));
+}
+
 function populate_contact_list(user_id) {
 	const contact_container = document.getElementById("contact-list");
-	fs.collection("friendlists").doc(user_id).get().then((doc) => {
-		const friendlist = doc.data().uid;
-		if (!doc.exists || friendlist == undefined)
+	fs.collection("grouplists").doc(user_id).get().then((doc) => {
+		if (!doc.exists)
 			return;
 		/* todo: make a screen telling the user that he has no friends */
-		for (const friend of friendlist) {
-			if (friend != undefined) {
-				fs.collection("users").doc(friend).get().then((fdoc) => {
-					const data = fdoc.data();
-					contact_container.innerHTML +=
-						`<div class="contact ripple active">
-						<img class="contact-image" alt="Profile picture"
-							src="${data.image}" />
+		// TODO display groups instead of friends
+		let i = 0;
+		for (const group of doc.data().groups) {
+			fs.collection("groups").doc(group.id).get().then((grp) => {
+				contact_container.innerHTML +=
+					`<div class="contact ripple active">
+						<img class="contact-image" alt="Profile picture"/>
 						<section class="contact-text">
-							<div class="contact-name">${data.display}</div>
+							<div class="contact-name"></div>
 							<div class="contact-last-message">Hej feto</div>
 						</section>
-					</div>`
-					requestAnimationFrame(display_chat);
-				});
-			}
-		};
-	});
+					</div>`;
+				contact_container.getElementsByClassName("contact")[i]
+					.setAttribute("data-id", group.id);
+				contact_container.getElementsByClassName("contact-name")[i]
+					.innerText = grp.data().name == null ? group.name
+						: grp.data().name;
+				contact_container.getElementsByClassName("contact-image")[i]
+					.src = grp.data().image;
+				requestAnimationFrame(() => display_chat());
+				i++;
+			});
+		}
+	}).catch((e) => console.log(e));
 }
 
 function display_logged_in_ui() {
