@@ -270,17 +270,20 @@ function contact_click(e) {
 	const group_id = e.currentTarget.getAttribute("data-id");
 	open_dialog(e.currentTarget
 		.getElementsByClassName("contact-name")[0].innerText,
-		`<div class="conversation-input-container">
-		<input id="message-input" class="form-element-field" placeholder=""
-			type="input" required />
-		<div class="form-element-bar"></div>
-		<label class="form-element-label" for="message-input">
-			Type a message</label>
-		<svg class="send-message" xmlns="http://www.w3.org/2000/svg"
-			width="24" height="24" viewBox="0 0 24 24">
-			<path fill="#cacaca" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-			<path d="M0 0h24v24H0z" fill="none"/>
-		</svg>
+		`<div class="message-container"></div>
+		<div class="conversation-input-container">
+		<div style="margin-top: 20px; height: 36px; position: relative">
+			<input id="message-input" class="form-element-field" placeholder=""
+				type="input" required />
+			<div class="form-element-bar"></div>
+			<label class="form-element-label" for="message-input">
+				Type a message</label>
+			<svg class="send-message" xmlns="http://www.w3.org/2000/svg"
+				width="24" height="24" viewBox="0 0 24 24">
+				<path fill="#cacaca" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+				<path d="M0 0h24v24H0z" fill="none"/>
+			</svg>
+		</div>
 	</div>`);
 	requestAnimationFrame(() => {
 		const dialog = document.getElementsByClassName("dialog")[0];
@@ -292,8 +295,9 @@ function contact_click(e) {
 		arrow.addEventListener("click", () =>
 			requestAnimationFrame(() =>
 				send_message(group_id, input.value)));
+		display_messages(group_id, dialog);
+		// TODO: await messages
 	});
-	// TODO: await messages
 }
 
 function open_dialog(title, content) {
@@ -345,13 +349,89 @@ function show_footer() {
 		.add("slide-in");
 }
 
+function remove_message(id) {
+	const msg = document.getElementById(id)
+	msg.classList.remove("display");
+	setTimeout(() => msg.parentNode.removeChild(msg), 200);
+}
+
+function create_message(id, timestamp, image, dialog, me) {
+	const message = document.createElement('div');
+	message.classList.add("message");
+	/* if the message is from the current user then it will be green.
+	positioned to the right, and without an avatar */
+	message.innerHTML = me ? 
+		`<span class="message-text"></span>
+			<br clear="both"/> `
+		: `<img class="message-avatar"/>
+			<span class="message-text"></span>`;
+	if (me) message.classList.add("from-me");
+	else message.getElementsByClassName("message-avatar")[0].src = image;
+	message.setAttribute('data-time', timestamp);
+	message.setAttribute('id', id);
+	// figure out where to insert new message
+	const message_list = dialog
+		.getElementsByClassName("message-container")[0];
+	const existing_messages = message_list.children;
+	if (existing_messages.length === 0) {
+		message_list.appendChild(message);
+	} else {
+		let message_list_node = existing_messages[0];
+		while (message_list_node) {
+			const message_list_node_time
+				= message_list_node.getAttribute('data-time');
+			if (message_list_node_time > timestamp)
+				break;
+			message_list_node = message_list_node.nextSibling;
+		}
+		message_list.insertBefore(message, message_list_node);
+	}
+	return message;
+}
+
+function display_messages(group_id, dialog) {
+	// awita bara allt och när man fått 12 så behöver man inte
+	// prependa mer och då kör man vanligt osv.
+	const limit = dialog.getAttribute("data-limit") || (() => {
+			dialog.setAttribute("data-limit", 24);
+			return 24;
+		})();
+	fs.collection("groups").doc(group_id).collection("messages")
+		.orderBy("time", "desc").limit(limit).onSnapshot((snp) =>
+			snp.docChanges().forEach(change => {
+				console.log(change);
+				if (change.type === "removed")
+					remove_message(change.doc.id);
+				else {
+					const msg = change.doc.data();
+					const id = change.doc.id;
+					display_message(dialog, msg.time, msg.sender, msg.text,
+						msg.image, id);
+				}
+			}));
+}
+
+function display_message(dialog, time, sender, text, image, id) {
+	// todo: add a cool animation
+	const me = sender == firebase.auth().currentUser.uid;
+	const msg = document.getElementById(id) ||
+		create_message(id, time, image, dialog, me);
+	requestAnimationFrame(() => msg.classList.add("display"));
+	msg.setAttribute("data-sender", sender);
+	const txt = msg.getElementsByClassName("message-text")[0]
+	txt.innerText = text;
+	txt.innerHTML = txt.innerHTML.replace(/\n/g, '<br>');
+}
+
 function type_message_on_keydown(e, group_id) {
 	// TODO make send message button send messages
 	if (e.target.value != "") {
 		e.target.parentNode.getElementsByTagName("svg")[0]
 			.classList.add("active");
-		if (e.key == "Enter")
+		if (e.key == "Enter") {
 			send_message(group_id, e.target.value);
+			e.target.value = "";
+		}
 	} else {
 		e.target.parentNode.getElementsByTagName("svg")[0]
 			.classList.remove("active");
@@ -360,15 +440,15 @@ function type_message_on_keydown(e, group_id) {
 
 function send_message(group, msg) {
 	const user_id = firebase.auth().currentUser.uid;
-	fs.collection("groups").doc(group).update({
-		messages: firebase.firestore.FieldValue.arrayUnion({
-			text: msg,
-			sender: user_id,
-			time: firebase.firestore.Timestamp.now()
-		})
+	const image = firebase.auth().currentUser.photoURL;
+	fs.collection("groups").doc(group).collection("messages").add({
+		text: msg,
+		sender: user_id,
+		time: firebase.firestore.Timestamp.now(),
+		image: image
 	});
 	fs.collection("groups").doc(group).update({
-		"last_message": msg 
+		"last_message": msg
 	});
 }
 
@@ -527,7 +607,7 @@ function add_groups_to_grouplists() {
 										id: grp.id,
 										name: name
 									})
-							});
+							}, { merge: true });
 						});
 					}
 				});
@@ -694,7 +774,7 @@ function submit_signup_form(event) {
 				const user_id = user.uid;
 				user.updateProfile({
 					displayName: display_name,
-					photoURL: "/images/jeffo.png"
+					photoURL: "/images/apple-touch-icon.png"
 				});
 				fs.collection("users").doc(user_id).set({
 					display: display_name,
