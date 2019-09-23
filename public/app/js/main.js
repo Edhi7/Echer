@@ -15,6 +15,19 @@ function main() {
 	}, 500);
 }
 
+function upload_avatar() {
+	// make path random keys
+	var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
+	return firebase.storage().ref(filePath).put(file).then(function (fileSnapshot) {
+		return fileSnapshot.ref.getDownloadURL().then((url) => {
+			return messageRef.update({
+				imageUrl: url,
+				storageUri: fileSnapshot.metadata.fullPath
+			});
+		});
+	});
+}
+
 function set_menu_button_click() {
 	const menu_button = document.getElementById("menu-button");
 	menu_button.onclick = () => {
@@ -272,32 +285,45 @@ function contact_click(e) {
 		.getElementsByClassName("contact-name")[0].innerText,
 		`<div class="message-container"></div>
 		<div class="conversation-input-container">
-		<div style="margin-top: 20px; height: 36px; position: relative">
-			<input id="message-input" class="form-element-field" placeholder=""
-				type="input" required />
-			<div class="form-element-bar"></div>
-			<label class="form-element-label" for="message-input">
-				Type a message</label>
+			<input id="message-input" placeholder="Type a message"
+				type="input"/>
 			<svg class="send-message" xmlns="http://www.w3.org/2000/svg"
 				width="24" height="24" viewBox="0 0 24 24">
 				<path fill="#cacaca" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
 				<path d="M0 0h24v24H0z" fill="none"/>
 			</svg>
-		</div>
-	</div>`);
+		</div>`);
 	requestAnimationFrame(() => {
 		const dialog = document.getElementsByClassName("dialog")[0];
 		const input = dialog.getElementsByTagName("input")[0];
 		const arrow = dialog.getElementsByClassName("send-message")[0];
+		const messages = dialog.getElementsByClassName("message-container")[0];
 		input.addEventListener("keydown", (e) =>
 			requestAnimationFrame(() =>
 				type_message_on_keydown(e, group_id)));
 		arrow.addEventListener("click", () =>
-			requestAnimationFrame(() =>
-				send_message(group_id, input.value)));
+			requestAnimationFrame(() => {
+				if (arrow.classList.contains("active"))
+					arrow.send_message(group_id, input.value)
+			}));
+		messages.addEventListener("scroll", () => 
+			messages_scroll(messages, group_id), { passive: true });
 		display_messages(group_id, dialog);
+		setTimeout(() => messages.scrollTop = messages.scrollHeight, 500);
 		// TODO: await messages
 	});
+}
+
+function messages_scroll(messages, group_id) {
+	const dialog = messages.parentNode;
+	if (messages.scrollTop == 0) {
+		const previous = dialog.getAttribute("data-limit");
+		// Unsubscribe from the snapshot listener
+		messages.scrollTop += 2;
+		messages_listener();
+		dialog.setAttribute("data-limit", parseInt(previous) + 12);
+		display_messages(group_id, dialog);
+	}
 }
 
 function open_dialog(title, content) {
@@ -350,7 +376,8 @@ function show_footer() {
 }
 
 function remove_message(id) {
-	const msg = document.getElementById(id)
+	const msg = document.getElementById(id);
+	if (msg == null) return;
 	msg.classList.remove("display");
 	setTimeout(() => msg.parentNode.removeChild(msg), 200);
 }
@@ -360,7 +387,7 @@ function create_message(id, timestamp, image, dialog, me) {
 	message.classList.add("message");
 	/* if the message is from the current user then it will be green.
 	positioned to the right, and without an avatar */
-	message.innerHTML = me ? 
+	message.innerHTML = me ?
 		`<span class="message-text"></span>
 			<br clear="both"/> `
 		: `<img class="message-avatar"/>
@@ -389,17 +416,17 @@ function create_message(id, timestamp, image, dialog, me) {
 	return message;
 }
 
+let messages_listener = null;
 function display_messages(group_id, dialog) {
 	// awita bara allt och när man fått 12 så behöver man inte
 	// prependa mer och då kör man vanligt osv.
-	const limit = dialog.getAttribute("data-limit") || (() => {
-			dialog.setAttribute("data-limit", 24);
-			return 24;
-		})();
-	fs.collection("groups").doc(group_id).collection("messages")
+	const limit = parseInt(dialog.getAttribute("data-limit")) || (() => {
+		dialog.setAttribute("data-limit", 24);
+		return 24;
+	})();
+	messages_listener = fs.collection("groups").doc(group_id).collection("messages")
 		.orderBy("time", "desc").limit(limit).onSnapshot((snp) =>
 			snp.docChanges().forEach(change => {
-				console.log(change);
 				if (change.type === "removed")
 					remove_message(change.doc.id);
 				else {
@@ -412,13 +439,12 @@ function display_messages(group_id, dialog) {
 }
 
 function display_message(dialog, time, sender, text, image, id) {
-	// todo: add a cool animation
 	const me = sender == firebase.auth().currentUser.uid;
 	const msg = document.getElementById(id) ||
 		create_message(id, time, image, dialog, me);
 	requestAnimationFrame(() => msg.classList.add("display"));
 	msg.setAttribute("data-sender", sender);
-	const txt = msg.getElementsByClassName("message-text")[0]
+	const txt = msg.getElementsByClassName("message-text")[0];
 	txt.innerText = text;
 	txt.innerHTML = txt.innerHTML.replace(/\n/g, '<br>');
 }
@@ -428,7 +454,7 @@ function type_message_on_keydown(e, group_id) {
 	if (e.target.value != "") {
 		e.target.parentNode.getElementsByTagName("svg")[0]
 			.classList.add("active");
-		if (e.key == "Enter") {
+		if (e.key == "Enter" && e.target.value) {
 			send_message(group_id, e.target.value);
 			e.target.value = "";
 		}
@@ -560,14 +586,15 @@ function check_friend_requests() {
 					fs.collection("friendlists").doc(user_id).set({
 						uid: firebase.firestore.FieldValue.arrayUnion(doc.id)
 					}, { merge: true });
-					fs.collection("groups").doc().set({
+					fs.collection("groups").add({
 						members: [user_id, doc.id],
 						admins: null,
-						last_message: "",
+						last_message: "New friend",
 						messages: [],
 						name: null,
-						image: "/images/apple-touch-icon.png"
+						image: "/images/android-icon-48x48.png"
 					}).catch((e) => console.log(e));
+					requestAnimationFrame(add_groups_to_grouplists);
 				}
 			});
 		});
@@ -593,7 +620,7 @@ function add_groups_to_grouplists() {
 									name: "New group"
 								})
 						}, { merge: true });
-					else {
+					else if (!found) {
 						// Only two memebers
 						let friend = undefined;
 						for (const m of grp.data().members) {
@@ -640,6 +667,9 @@ function populate_contact_list(user_id) {
 						: grp.data().name;
 				contact_container.getElementsByClassName("contact-image")[i]
 					.src = grp.data().image;
+				contact_container
+					.getElementsByClassName("contact-last-message")[i]
+					.innerText = grp.data().last_message;
 				requestAnimationFrame(() => display_chat());
 				i++;
 			});
@@ -774,7 +804,7 @@ function submit_signup_form(event) {
 				const user_id = user.uid;
 				user.updateProfile({
 					displayName: display_name,
-					photoURL: "/images/apple-touch-icon.png"
+					photoURL: "/images/android-icon-48x48.png"
 				});
 				fs.collection("users").doc(user_id).set({
 					display: display_name,

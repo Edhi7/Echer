@@ -23,17 +23,20 @@ service cloud.firestore {
 		allow read, write: if request.auth.uid == user_id;
 	}
 	match /groups/{group_id} {
-	  	allow read, write: if resource.data.admins != null
-		  && request.atuh.uid in resource.data.admins;
+		allow read, write: if resource.data.admins == null
+			&& request.auth.uid in resource.data.members;
 		allow read: if request.auth.uid in resource.data.members;
 	  	allow create: if request.auth.uid != null;
 		allow list;
-		allow read, update:
+		allow read, create, update:
 			if request.resource.data.admins  == resource.data.admins
 			&& request.resource.data.members == resource.data.members
-			&& request.resource.data.image   == resource.data.image;
+			&& request.resource.data.image   == resource.data.image
+			&& request.auth.uid in resource.data.members;
+	  	allow read, write: if resource.data.admins != null
+			&& request.atuh.uid in resource.data.admins;
 		match /messages/{message} {
-			allow read, write;
+			allow read, write: if request.auth.uid in resource.data.members;
 		}
 	}
 	match /grouplists/{user_id} {
