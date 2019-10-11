@@ -100,6 +100,7 @@
 
 		#authentication,
 		/*body:not(.loaded) svg,*/
+
 		body:not(.loaded) #bottom-navigation,
 		body:not(.loaded) main {
 			display: none;
@@ -163,8 +164,7 @@
 			<div class="button-flat" style="float: right;" onclick="submit_signup_form()" tabindex=0>Submit</div>
 			<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
 			<br clear="all" />
-			<hr class="divider" style="margin-bottom: 16px;" />
-			Already have an account? <b class="button-flat" style="float: right;
+			<hr class="divider" style="margin-bottom: 16px;" /> Already have an account? <b class="button-flat" style="float: right;
 			margin-top: -6px;  padding: 0 14px;" onclick="display_sign_in()">LOG IN</b>
 			<a href="/help" style="margin-top: 8px;">Help</a>
 			<a href="/tos">Terms</a>
@@ -189,8 +189,7 @@
 			<div class="button-flat" style="float: right;" onclick="submit_login_form()" tabindex=0>Submit</div>
 			<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
 			<br clear="both" />
-			<hr class="divider" />
-			No account? <b class="button-flat" onclick="display_sign_in()">SIGN UP</b>
+			<hr class="divider" /> No account? <b class="button-flat" onclick="display_sign_in()">SIGN UP</b>
 			<br style="margin-top: 16px;" clear="all" />
 			<a href="/help">Help</a>
 			<a href="/tos">Terms</a>
@@ -202,55 +201,32 @@
 	<main>
 
 		<section id="map-screen" class="top-level-destination">
-			KARTAN ÄR INTE PRIORITERAD!!!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
-			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
+			KARTAN ÄR INTE PRIORITERAD!!! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
+			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
+			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
+			LOLE!LOLE!LOLE!LOLE!LOLE!LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE! LOLE!LOLE!LOLE!LOLE!LOLE!LOLE!
 		</section>
 
 		<section id="chat-screen" class="top-level-destination">
-			<!--<div class="subheader">Kontakter</div>-->
+			<div id="add-friend" class="ripple">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+					<path d="M0 0h24v24H0z" fill="none" />
+					<path fill="#424242"
+						d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+				</svg>
+				<div class="text">Add friends</div>
+			</div>
+			<div id="create-group" class="ripple">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+					<path d="M0 0h24v24H0z" fill="none" />
+					<path fill="#424242"
+						d="M8 10H5V7H3v3H0v2h3v3h2v-3h3v-2zm10 1c1.66 0 2.99-1.34 2.99-3S19.66 5 18 5c-.32 0-.63.05-.91.14.57.81.9 1.79.9 2.86s-.34 2.04-.9 2.86c.28.09.59.14.91.14zm-5 0c1.66 0 2.99-1.34 2.99-3S14.66 5 13 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm6.62 2.16c.83.73 1.38 1.66 1.38 2.84v2h3v-2c0-1.54-2.37-2.49-4.38-2.84zM13 13c-2 0-6 1-6 3v2h12v-2c0-2-4-3-6-3z" />
+				</svg>
+				<div class="text">New group</div>
+			</div>
 			<div id="contact-list">
-				<div id="add-friend" class="ripple">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-						<path d="M0 0h24v24H0z" fill="none" />
-						<path fill="#424242"
-							d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-					</svg>
-					<div class="add-friend-text">Add friends</div>
-				</div>
-
-				<!--<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/barrry.jpg" />
-					<section class="contact-text">
-						<div class="contact-name">Arry Ballen</div>
-						<div class="contact-last-message">Jef mem</div>
-					</section>
-				</div>
-				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/allen.jpg" />
-					<section class="contact-text">
-						<div class="contact-name">Fattest man alive</div>
-						<div class="contact-last-message">Ja, jef</div>
-					</section>
-				</div>
-				<div class="contact ripple">
-					<img class="contact-image" alt="Steven Pinker" src="/images/jeffo.png" />
-					<section class="contact-text">
-						<div class="contact-name">Jeffo</div>
-						<div class="contact-last-message">Jef fem</div>
-					</section>
-				</div>-->
-
-				<!-- >tfw no frens -->
+			</div>
+			<!-- >tfw no frens -->
 		</section>
 
 		<section id="account-screen" class="top-level-destination">
@@ -261,14 +237,6 @@
 		</section>
 
 	</main>
-
-	<div id="add-fren" class=ripple>
-		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-			<path d="M0 0h24v24H0z" fill="none" />
-			<path fill="#efefef"
-				d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-		</svg>
-	</div>
 
 	<nav id="bottom-navigation">
 		<section class="bottom-navigation-destination">

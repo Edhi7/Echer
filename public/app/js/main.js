@@ -99,6 +99,7 @@ function display_chat() {
 	}
 	window.setTimeout(() => { chat_screen.classList.add("active") }, 25)
 	set_add_fren_on_click();
+	set_new_group_on_click();
 	set_contact_on_click();
 }
 
@@ -111,7 +112,118 @@ function display_account() {
 
 function set_add_fren_on_click() {
 	const ボタン = document.getElementById("add-friend");
-	ボタン.addEventListener("mouseup", display_add_fren, { passive: true });
+	ボタン.addEventListener("mouseup", display_add_fren);
+}
+
+function set_new_group_on_click() {
+	const ボタン = document.getElementById("create-group");
+	ボタン.addEventListener("mouseup", new_group_dialog);
+}
+
+function new_group_dialog() {
+	open_dialog("Create a new group", `<div class="create-group">
+		<div class="form-element form-input">
+			<input id="create-group-name" class="form-element-field"
+				placeholder="" type="input" required />
+			<div class="form-element-bar"></div>
+			<label class="form-element-label" for="create-group-name">
+				Name your band
+			</label>
+		</div>
+		<div class="members">
+		</div>
+	</div>`);
+	requestAnimationFrame(() => {
+		const user_id = firebase.auth().currentUser.uid;
+		const dialog = document.getElementsByClassName("dialog")[0];
+		const footer = dialog.getElementsByClassName("dialog-footer")[0];
+		const container = dialog.getElementsByClassName("members")[0];
+		// Display all contacts so that you can select members
+		fs.collection("friendlists").doc(user_id).get().then(doc => {
+			for (const uid of doc.data().uid) {
+				fs.collection("users").doc(uid).get().then(fren => {
+					const data = fren.data();
+					display_friend_for_new_group(container, data.image,
+						data.display, uid);
+				});
+			}
+		});
+		// Create checkmark to click when the user is done
+		footer.innerHTML += `<svg xmlns="http://www.w3.org/2000/svg"
+			width="24" height="24" viewBox="0 0 24 24"
+			style="position: absolute; right: 4px; bottom: 4px;
+			padding: 12px; cursor: pointer;">
+			<path fill="none" d="M0 0h24v24H0z"/>
+			<path fill="#f5f5f5" d="M9 16.2L4.8 12l-1.4 1.4L9 19
+				21 7l-1.4-1.4L9 16.2z"/>
+		</svg>`;
+		requestAnimationFrame(() => {
+			footer.lastChild.addEventListener("click", (e) => {
+				create_new_group(dialog);
+			});
+		});
+	});
+}
+
+function display_friend_for_new_group(container, img, name, id) {
+	container.innerHTML += `<div class="contact ripple active" id="${id}">
+						<img class="contact-image" alt="Profile picture"/>
+						<section class="contact-text">
+							<div class="contact-name"></div>
+							<div class="contact-last-message">Click to select</div>
+						</section>
+					</div>`;
+	const div = container.querySelector("#" + id);
+	div.setAttribute("data-group-id", id);
+	div.getElementsByClassName("contact-image")[0].src = img;
+	div.getElementsByClassName("contact-name")[0].innerText = name;
+	div.addEventListener("click", (e) => e.currentTarget.classList.toggle("selected"));
+}
+
+function create_new_group(dialog) {
+	const user_id = firebase.auth().currentUser.uid;
+	const members = Array.from(dialog
+		.querySelectorAll(".members .contact.selected"))
+		.map((contact) => contact.getAttribute("data-group-id"))
+		.concat(user_id);
+	const name = dialog.querySelector("#create-group-name").value;
+	fs.collection("groups").add({
+		members: members,
+		admins: user_id,
+		last_message: "New group",
+		name: name,
+		image: "/images/android-icon-48x48.png"
+	});
+	tiny_dialog_message(dialog, `Group ${name} was created.`);
+}
+
+function tiny_dialog_message(dialog, message, success) {
+	const children = dialog.children;
+	for (const child of children)
+		child.style.opacity = 0;
+	dialog.classList.add("tiny");
+	dialog.innerHTML += `<svg xmlns="http://www.w3.org/2000/svg"
+			width="24" height="24" viewBox="0 0 24 24"
+			class="tiny-dialog-checkmark">
+			<path fill="none" d="M0 0h24v24H0z"/>
+			<path fill="#5a9271" d="M9 16.2L4.8 12l-1.4 1.4L9 19
+				21 7l-1.4-1.4L9 16.2z"/>
+		</svg>
+	<span class="tiny-dialog-centered-text">
+		${message}
+	</span>`;
+	setTimeout(() => {
+		dialog.getElementsByClassName("create-group")[0].remove();
+		requestAnimationFrame(() => {
+			const text = dialog
+				.getElementsByClassName("tiny-dialog-centered-text")[0];
+			const svg = dialog.getElementsByClassName("tiny-dialog-checkmark")[0];
+			[text, svg].forEach(element => {
+				element.style.opacity = 1;
+			});
+		});
+	}, 120);
+	setTimeout(() => close_dialog(dialog), 1000);
 }
 
 function display_add_fren() {
@@ -134,6 +246,7 @@ function display_add_fren() {
 			Loading...
 		</div>
 		`);
+
 	const dialog = document.getElementsByClassName("dialog")[0];
 	const input = dialog.getElementsByTagName("input")[0];
 	const tabs = dialog.getElementsByClassName("dialog-tab");
@@ -196,6 +309,13 @@ function accept_friend_request(e, uid) {
 	fs.collection("accepted-friends").doc(user_id).set({
 		uids: firebase.firestore.FieldValue.arrayUnion(uid)
 	}, { merge: true });
+	fs.collection("groups").add({
+		members: [user_id, uid],
+		admins: null,
+		last_message: "New friend",
+		name: null,
+		image: "/images/android-icon-48x48.png"
+	});
 }
 
 function display_dialog_tab(e) {
@@ -252,7 +372,7 @@ function search_for_frens(e) {
 				});
 			}
 		});
-	}).catch((e) => console.log(e));
+	});
 }
 
 function send_friend_request(uid) {
@@ -269,7 +389,7 @@ function send_friend_request(uid) {
 }
 
 function set_contact_on_click() {
-	const contacts = document.getElementsByClassName("contact");
+	const contacts = document.querySelectorAll("#contact-list .contact");
 	for (const contact of contacts) {
 		// For some reason click works only about half of the time
 		// It sometimes stops working for a while and then it works again
@@ -283,7 +403,15 @@ function contact_click(e) {
 	const group_id = e.currentTarget.getAttribute("data-id");
 	open_dialog(e.currentTarget
 		.getElementsByClassName("contact-name")[0].innerText,
-		`<div class="message-container"></div>
+		`<div class="progress-indicator indeterminate">
+                <div class="progress-indicator__primary-bar">
+                    <span class="progress-indicator__bar-inner"></span>
+                </div>
+                <div class="progress-indicator__secondary-bar">
+                    <span class="progress-indicator__bar-inner"></span>
+                </div>
+        </div>
+		<div class="message-container"></div>
 		<div class="conversation-input-container">
 			<input id="message-input" placeholder="Type a message"
 				type="input"/>
@@ -303,14 +431,15 @@ function contact_click(e) {
 				type_message_on_keydown(e, group_id)));
 		arrow.addEventListener("click", () =>
 			requestAnimationFrame(() => {
-				if (arrow.classList.contains("active"))
-					arrow.send_message(group_id, input.value)
+				if (arrow.classList.contains("active")) {
+					send_message(group_id, input.value);
+					input.value = "";
+				}
 			}));
-		messages.addEventListener("scroll", () => 
+		messages.addEventListener("scroll", () =>
 			messages_scroll(messages, group_id), { passive: true });
 		display_messages(group_id, dialog);
 		setTimeout(() => messages.scrollTop = messages.scrollHeight, 500);
-		// TODO: await messages
 	});
 }
 
@@ -327,11 +456,11 @@ function messages_scroll(messages, group_id) {
 }
 
 function open_dialog(title, content) {
-	close_all_dialogs();
+	remove_all_dialogs();
 	const node = document.createElement('div');
 	node.classList.add("dialog");
 	node.innerHTML = `<div class="dialog-footer">
-		<div class="close-dialog" onclick="close_dialog(this)">
+		<div class="close-dialog" onclick="close_dialog(this.parentNode.parentNode)">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 				<path fill = #f5f5f5 d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
 				<path d="M0 0h24v24H0z" fill="none"/>
@@ -341,26 +470,30 @@ function open_dialog(title, content) {
 	</div>
 	` + content;
 	hide_footer();
+	document.getElementsByTagName("main")[0].classList.add("hidden");
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() => {
-		requestAnimationFrame(() => {
-			const dialog = document.getElementsByClassName("dialog")[0];
-			dialog.classList.add("open");
-		});
+		const dialog = document.getElementsByClassName("dialog")[0];
+		dialog.classList.add("open");
 	});
 }
 
-function close_all_dialogs() {
+function remove_all_dialogs() {
 	const dialog = document.getElementsByClassName("dialog");
 	for (const c of dialog) {
 		c.parentNode.removeChild(c);
 	}
+	document.getElementsByTagName("main")[0].classList.remove("hidden");
+	// stop listening for messages
+	if (messages_listener != null)
+		messages_listener();
+	messages_listener = null;
 	show_footer();
 }
 
-function close_dialog(button) {
-	button.parentNode.parentNode.classList.remove("open");
-	window.setTimeout(close_all_dialogs, 100);
+function close_dialog(dialog) {
+	dialog.classList.remove("open");
+	window.setTimeout(remove_all_dialogs, 100);
 }
 
 function hide_footer() {
@@ -418,15 +551,38 @@ function create_message(id, timestamp, image, dialog, me) {
 
 let messages_listener = null;
 function display_messages(group_id, dialog) {
-	// awita bara allt och när man fått 12 så behöver man inte
-	// prependa mer och då kör man vanligt osv.
+	const user_id = firebase.auth().currentUser.uid;
 	const limit = parseInt(dialog.getAttribute("data-limit")) || (() => {
 		dialog.setAttribute("data-limit", 24);
 		return 24;
 	})();
-	messages_listener = fs.collection("groups").doc(group_id).collection("messages")
-		.orderBy("time", "desc").limit(limit).onSnapshot((snp) =>
+	fs.collection("groups").doc(group_id).collection("messages").get()
+		.then((col) => {
+			if (col.docs.length == 0) {
+				messages_remove_loader(dialog);
+			}
+			messages_listener = create_message_listener(group_id, dialog, limit);
+		});
+}
+
+function create_message_listener(group_id, dialog, limit) {
+	let is_new = limit == 24;
+	return fs.collection("groups").doc(group_id)
+		.collection("messages").orderBy("time", "desc").limit(limit)
+		.onSnapshot((snp) => {
 			snp.docChanges().forEach(change => {
+				if (is_new) {
+					messages_remove_loader(dialog);
+					is_new = false;
+					const msg = dialog
+						.getElementsByClassName("message-container")[0];
+					setTimeout(() => {
+						msg.scrollTop = msg.scrollHeight;
+					}, 250);
+					setTimeout(() => {
+						msg.scrollTop = msg.scrollHeight;
+					}, 500);
+				}
 				if (change.type === "removed")
 					remove_message(change.doc.id);
 				else {
@@ -435,7 +591,8 @@ function display_messages(group_id, dialog) {
 					display_message(dialog, msg.time, msg.sender, msg.text,
 						msg.image, id);
 				}
-			}));
+			});
+		});
 }
 
 function display_message(dialog, time, sender, text, image, id) {
@@ -449,8 +606,13 @@ function display_message(dialog, time, sender, text, image, id) {
 	txt.innerHTML = txt.innerHTML.replace(/\n/g, '<br>');
 }
 
+function messages_remove_loader(dialog) {
+	const loader = dialog.getElementsByClassName("progress-indicator")[0];
+	loader.setAttribute("style", "height: 0px;");
+	setTimeout(() => loader.parentNode.removeChild(loader), 500);
+}
+
 function type_message_on_keydown(e, group_id) {
-	// TODO make send message button send messages
 	if (e.target.value != "") {
 		e.target.parentNode.getElementsByTagName("svg")[0]
 			.classList.add("active");
@@ -555,13 +717,10 @@ function logged_in(user) {
 		"\nEmail verified: " + user.emailVerified);
 	if (user.displayName != null)
 		display_snackbar("Signed in as " + user.displayName);
-	// TODO fetch user data from firestore
 	fs.collection("users").doc(user.uid).get().then((doc) => {
 		if (doc.exists) {
 			populate_contact_list(user.uid);
 		}
-	}).catch((e) => {
-		console.log(e);
 	});
 	display_logged_in_ui();
 	check_friend_requests();
@@ -574,8 +733,6 @@ function check_friend_requests() {
 		.where("uids", "array-contains", user_id);
 	query.get().then((snp) => {
 		snp.forEach((doc) => {
-			/* Check if friend has been added to avoid trying to create a
-			group twice. */
 			fs.collection("friendlists").doc(user_id).get().then((frl) => {
 				let found = false;
 				if (frl.exists) {
@@ -583,17 +740,10 @@ function check_friend_requests() {
 						if (d == doc.id) found = true;
 				}
 				if (!found) {
+					// Become friends
 					fs.collection("friendlists").doc(user_id).set({
 						uid: firebase.firestore.FieldValue.arrayUnion(doc.id)
 					}, { merge: true });
-					fs.collection("groups").add({
-						members: [user_id, doc.id],
-						admins: null,
-						last_message: "New friend",
-						messages: [],
-						name: null,
-						image: "/images/android-icon-48x48.png"
-					}).catch((e) => console.log(e));
 					requestAnimationFrame(add_groups_to_grouplists);
 				}
 			});
@@ -604,24 +754,27 @@ function check_friend_requests() {
 function add_groups_to_grouplists() {
 	const user_id = firebase.auth().currentUser.uid;
 	fs.collection("groups").where("members", "array-contains", user_id)
-		.get().then((snp) => {
+		.onSnapshot((snp) => {
 			snp.forEach(grp => {
 				fs.collection("grouplists").doc(user_id).get().then((doc) => {
 					let found = false;
+					// See if the group is already in the grouplist
 					if (doc.exists)
 						for (const stored of doc.data().groups)
 							if (stored.id == grp.id)
 								found = true;
 					if (!found && grp.data().admins != null)
 						fs.collection("grouplists").doc(user_id).set({
+
 							groups: firebase.firestore.FieldValue
 								.arrayUnion({
 									id: grp.id,
-									name: "New group"
+									name: grp.data().name
 								})
-						}, { merge: true });
+						}, { merge: true }).then(() =>
+							populate_contact_list(user_id));
 					else if (!found) {
-						// Only two memebers
+						// An automatically created non-modifiable group
 						let friend = undefined;
 						for (const m of grp.data().members) {
 							if (m != user_id) friend = m;
@@ -634,12 +787,13 @@ function add_groups_to_grouplists() {
 										id: grp.id,
 										name: name
 									})
-							}, { merge: true });
+							}, { merge: true }).then(() =>
+								populate_contact_list(user_id));
 						});
 					}
 				});
 			});
-		}).catch(e => console.log(e));
+		});
 }
 
 function populate_contact_list(user_id) {
@@ -647,8 +801,8 @@ function populate_contact_list(user_id) {
 	fs.collection("grouplists").doc(user_id).get().then((doc) => {
 		if (!doc.exists)
 			return;
-		/* todo: make a screen telling the user that he has no friends */
-		// TODO display groups instead of friends
+		// todo: make a screen telling the user that he has no friends
+		contact_container.innerHTML = "";
 		let i = 0;
 		for (const group of doc.data().groups) {
 			fs.collection("groups").doc(group.id).get().then((grp) => {
@@ -674,7 +828,7 @@ function populate_contact_list(user_id) {
 				i++;
 			});
 		}
-	}).catch((e) => console.log(e));
+	});
 }
 
 function display_logged_in_ui() {
@@ -758,35 +912,6 @@ function display_loader_in_form(form) {
 	}, 375);
 }
 
-function google_sign_in() {
-	const provider = new firebase.auth.GoogleAuthProvider();
-	firebase.auth().signInWithPopup(provider).then(function (result) {
-		// This gives you a Google Access Token. You can use it to access the Google API.
-		const token = result.credential.accessToken;
-		// The signed-in user info.
-		const user = result.user;
-		user.name = "はかせ";
-	}).catch(function (error) {
-		const error_code = error.code;
-		const error_message = error.message;
-		const email = error.email;
-		const credential = error.credential;
-	});
-}
-
-function github_sign_in() {
-	const provider = new firebase.auth.GithubAuthProvider();
-	firebase.auth().signInWithPopup(provider).then(function (result) {
-		const token = result.credential.accessToken;
-		const user = result.user;
-	}).catch(function (error) {
-		const error_code = error.code;
-		const error_message = error.message;
-		const email = error.email;
-		const credential = error.credential;
-	});
-}
-
 function submit_signup_form(event) {
 	const form = document.getElementById("signup");
 	const form_vailidation = validate_login_form(form);
@@ -799,7 +924,6 @@ function submit_signup_form(event) {
 		// Form was valid
 		firebase.auth().createUserWithEmailAndPassword(email, password)
 			.then(() => {
-				// TODO add user in database
 				const user = firebase.auth().currentUser;
 				const user_id = user.uid;
 				user.updateProfile({
@@ -808,7 +932,7 @@ function submit_signup_form(event) {
 				});
 				fs.collection("users").doc(user_id).set({
 					display: display_name,
-					image: "/images/apple-touch-icon.png",
+					image: "/images/android-icon-48x48.png",
 				})
 			}).catch((error) => {
 				if (!error.code == "auth/email-already-in-use")
@@ -827,9 +951,10 @@ function submit_login_form(event) {
 	} else {
 		const email = form_vailidation[0];
 		const password = form_vailidation[1];
-		firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
-			display_snackbar(error.message);
-		});
+		firebase.auth().signInWithEmailAndPassword(email, password)
+			.catch(function (error) {
+				display_snackbar(error.message);
+			});
 	}
 	return false;
 }
