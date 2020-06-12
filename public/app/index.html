@@ -33,12 +33,10 @@
 	<meta name="msapplication-TileColor" content="#5a9271" />
 	<meta name="theme-color" content="#5a9271" />
 	<meta name="twitter:card" content="Runyonii, the free messaging platform" />
-	<script src="/__/firebase/6.3.5/firebase-app.js"></script>
-	<script defer src="/__/firebase/6.3.5/firebase-auth.js"></script>
-	<script defer src="/__/firebase/6.3.5/firebase-firestore.js"></script>
-	<script defer src="/__/firebase/6.3.5/firebase-messaging.js"></script>
-	<!--<script defer
-		src="/__/firebase/6.3.5/firebase-storage.js"></script>-->
+	<script src="/__/firebase/7.2.0/firebase-app.js"></script>
+	<script defer src="/__/firebase/7.2.0/firebase-auth.js"></script>
+	<script defer src="/__/firebase/7.2.0/firebase-firestore.js"></script>
+	<script defer src="/__/firebase/7.2.0/firebase-messaging.js"></script>
 	<script defer src="/__/firebase/init.js"></script>
 	<script defer src="js/ripple.js"></script>
 	<script defer src="js/main.js"></script>
@@ -133,7 +131,7 @@
 			<div class="form-element form-input">
 				<input id="display-name" class="form-element-field" placeholder="そらまめ" type="input" required />
 				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="name">Display name</label>
+				<label class="form-element-label" for="display-name">Display name</label>
 			</div>
 
 			<!-- no longer supporting these
@@ -166,6 +164,7 @@
 			<br clear="all" />
 			<hr class="divider" style="margin-bottom: 16px;" /> Already have an account? <b class="button-flat" style="float: right;
 			margin-top: -6px;  padding: 0 14px;" onclick="display_sign_in()">LOG IN</b>
+			<br />
 			<a href="/help" style="margin-top: 8px;">Help</a>
 			<a href="/tos">Terms</a>
 		</form>
@@ -176,14 +175,14 @@
 				<input id="login-email" class="form-element-field" placeholder="Type your email, bucko" type="input"
 					required />
 				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="email">Email</label>
+				<label class="form-element-label" for="login-email">Email</label>
 			</div>
 
 			<div class="form-element form-input">
 				<input id="login-password" class="form-element-field" placeholder="Any format you want" type="password"
 					required />
 				<div class="form-element-bar"></div>
-				<label class="form-element-label" for="password">Password</label>
+				<label class="form-element-label" for="login-password">Password</label>
 			</div>
 
 			<div class="button-flat" style="float: right;" onclick="submit_login_form()" tabindex=0>Submit</div>
@@ -230,7 +229,6 @@
 		</section>
 
 		<section id="account-screen" class="top-level-destination">
-			<!-- Todo: fix this destination doeasent display when lciicked i t still jhas display: none lole-->
 			<div class="button-flat" style="float: right;" onclick="sign_out()" tabindex=0>Sign out</div>
 			<br style="clear: both" />
 			<div class=ripple> Här e ju profilen men den e inte klar hoppsan där va lole :^)</div>

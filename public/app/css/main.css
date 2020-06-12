@@ -39,7 +39,7 @@ a {
 	margin: auto;
 	background: #fafafa;
 	top: 8px;
-	height: calc(100vh - 16px);
+	height: calc(100% - 16px);
 	left: 0;
 	right: 0;
 	transition: 112ms cubic-bezier(0.4, 0, 1, 1);
@@ -1021,6 +1021,8 @@ body .raised-button {
 		transform: rotate(130deg);
 	}
 }
+
+/* End preloader */
 
 @media screen and (min-width: 365px) {
 	.round-half-button {

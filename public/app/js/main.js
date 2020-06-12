@@ -5,14 +5,40 @@ window.onload = main;
 const fs = firebase.firestore();
 
 function main() {
-	// Serviceworker is anoying during debugging
-	// register_service_worker();
+	enable_persistence();
+	register_service_worker();
 	scale_in_title();
 	ripple_init();
 	set_bottom_navigation_click();
 	window.setTimeout(() => {
 		check_logged_in();
-	}, 500);
+	}, 50);
+}
+
+function enable_persistence() {
+	fs.enablePersistence()
+		.catch(err => {
+			if (err.code == "failed-precondition") {
+				// Multiple tabs open, persistence can only be enabled
+				// in one tab at a a time.
+			} else if (err.code == "unimplemented") {
+				// The current browser does not support all of the
+				// features required to enable persistence
+				const div = create_error(`Your browser does not support offline storage.
+				You will not be able to access this website without internet
+				access. If you want these features,
+				try using Firefox or Chrome.`);
+				const acc = document.getElementById("account-screen");
+				acc.innerHTML += div;
+			}
+		});
+}
+
+function create_error(message) {
+	const node = document.createElement("div");
+	node.classList.add("error");
+	node.innerHTML += message;
+	return node;
 }
 
 function upload_avatar() {
@@ -140,6 +166,8 @@ function new_group_dialog() {
 		const container = dialog.getElementsByClassName("members")[0];
 		// Display all contacts so that you can select members
 		fs.collection("friendlists").doc(user_id).get().then(doc => {
+			if (!doc.exists)
+				return;
 			for (const uid of doc.data().uid) {
 				fs.collection("users").doc(uid).get().then(fren => {
 					const data = fren.data();
@@ -566,6 +594,7 @@ function display_messages(group_id, dialog) {
 }
 
 function create_message_listener(group_id, dialog, limit) {
+	loader_scheduled_for_removal = false;
 	let is_new = limit == 24;
 	return fs.collection("groups").doc(group_id)
 		.collection("messages").orderBy("time", "desc").limit(limit)
@@ -606,8 +635,15 @@ function display_message(dialog, time, sender, text, image, id) {
 	txt.innerHTML = txt.innerHTML.replace(/\n/g, '<br>');
 }
 
+let loader_scheduled_for_removal = false;
 function messages_remove_loader(dialog) {
+	if (loader_scheduled_for_removal)
+		return;
+	// Have to do this as fast as possible
+	loader_scheduled_for_removal = true;
 	const loader = dialog.getElementsByClassName("progress-indicator")[0];
+	if (loader == undefined)
+		return;
 	loader.setAttribute("style", "height: 0px;");
 	setTimeout(() => loader.parentNode.removeChild(loader), 500);
 }

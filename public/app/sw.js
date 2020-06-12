@@ -2,49 +2,44 @@
 
 importScripts('/app/js/cache-polyfill.js');
 
+const CACHE = "ルニョニー";
 
-const version = "0.0.9";
-const cacheName = `Runyonii-${version}`;
-self.addEventListener('install', e => {
-  const timeStamp = Date.now();
-  e.waitUntil(
-    caches.open(cacheName).then(cache => {
-      return cache.addAll([
-        `/app/`,
-        `/app/js/main.js`,
-        `/app/css/main.css`,
-        `/app/css/field.css`,
-        `/images/apple-touch-icon.png`,
-        `/images/favicon-32x32.png`,
-        `/images/favicon-16x16.png`,
-        `/config/site.webmanifest`,
-        `/images/safari-pinned-tab.svg`,
-        `https://fonts.googleapis.com/css?family=Cabin:400,500&subset=latin-ext`,
-        `https://fonts.googleapis.com/icon?family=Material+Icons`,
-        `https://fonts.gstatic.com/s/cabin/v12/u-4x0qWljRw-Pd8w__1ImSRu.woff2`,
-        `https://fonts.gstatic.com/s/materialicons/v36/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2`,
-        `/__/firebase/6.3.5/firebase-app.js`,
-        `/__/firebase/6.3.5/firebase-auth.js`,
-        `/__/firebase/init.js`
-      ])
-      .then(() => {
-        console.log("Cached a bunch of files");
-      })
-      .catch((e) => console.log(e))
-    })
-    .catch((e) => console.log(e))
-  );
+self.addEventListener('install', event => {
+	event.waitUntil(precache());
 });
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-      .catch((e) => console.log(e))
-  );
+self.addEventListener('fetch', event => {
+	const request = event.request;
+	const url = event.request.url;
+	if (url.includes("googleapis.com")) {
+		event.respondWith(fetch(request));
+	} else {
+		event.respondWith(from_cache(request));
+		event.waitUntil(update(request));
+	}
 });
+
+function precache() {
+	caches.open(CACHE).then(cache =>
+		cache.addAll([
+			`/app/`,
+			`/app/js/main.js`,
+			`/app/css/main.css`,
+			`/app/css/field.css`,
+			`/__/firebase/7.2.0/firebase-app.js`,
+			`/__/firebase/7.2.0/firebase-auth.js`,
+			`/__/firebase/init.js`
+		]));
+}
+
+async function from_cache(request) {
+	const cache = await caches.open(CACHE);
+	const matching = await cache.match(request);
+	return matching || Promise.reject("from_cache: No match found");
+}
+
+async function update(request) {
+	const cache = await caches.open(CACHE);
+	const response = await fetch(request);
+	return cache.put(request, response);
+}
