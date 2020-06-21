@@ -33,14 +33,14 @@ function set_active_tab_no(n) {
     // If not activated tab
     if (tabs[n] !== tab) {
       tab.classList.remove("active");
-      window.setTimeout(function () {
+      setTimeout(function () {
         tab.style.display = "none";
       }, 240);
     }
   }
 
   tabs[n].style.display = "block";
-  window.setTimeout(function () {
+  setTimeout(function () {
     tabs[n].classList.add("active");
   }, 120);
 }

@@ -8,9 +8,9 @@ function main() {
 	enable_persistence();
 	register_service_worker();
 	scale_in_title();
-	ripple_init();
+	init_ripple();
 	set_bottom_navigation_click();
-	window.setTimeout(() => {
+	setTimeout(() => {
 		check_logged_in();
 	}, 50);
 }
@@ -99,7 +99,7 @@ function hide_top_level_destinations() {
 	for (let contact of contacts)
 		contact.classList.remove("active");
 	// Actually hide
-	window.setTimeout(() => {
+	setTimeout(() => {
 		for (const destination of destinations) {
 			if (!destination.classList.contains("active"))
 				destination.style.display = "none";
@@ -109,7 +109,7 @@ function hide_top_level_destinations() {
 
 function display_map() {
 	document.getElementById("map-screen").style.display = "block";
-	window.setTimeout(() => {
+	setTimeout(() => {
 		document.getElementById("map-screen").classList.add("active");
 	}, 40);
 }
@@ -119,11 +119,14 @@ function display_chat() {
 	const contacts = document.getElementById("contact-list").children;
 	chat_screen.style.display = "block";
 	for (let i = 0; i < contacts.length; i++) {
-		window.setTimeout(() => {
+		setTimeout(() => {
 			contacts[i].classList.add("active");
 		}, 35 * (i + 1));
 	}
-	window.setTimeout(() => { chat_screen.classList.add("active") }, 25)
+	setTimeout(() => {
+		chat_screen.classList.add("active")
+		init_ripple();
+	}, 25)
 	set_add_fren_on_click();
 	set_new_group_on_click();
 	set_contact_on_click();
@@ -131,7 +134,7 @@ function display_chat() {
 
 function display_account() {
 	document.getElementById("account-screen").style.display = "block";
-	window.setTimeout(() => {
+	setTimeout(() => {
 		document.getElementById("account-screen").classList.add("active");
 	}, 25);
 }
@@ -326,7 +329,7 @@ function display_friend_requests(dialog) {
 }
 
 function no_friend_requests(container) {
-	container.innerText = "No one wants to be your friend";
+	container.innerText = "No one wants to become your friend";
 }
 
 function accept_friend_request(e, uid) {
@@ -360,7 +363,7 @@ function display_dialog_tab(e) {
 			d.setAttribute("style", "display: none;");
 		} else {
 			d.setAttribute("style", "display: block;");
-			window.setTimeout(() => d.classList.add("active"), 100);
+			setTimeout(() => d.classList.add("active"), 100);
 		}
 	}
 }
@@ -467,16 +470,21 @@ function contact_click(e) {
 		messages.addEventListener("scroll", () =>
 			messages_scroll(messages, group_id), { passive: true });
 		display_messages(group_id, dialog);
-		setTimeout(() => messages.scrollTop = messages.scrollHeight, 500);
+		setTimeout(() => messages.scrollTop = messages.scrollHeight, 1000);
 	});
 }
 
+let prev_scroll = 1337;
 function messages_scroll(messages, group_id) {
+	if (prev_scroll == messages.scrollTop)
+		return;
+	else
+		prev_scroll = messages.scrollTop
+
 	const dialog = messages.parentNode;
 	if (messages.scrollTop == 0) {
 		const previous = dialog.getAttribute("data-limit");
 		// Unsubscribe from the snapshot listener
-		messages.scrollTop += 2;
 		messages_listener();
 		dialog.setAttribute("data-limit", parseInt(previous) + 12);
 		display_messages(group_id, dialog);
@@ -487,23 +495,32 @@ function open_dialog(title, content) {
 	remove_all_dialogs();
 	const node = document.createElement('div');
 	node.classList.add("dialog");
+	node.tabIndex = -1;
 	node.innerHTML = `<div class="dialog-footer">
-		<div class="close-dialog" onclick="close_dialog(this.parentNode.parentNode)">
+		<div class="close-dialog dialog-icon" onclick="close_dialog(this.parentNode.parentNode)">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 				<path fill = #f5f5f5 d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
 				<path d="M0 0h24v24H0z" fill="none"/>
 			</svg>
 		</div>
 		<div class="dialog-name">${title}</div>
-	</div>
-	` + content;
+	</div> ${content}`;
 	hide_footer();
 	document.getElementsByTagName("main")[0].classList.add("hidden");
 	document.getElementsByTagName('body')[0].append(node);
 	requestAnimationFrame(() => {
 		const dialog = document.getElementsByClassName("dialog")[0];
 		dialog.classList.add("open");
+		dialog.focus();
+		dialog.addEventListener("keydown", close_if_esc(dialog));
 	});
+}
+
+function close_if_esc(dialog) {
+	return event => {
+		if (event.key == "Esc" || event.key == "Escape")
+			close_dialog(dialog);
+	}
 }
 
 function remove_all_dialogs() {
@@ -521,7 +538,7 @@ function remove_all_dialogs() {
 
 function close_dialog(dialog) {
 	dialog.classList.remove("open");
-	window.setTimeout(remove_all_dialogs, 100);
+	setTimeout(remove_all_dialogs, 100);
 }
 
 function hide_footer() {
@@ -549,15 +566,15 @@ function create_message(id, timestamp, image, dialog, me) {
 	/* if the message is from the current user then it will be green.
 	positioned to the right, and without an avatar */
 	message.innerHTML = me ?
-		`<span class="message-text"></span>
-			<br clear="both"/> `
+		`<span class="message-text"></span>`
 		: `<img class="message-avatar"/>
 			<span class="message-text"></span>`;
 	if (me) message.classList.add("from-me");
 	else message.getElementsByClassName("message-avatar")[0].src = image;
 	message.setAttribute('data-time', timestamp);
 	message.setAttribute('id', id);
-	// figure out where to insert new message
+
+	// Figure out where to insert new message
 	const message_list = dialog
 		.getElementsByClassName("message-container")[0];
 	const existing_messages = message_list.children;
@@ -568,7 +585,7 @@ function create_message(id, timestamp, image, dialog, me) {
 		while (message_list_node) {
 			const message_list_node_time
 				= message_list_node.getAttribute('data-time');
-			if (message_list_node_time > timestamp)
+			if (message_list_node_time < timestamp)
 				break;
 			message_list_node = message_list_node.nextSibling;
 		}
@@ -584,34 +601,23 @@ function display_messages(group_id, dialog) {
 		dialog.setAttribute("data-limit", 24);
 		return 24;
 	})();
+	messages_show_loader(dialog);
 	fs.collection("groups").doc(group_id).collection("messages").get()
 		.then((col) => {
-			if (col.docs.length == 0) {
-				messages_remove_loader(dialog);
-			}
+			if (col.docs.length == 0)
+				messages_hide_loader(dialog);
+
 			messages_listener = create_message_listener(group_id, dialog, limit);
 		});
 }
 
 function create_message_listener(group_id, dialog, limit) {
-	loader_scheduled_for_removal = false;
 	let is_new = limit == 24;
 	return fs.collection("groups").doc(group_id)
 		.collection("messages").orderBy("time", "desc").limit(limit)
 		.onSnapshot((snp) => {
 			snp.docChanges().forEach(change => {
-				if (is_new) {
-					messages_remove_loader(dialog);
-					is_new = false;
-					const msg = dialog
-						.getElementsByClassName("message-container")[0];
-					setTimeout(() => {
-						msg.scrollTop = msg.scrollHeight;
-					}, 250);
-					setTimeout(() => {
-						msg.scrollTop = msg.scrollHeight;
-					}, 500);
-				}
+				messages_hide_loader(dialog);
 				if (change.type === "removed")
 					remove_message(change.doc.id);
 				else {
@@ -628,24 +634,38 @@ function display_message(dialog, time, sender, text, image, id) {
 	const me = sender == firebase.auth().currentUser.uid;
 	const msg = document.getElementById(id) ||
 		create_message(id, time, image, dialog, me);
-	requestAnimationFrame(() => msg.classList.add("display"));
+	display_message_after_wait(msg);
 	msg.setAttribute("data-sender", sender);
 	const txt = msg.getElementsByClassName("message-text")[0];
 	txt.innerText = text;
 	txt.innerHTML = txt.innerHTML.replace(/\n/g, '<br>');
 }
 
-let loader_scheduled_for_removal = false;
-function messages_remove_loader(dialog) {
-	if (loader_scheduled_for_removal)
-		return;
-	// Have to do this as fast as possible
-	loader_scheduled_for_removal = true;
+let messages_displayed = 0;
+let reset_timer = null;
+function display_message_after_wait(msg) {
+	const wait = messages_displayed * 15;
+	messages_displayed++;
+	setTimeout(() => msg.classList.add("display"), wait);
+
+	// Reset to zero after one second of no messages 
+	if (reset_timer)
+		clearTimeout(reset_timer);
+	reset_timer = setTimeout(() => {
+		messages_displayed = 0;
+	}, 500);
+}
+
+function messages_hide_loader(dialog) {
 	const loader = dialog.getElementsByClassName("progress-indicator")[0];
-	if (loader == undefined)
-		return;
-	loader.setAttribute("style", "height: 0px;");
-	setTimeout(() => loader.parentNode.removeChild(loader), 500);
+	if (loader)
+		loader.setAttribute("style", "height: 0px;");
+}
+
+function messages_show_loader(dialog) {
+	const loader = dialog.getElementsByClassName("progress-indicator")[0];
+	if (loader)
+		loader.setAttribute("style", "");
 }
 
 function type_message_on_keydown(e, group_id) {
@@ -663,6 +683,14 @@ function type_message_on_keydown(e, group_id) {
 }
 
 function send_message(group, msg) {
+	if (msg == "")
+		return;
+
+	// Disable button
+	const arrow = document.getElementsByClassName("send-message")[0];
+	arrow.classList.remove("active");
+
+	// Write message to db
 	const user_id = firebase.auth().currentUser.uid;
 	const image = firebase.auth().currentUser.photoURL;
 	fs.collection("groups").doc(group).collection("messages").add({
@@ -698,14 +726,14 @@ function float_title() {
 }
 
 function register_service_worker() {
-	if ('serviceWorker' in navigator) {
+	if ("serviceWorker" in navigator) {
 		navigator.serviceWorker
-			.register('/app/sw.js')
+			.register("/app/sw.js")
 			.then(function (registration) {
-				console.log('Service Worker Registered at scope ', registration.scope);
+				console.log("Service worker registered at scope ", registration.scope);
 			});
 		navigator.serviceWorker.ready.then(function (registration) {
-			console.log('Service Worker Ready');
+			console.log("Service worker Ready");
 		});
 	} else {
 		console.log("Service worker is unavailable");
@@ -746,11 +774,6 @@ function hide_login_form() {
 }
 
 function logged_in(user) {
-	console.log("Logged in as " + user.email +
-		"\nUser id: " + user.uid +
-		"\nDisplayname: " + user.displayName +
-		"\nPhoto url: " + user.photoURL +
-		"\nEmail verified: " + user.emailVerified);
 	if (user.displayName != null)
 		display_snackbar("Signed in as " + user.displayName);
 	fs.collection("users").doc(user.uid).get().then((doc) => {
@@ -870,11 +893,11 @@ function populate_contact_list(user_id) {
 function display_logged_in_ui() {
 	fade_out_title();
 	hide_login_form();
-	window.setTimeout(() => {
+	setTimeout(() => {
 		display_chat();
 		login.style.display = "none";
 	}, 250);
-	window.setTimeout(() => {
+	setTimeout(() => {
 		document.getElementById("bottom-navigation").classList.add("slide-in")
 	}, 480);
 }
@@ -895,13 +918,19 @@ function validate_login_form(form) {
 	const inputs = form.getElementsByTagName("input");
 	let valid = true;
 	let values = [];
-	for (const input of inputs) {
-		if (input.validity.valid) {
-			values.push(input.value);
+	let names = ["email", "password", "name"];
+	for (let i = 0; i < inputs.length; i++) {
+		if (inputs[i].validity.valid) {
+			values.push(inputs[i].value);
 		} else {
+			if (inputs[i].value == "") {
+				display_snackbar(`Your ${names[i]} is empty`);
+			} else {
+				display_snackbar(`Your ${names[i]} is badly formatted`);
+			}
 			valid = false;
 		}
-	};
+	}
 	// Return false if form is invalid, else return form values
 	return valid ? values : valid;
 }
@@ -912,27 +941,50 @@ function set_text_color() {
 	document.body.parentNode.style.color = "rgba(0, 0, 0, 0.9)";
 }
 
+// Displays a message at the bottom of the screen for 4 seconds
 function display_snackbar(message) {
-	const snackbar = document.createElement("div");
-	snackbar.classList.add("snackbar");
-	snackbar.innerText = message;
-	document.body.appendChild(snackbar);
+	let container = document.getElementById("snackbar-container");
+	if (!container)
+		container = create_snackbar_container();
+
+	const snackbar = create_snackbar(message);
+	container.appendChild(snackbar);
+
 	requestAnimationFrame(() =>
 		requestAnimationFrame(() => {
 			snackbar.classList.add("slideUp");
-			window.setTimeout(() => {
+			setTimeout(() => {
 				snackbar.classList.remove("slideUp");
-				window.setTimeout(() => {
+				setTimeout(() => {
 					snackbar.parentNode.removeChild(snackbar);
 				}, 225);
-			}, 3500);
+			}, 4000);
 		})
 	);
 }
 
-function display_loader_in_form(form) {
-	window.setTimeout(() => {
-		form.parentNode.innerHTML += `<div class="preloader-wrapper active centered">
+function create_snackbar_container() {
+	const container = document.createElement("div");
+	container.setAttribute("id", "snackbar-container");
+	return document.body.appendChild(container);
+}
+
+function create_snackbar(message) {
+	const snackbar = document.createElement("div");
+	snackbar.classList.add("snackbar");
+	snackbar.innerHTML = `<span class="snackbar-content">
+		${message}
+	</span>`;
+	return snackbar;
+}
+
+function display_fullscreen_loader() {
+	const prev = document.getElementsByClassName("loader-container");
+	const container = document.createElement("div");
+	if (prev.length !== 0)
+		return;
+	container.classList.add("loader-container");
+	container.innerHTML += `<div class="preloader-wrapper active centered">
 						<div class="spinner-layer">
 							<div class="circle-clipper left">
 								<div class="circle"></div>
@@ -945,18 +997,32 @@ function display_loader_in_form(form) {
 							</div>
 						</div>
 					</div>`;
-	}, 375);
+	document.body.appendChild(container);
+}
+
+function remove_loader() {
+	const loaders = document.querySelectorAll(".loader-container .preloader-wrapper");
+	for (let loader of loaders) {
+		const spinner = loader.getElementsByClassName("spinner-layer")[0];
+		if (loader != undefined) {
+			spinner.setAttribute("transform", "scale(0)");
+			loader.parentNode.style.opacity = "0";
+			setTimeout(() => {
+				if (loader)
+					loader.parentNode.remove();
+			}, 500);
+		}
+	}
 }
 
 function submit_signup_form(event) {
 	const form = document.getElementById("signup");
-	const form_vailidation = validate_login_form(form);
-	if (form_vailidation === false) {
-		display_snackbar("Your form values are incorrectly formated.");
-	} else {
-		const email = form_vailidation[0];
-		const password = form_vailidation[1];
-		const display_name = form_vailidation[2];
+	const form_validation = validate_login_form(form);
+	if (form_validation) {
+		display_fullscreen_loader();
+		const email = form_validation[0];
+		const password = form_validation[1];
+		const display_name = form_validation[2];
 		// Form was valid
 		firebase.auth().createUserWithEmailAndPassword(email, password)
 			.then(() => {
@@ -970,10 +1036,12 @@ function submit_signup_form(event) {
 					display: display_name,
 					image: "/images/android-icon-48x48.png",
 				})
+				remove_loader();
 			}).catch((error) => {
 				if (!error.code == "auth/email-already-in-use")
 					console.log(error.code);
 				display_snackbar(error.message);
+				remove_loader();
 			});
 	}
 	return false;
@@ -981,15 +1049,16 @@ function submit_signup_form(event) {
 
 function submit_login_form(event) {
 	const form = document.getElementById("login");
-	const form_vailidation = validate_login_form(form);
-	if (form_vailidation === false) {
-		display_snackbar("Your email or password format is wrong.");
-	} else {
-		const email = form_vailidation[0];
-		const password = form_vailidation[1];
+	const form_validation = validate_login_form(form);
+	if (form_validation) {
+		display_fullscreen_loader();
+		const email = form_validation[0];
+		const password = form_validation[1];
 		firebase.auth().signInWithEmailAndPassword(email, password)
+			.then(remove_loader)
 			.catch(function (error) {
 				display_snackbar(error.message);
+				remove_loader();
 			});
 	}
 	return false;

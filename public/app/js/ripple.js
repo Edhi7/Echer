@@ -1,144 +1,157 @@
-"use strict";
+document.addEventListener("DOMContentLoaded", init_ripple);
 
-function ripple_bounce(element, event, size) {
-    // Stop loop when ripple is removed
-    if (element) {
-        element.style.transition = "transform 1200ms cubic-bezier(0.0, 0.0, 0.2, 1)";
-        element.style.transform = "scale(" + size * 1.1 + ")";
-        window.setTimeout(function () {
-            element.style.transform = "scale(" + size + ")";
-            // Check again if element is still alive
-            if (element)
-                window.setTimeout(ripple_bounce, 1200, element, event, size);
-        }, 1200);
-    }
+/* Test if passive events are supported */
+let passive_supported = false;
+try {
+	const options = {
+		get passive() {
+			// This function will be called when the browser
+			//   attempts to access the passive property.
+			passive_supported = true;
+			return false;
+		}
+	};
+
+	window.addEventListener("test", null, options);
+	window.removeEventListener("test", null, options);
+} catch (err) {
+	passive_supported = false;
 }
 
 function ripple_size(height, width) {
-    return (Math.max(height, width) * 0.8) / 16;
+	return (Math.max(height, width) * Math.sqrt(2)) / 16;
 }
 
-function relative_click_coordinates(event) {
-    var rect = event.currentTarget.getBoundingClientRect();
-    return {
-        x: event.pageX - rect.left,
-        y: event.pageY - rect.top
-    };
+function relative_click_coordinates(event, target) {
+	let rect = target.getBoundingClientRect();
+	return {
+		x: event.pageX - rect.left,
+		y: event.pageY - rect.top
+	};
 }
 
-function applyStylesToRipple(element, event) {
-    const parent_height = event.currentTarget.clientHeight,
-        parent_width = event.currentTarget.clientWidth,
-        size = ripple_size(
-            event.currentTarget.clientHeight,
-            event.currentTarget.clientWidth
-        );
+function applyStylesToRipple(element, event, target) {
+	const parent_height = target.clientHeight,
+		parent_width = target.clientWidth,
+		size = ripple_size(
+			target.clientHeight,
+			target.clientWidth
+		);
 
-    const coords = relative_click_coordinates(event);
-    element.style.top = coords.y - 8 + "px";
-    element.style.left = coords.x - 8 + "px";
-    element.style.transition = "500ms cubic-bezier(0.4, 0, 0.2, 1)";
-    window.setTimeout(function () {
-        element.style.transform = "scale(" + size + ")";
-        element.style.top = parent_height / 2 - 8 + "px";
-        element.style.left = parent_width / 2 - 8 + "px";
-        window.setTimeout(function () {
-            ripple_bounce(element, event, size);
-        }, 500);
-    }, 10);
+	const coords = relative_click_coordinates(event, target);
+	element.style.top = coords.y - 8 + "px";
+	element.style.left = coords.x - 8 + "px";
+	element.style.transition = "500ms cubic-bezier(0.4, 0, 0.2, 1)";
+	requestAnimationFrame(() => {
+		element.style.transform = "scale(" + size + ")";
+		element.style.top = parent_height / 2 - 8 + "px";
+		element.style.left = parent_width / 2 - 8 + "px";
+	}, 10);
 }
 
 function ripple_cleanup(ripple) {
-    ripple.setAttribute("removal-scheduled", "f");
-    window.setTimeout(function () {
-        ripple.style.transition = "1200ms cubic-bezier(0, 0, 0.2, 1)";
-        ripple.style.opacity = 0;
-        ripple.style.width = "32px";
-        ripple.style.height = "32px";
-        window.setTimeout(function () {
-            // Tofix: element does not get deleted
-            if (ripple)
-                ripple.parentNode.removeChild(ripple);
-        }, 750);
-    }, 120);
+	ripple.setAttribute("removal-scheduled", "f");
+	window.setTimeout(function () {
+		ripple.style.transition = "1200ms cubic-bezier(0, 0, 0.2, 1)";
+		ripple.style.opacity = 0;
+		ripple.style.width = "32px";
+		ripple.style.height = "32px";
+		window.setTimeout(function () {
+			if (ripple)
+				ripple.remove();
+		}, 750);
+	}, 120);
 }
 
 function create_ripple(parent) {
-    const ripple_element = document.createElement("div");
-    ripple_element.classList = "_inkSplash";
-    parent.append(ripple_element);
+	const ripple_element = document.createElement("div");
+	ripple_element.classList = "ink_splash";
+	parent.append(ripple_element);
 
-    //Have to fetch newly appended element instead of sending rippleElement because it'll just be a copy otherwise
-    return parent.lastChild;
+	//Have to fetch newly appended element instead of sending rippleElement because it'll just be a copy otherwise
+	return parent.lastChild;
 }
 
 function ripple_event_handler(event) {
-    if (rippling_allowed) {
-        rippling_allowed = false;
-        const t = event.currentTarget;
-        const ripple_element = create_ripple(t);
-        applyStylesToRipple(ripple_element, event);
-        window.setTimeout(function () {
-            rippling_allowed = true;
-        }, 15);
-    }
+	const target = event.currentTarget;
+	requestAnimationFrame(() => {
+		if (rippling_allowed) {
+			rippling_allowed = false;
+			if (!target.classList.contains("disabled")) {
+				const ripple_element = create_ripple(target);
+				applyStylesToRipple(ripple_element, event, target);
+			}
+			window.setTimeout(function () {
+				rippling_allowed = true;
+			}, 150);
+		}
+	});
 }
 
-function ripple_init() {
-    "use strict";
-    const ripple_containers = [].slice.call(
-        document.getElementsByClassName("ripple")
-    );
+function init_ripple() {
+	/* 	For some reason the ripples cause other event listeners
+	 *	to not fire on pale moon. I'm including Goanna and Gecko
+	 *	too since I don't know where the issue lies and it's
+	 *	better to be safe than sorry.
+	 */
+	if (navigator.userAgent.includes("PaleMoon") ||
+		navigator.userAgent.includes("Goanna"))
+		return;
 
-    //Apply event listener to each of the rippleContainers
-    ripple_containers.forEach(function (element) {
-        element.addEventListener("mousedown", function (event) {
-            ripple_event_handler(event);
-        });
+	const ripple_containers = [].slice.call(
+		document.getElementsByClassName("ripple")
+	);
 
-        element.addEventListener("touchstart", function (event) {
-            ripple_event_handler(event);
-        });
+	//Apply event listener to each of the rippleContainers
+	ripple_containers.forEach(function (element) {
+		if (!element.hasAttribute("ripple-status")) {
+			element.setAttribute("ripple-status", "activated");
+			element.addEventListener("mousedown", function (event) {
+				ripple_event_handler(event);
+			});
+			if (passive_supported) {
+				element.addEventListener("touchstart", function (event) {
+					ripple_event_handler(event);
+				}, { passive: true });
+			}
+			else {
+				element.addEventListener("touchstart", function (event) {
+					ripple_event_handler(event);
+				});
+			}
 
-        // Delete ripple if the mouse leaves the container
-        element.addEventListener("mouseleave", function (event) {
-            delete_all_ripples();
-        });
+			// Delete ripple if the mouse leaves the container
+			element.addEventListener("mouseleave", function (event) {
+				delete_all_ripples();
+			});
 
-        // Clean up ripples if mouseup or touchend occurs outside element
-        document.addEventListener("mouseup", function (event) {
-            delete_all_ripples();
-        });
-    
-        document.addEventListener("touchend", function (event) {
-            delete_all_ripples();
-        });
-    });
+			// Clean up ripples if mouseup or touchend occurs outside element
+			document.addEventListener("mouseup", function (event) {
+				delete_all_ripples();
+			});
+
+			document.addEventListener("touchend", function (event) {
+				delete_all_ripples();
+			});
+		}
+	});
 }
 
 // To stop both events from firing
-var rippling_allowed = true;
-var deleting_ripples_allowed = true;
+let rippling_allowed = true;
+let deleting_ripples_allowed = true;
 
 function delete_all_ripples() {
-    if (deleting_ripples_allowed) {
-        deleting_ripples_allowed = false;
-        const targets = document.getElementsByClassName("_inkSplash");
-        for (let target of targets) {
-            if (!target.hasAttribute("removal-scheduled"))
-                ripple_cleanup(target);
-        }
-        window.setTimeout(function () {
-            deleting_ripples_allowed = true;
-        }, 10);
-    }
-}
-
-function hide_menu(event) {
-    if (!event.target.classList.contains("toolbar-menu") &&
-        !event.target.classList.contains("toolbar-menu-option")) {
-        document.getElementById("menu-button")
-            .classList.remove("active");
-        // Todo: Make it gain activity as well
+	if (deleting_ripples_allowed) {
+		deleting_ripples_allowed = false;
+		const targets = document.getElementsByClassName("ink_splash");
+		for (let target of targets) {
+			if (!target.hasAttribute("removal-scheduled")) {
+				ripple_cleanup(target);
+			}
+		}
+		window.setTimeout(() => {
+			deleting_ripples_allowed = true;
+		}, 50);
     }
 }
