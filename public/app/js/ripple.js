@@ -65,7 +65,7 @@ function ripple_cleanup(ripple) {
 
 function create_ripple(parent) {
 	const ripple_element = document.createElement("div");
-	ripple_element.classList = "ink_splash";
+	ripple_element.classList.add("ink-splash");
 	parent.append(ripple_element);
 
 	//Have to fetch newly appended element instead of sending rippleElement because it'll just be a copy otherwise
@@ -77,6 +77,7 @@ function ripple_event_handler(event) {
 	requestAnimationFrame(() => {
 		if (rippling_allowed) {
 			rippling_allowed = false;
+			
 			if (!target.classList.contains("disabled")) {
 				const ripple_element = create_ripple(target);
 				applyStylesToRipple(ripple_element, event, target);
@@ -144,7 +145,7 @@ let deleting_ripples_allowed = true;
 function delete_all_ripples() {
 	if (deleting_ripples_allowed) {
 		deleting_ripples_allowed = false;
-		const targets = document.getElementsByClassName("ink_splash");
+		const targets = document.getElementsByClassName("ink-splash");
 		for (let target of targets) {
 			if (!target.hasAttribute("removal-scheduled")) {
 				ripple_cleanup(target);

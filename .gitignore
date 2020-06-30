@@ -1,3 +1,4 @@
 firebase-debug.log
 .vscode
 *.cache
+node_modules/

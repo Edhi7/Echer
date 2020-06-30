@@ -4,33 +4,39 @@ importScripts('/app/js/cache-polyfill.js');
 
 const CACHE = "ルニョニー";
 
-self.addEventListener('fetch', function (event) {
-	event.respondWith(
-		caches.match(event.request)
-			.then(response => {
-				if (response) {
-					return response;
-				}
-
-				return fetch(event.request).then(
-					response => {
-						if (!response || response.status !== 200 || response.type !== 'basic') {
-							return response;
-						}
-
-						var responseToCache = response.clone();
-						caches.open(CACHE)
-							.then(cache => {
-								cache.put(event.request, responseToCache);
-							});
-						return response;
-					}
-				);
-			})
-	);
+self.addEventListener("fetch", event => {
+	event.respondWith(respond(event));
 });
 
-self.addEventListener('install', event => {
+async function respond(event) {
+	// Let cache open in background
+	const cache_promise = caches.match(event.request);
+
+	let fetched_response = await fetch(event.request);
+
+	// Choose if we use the cache or fetched response
+	if (!fetched_response || fetched_response.status !== 200) {
+		const cache_response = await cache_promise;
+		if (cache_response != undefined) {
+			return cache_response;
+		} else {
+			// Return erronious response
+			return fetched_response;
+		}
+	} else {
+		// Only cache same-origin requests
+		if (fetched_response.type === 'basic') {
+			// Cache and respond with fetched response
+			var response_to_be_cached = fetched_response.clone();
+			const opened = await caches.open(CACHE);
+			opened.put(event.request, response_to_be_cached);
+	}
+		return fetched_response;
+	}
+}
+
+self.addEventListener("install", event => {
+	console.log("installerar");
 	event.waitUntil(precache());
 });
 

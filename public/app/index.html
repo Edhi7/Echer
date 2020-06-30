@@ -32,11 +32,12 @@
 	<meta name="application-name" content="Runyonii" />
 	<meta name="msapplication-TileColor" content="#5a9271" />
 	<meta name="theme-color" content="#5a9271" />
-	<meta name="twitter:card" content="Runyonii, the free messaging platform" />
-	<script src="/__/firebase/7.2.0/firebase-app.js"></script>
-	<script defer src="/__/firebase/7.2.0/firebase-auth.js"></script>
-	<script defer src="/__/firebase/7.2.0/firebase-firestore.js"></script>
-	<script defer src="/__/firebase/7.2.0/firebase-messaging.js"></script>
+	<meta name="twitter:card" content="Runyonii, the nicest messaging platform" />
+	<script src="/__/firebase/7.15.4/firebase-app.js"></script>
+	<script defer src="/__/firebase/7.15.4/firebase-auth.js"></script>
+	<script defer src="/__/firebase/7.15.4/firebase-firestore.js"></script>
+	<script defer src="/__/firebase/7.15.4/firebase-messaging.js"></script>
+	<script defer src="/__/firebase/7.15.4/firebase-storage.js"></script>
 	<script defer src="/__/firebase/init.js"></script>
 	<script defer src="js/ripple.js"></script>
 	<script defer src="js/main.js"></script>
@@ -97,8 +98,6 @@
 		}
 
 		#authentication,
-		/*body:not(.loaded) svg,*/
-
 		body:not(.loaded) #bottom-navigation,
 		body:not(.loaded) main {
 			display: none;
@@ -188,7 +187,7 @@
 			<div class="button-flat" style="float: right;" onclick="submit_login_form()" tabindex=0>Submit</div>
 			<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1" />
 			<br clear="both" />
-			<hr class="divider" /> No account? <b class="button-flat" onclick="display_sign_in()">SIGN UP</b>
+			<hr class="divider" /> No account yet? <b class="button-flat" onclick="display_sign_in()">SIGN UP</b>
 			<br style="margin-top: 16px;" clear="all" />
 			<a href="/help">Help</a>
 			<a href="/tos">Terms</a>
@@ -224,14 +223,17 @@
 				<div class="text">New group</div>
 			</div>
 			<div id="contact-list">
+				<!-- >tfw no frens -->
 			</div>
-			<!-- >tfw no frens -->
 		</section>
 
 		<section id="account-screen" class="top-level-destination">
-			<div class="button-flat" style="float: right;" onclick="sign_out()" tabindex=0>Sign out</div>
+			<img class="profile-picture-large">
+			<div class="profile-display-name">Loading...</div>
+			<div class="profile-action ripple" onclick="sign_out()" tabindex=0>Sign out</div>
 			<br style="clear: both" />
-			<div class=ripple> Här e ju profilen men den e inte klar hoppsan där va lole :^)</div>
+			<!--- TODO disablel le nofitiancaionts LOLE !! -->
+			<div class=ripple> Här e ju profilen men den e nte klar hoppsan där va lole :^)</div>
 		</section>
 
 	</main>
