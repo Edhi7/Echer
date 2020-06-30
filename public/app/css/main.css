@@ -3,11 +3,9 @@ html {
 	font-family: 'Cabin', sans-serif;
 	/*-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	-moz-tap-highlight-color: rgba(0, 0, 0, 0);*/
-	min-height: 100%;
 }
 
 main {
-	display: block;
 	transition: 200ms;
 	opacity: 1;
 }
@@ -57,8 +55,7 @@ a {
 }
 
 .dialog.tiny {
-	transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1),
-		top 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1), top 300ms cubic-bezier(0.4, 0, 0.2, 1);
 	top: calc(50vh - 28px) !important;
 	height: 56px !important;
 	bottom: unset !important;
@@ -150,13 +147,13 @@ a {
 	overflow: hidden;
 	z-index: 25;
 	opacity: 0;
-	transform: scale(0.8);
+	transform: scale(0.95);
 	transition: 100ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dialog-destination.active {
-	transition: 175ms cubic-bezier(0.4, 0, 0.2, 1);
-	top: 56px;
+	transition: 125ms cubic-bezier(0.4, 0, 0.2, 1);
+	top: 72px;
 	z-index: 26;
 	opacity: 1;
 	transform: scale(1);
@@ -190,6 +187,10 @@ a {
 	left: 0;
 }
 
+.dialog .form-element {
+	padding: 8px;
+}
+
 .message-container {
 	padding: 8px;
 	height: calc(100% - 117px);
@@ -203,16 +204,17 @@ a {
 	color: unset;
 	width: 100%;
 	padding-top: 2px;
-	padding-bottom: 8px;
+	padding-bottom: 2px;
 	clear: both;
 	min-height: 48px;
 	opacity: 0;
 	overflow-wrap: break-word;
-	transition: 200ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .message.display {
-	padding-bottom: 2px;
+	transition: 200ms cubic-bezier(0, 0, 0.2, 1);
+	margin: 0 !important;
+	padding-bottom: 2px !important;
 	opacity: 1;
 }
 
@@ -361,13 +363,13 @@ a {
 	bottom: 56px;
 	width: 100vw;
 	box-sizing: border-box;
-	transition: 50ms cubic-bezier(0.4, 0.0, 1, 1);
+	transition: top 50ms cubic-bezier(0.4, 0.0, 1, 1), opacity 50ms cubic-bezier(0.4, 0.0, 1, 1), margin-top 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
 	opacity: 0.2;
 	transform: scale(0.96);
 }
 
 .top-level-destination.active {
-	transition: 225ms cubic-bezier(0, 0, 0.2, 1);
+	transition: top 225ms cubic-bezier(0, 0, 0.2, 1), opacity 225ms cubic-bezier(0, 0, 0.2, 1), margin-top 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
 	top: 0;
 	opacity: 1;
 	transform: none;
@@ -654,28 +656,29 @@ body .raised-button {
 
 #bottom-navigation .bottom-navigation-destination {
 	padding: 8px 8px 0 8px;
-	flex: 1;
+	flex: 2;
 	text-align: center;
-	flex-grow: 1;
 	font-size: 12px;
 	max-width: 168px;
-	transition: 175ms cubic-bezier(0.4, 0.0, 0.2, 1);
+	transition: 200ms cubic-bezier(0, 0, 0.2, 1);
 	cursor: pointer;
 }
 
 #bottom-navigation .bottom-navigation-destination.active {
-	padding: 6px 8px 0 8px;
-	flex-grow: 2;
+	border-radius: 16px 16px 0 0;
+	background: #528165;
+	transform: scale(1.1);
+	flex: 3;
+	padding: 6px 24px 0 24px;
+	/*flex-grow: 2;*/
 }
 
 .bottom-navigation-destination path {
 	transition: 125ms;
-	transform: scale(0.9);
 	fill: rgba(230, 230, 230, 0.64);
 }
 
 .bottom-navigation-destination.active path {
-	transform: scale(1);
 	fill: rgba(230, 230, 230, 0.96);
 }
 
@@ -688,7 +691,6 @@ body .raised-button {
 }
 
 .bottom-navigation-destination.active .bottom-navigation-label {
-	font-size: 14px;
 	color: rgba(230, 230, 230, 0.96);
 }
 
@@ -700,12 +702,40 @@ body .raised-button {
 	margin: 0 auto 2px auto;
 }
 
+#account-screen {
+	margin-top: 48px;
+	text-align: center;
+}
+
+.profile-picture-large {
+	height: 96px;
+	width: 96px;
+	border-radius: 50%;
+}
+
+.profile-display-name {
+	font-size: 24px;
+	color: #4d4d4d;
+}
+
+.profile-action {
+	text-transform: uppercase;
+	font-size: 14px;
+	font-weight: 500;
+	color: #424242;
+	line-height: 20px;
+	padding: 4px 8px;
+	border-radius: 4px;
+	display: inline-block;
+	cursor: pointer;
+}
+
 .ripple {
 	position: relative;
 	overflow: hidden;
 }
 
-._inkSplash {
+.ink-splash {
 	position: absolute;
 	background-color: #000;
 	width: 16px;
@@ -715,12 +745,29 @@ body .raised-button {
 	border-radius: 50%;
 }
 
+.banner {
+	box-sizing: border-box;
+	margin-top: -100px;
+	width: 100%;
+	line-height: 24px;
+	font-size: 18px;
+	padding: 8px 16px;
+	padding-top: 12px;
+	background: #f5f5f5;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.banner.slide-in {
+	transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	margin-top: 0;
+}
+
 #snackbar-container {
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	right: 0;
-    margin: 0 auto;
+	margin: 0 auto;
 	pointer-events: none;
 	max-width: 700px;
 	z-index: 40;
@@ -1063,40 +1110,42 @@ body .raised-button {
 	.add-fren-text {
 		left: 64px;
 	}
-	.dialog {
-		top: 8px;
-		height: calc(100% - 16px) !important;
-	}
 }
 
 @media screen and (min-width: 672px) {
 	/* Bottom nav becomes side nav when screen is too big */
 	#bottom-navigation {
-		width: 56px;
-		height: 100vh;
-		left: -64px;
-		top: 0;
+		width: 64px;
+		height: 192px;
+		left: -72px;
+		top: calc(50vh - 121px);
+		box-sizing: border-box;
 		right: initial;
 		display: initial;
-		border-radius: 0;
+		padding-top: 16px;
+		border-radius: 0 8px 8px 0;
 	}
 	#bottom-navigation.slide-in {
 		left: 0;
 	}
 	#bottom-navigation .bottom-navigation-destination {
 		color: rgba(256, 256, 256, 0.54);
-		padding: 16px;
+		padding: 8px 0;
+		width: 48px;
+		margin-left: 8px;
 	}
 	/* No need for label on side nav */
 	.bottom-navigation-label {
 		display: none;
 	}
 	#bottom-navigation .bottom-navigation-destination.active {
+		margin: 16px 8px;
 		color: rgba(256, 256, 256, 0.87);
-		padding: 16px;
+		border-radius: 16px;
+		padding: 12px 0;
 	}
-	#bottom-navigation .bottom-navigation-destination .material-icons {
-		margin: 0;
+	#bottom-navigation .bottom-navigation-destination svg, #bottom-navigation .bottom-navigation-destination img {
+		margin: 0 auto;
 	}
 	#fab {
 		right: 8px;
@@ -1121,27 +1170,15 @@ body .raised-button {
 		right: 0;
 		margin: auto;
 	}
-	/*#chat-screen {
-		width: 40vw;
-		left: 56px;
-		margin: 0;
-		height: 100vh;
+	.banner {
+		padding: 8px calc(15vw - 80px);
+		padding-top: 12px;
 	}
-	#contact-list {
-		height: 100%;
-		padding: 0;
-		margin: 0;
-		padding-top: 8px;
-		box-sizing: border-box;
-		overflow: auto
-	}
-	.dialog-toolbar {
-		display: none;
-	}*/
 	.dialog {
 		left: 64px;
 		right: 8px;
 		top: 8px;
+		height: calc(100% - 16px) !important;
 		bottom: 8px;
 		margin: auto;
 		width: 66vw;

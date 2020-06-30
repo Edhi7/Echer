@@ -15,6 +15,63 @@ function main() {
 	}, 50);
 }
 
+let enable_messaging_has_been_called = false;
+let current_notification_token = null;
+function enable_messaging() {
+	const messaging = firebase.messaging();
+	if (!enable_messaging_has_been_called) {
+		messaging.usePublicVapidKey("BFJKkTQpA4Ft8VwpEc2kz8EJMdqLFMpc3RHn7WCHyxBH1Ouegsm5zuhbcubvtSwhysfVHGa2uri6qu8MtUCVPh8");
+		messaging.onTokenRefresh(() => {
+			messaging.getToken().then((refreshedToken) => {
+				sendTokenToServer(refreshedToken);
+				current_notification_token = refreshedToken;
+			}).catch((err) => {
+				console.log('Unable to retrieve refreshed token ', err);
+			});
+		});
+	}
+	enable_messaging_has_been_called = true;
+	messaging.getToken().then(currentToken => {
+		if (currentToken) {
+			sendTokenToServer(currentToken);
+			current_notification_token = currentToken;
+		} else {
+			updateUIForPushPermissionRequired();
+		}
+	}).catch((err) => {
+		console.log('An error occurred while retrieving token. ', err);
+		updateUIForPushPermissionRequired();
+	});
+}
+
+function sendTokenToServer(new_token) {
+	const uid = firebase.auth().currentUser.uid;
+	if (current_notification_token != new_token) {
+		// Remove old token
+		firebase.firestore().collection("users").doc(uid).update({
+			notification_tokens: firebase.firestore.FieldValue.arrayRemove(current_notification_token)
+		});
+	}
+	// Upload new token
+	firebase.firestore().collection("users").doc(uid).update({
+		notification_tokens: firebase.firestore.FieldValue.arrayUnion(new_token)
+	});
+}
+
+function updateUIForPushPermissionRequired() {
+	// Use a thing on top full wide slides down square same color with seam.
+	display_banner(`Enable notifications to achieve victory
+		<div class="right" style="margin-top: -4px;">
+			<div class="button-flat" onclick="hide_banner()">No, thank you</div>
+			<div class="button-flat" onclick="request_notification_permission()">I'll try it</div>
+		</div>
+		<br clear="both"></br>`);
+}
+
+function request_notification_permission() {
+	enable_messaging();
+}
+
 function enable_persistence() {
 	fs.enablePersistence()
 		.catch(err => {
@@ -24,10 +81,7 @@ function enable_persistence() {
 			} else if (err.code == "unimplemented") {
 				// The current browser does not support all of the
 				// features required to enable persistence
-				const div = create_error(`Your browser does not support offline storage.
-				You will not be able to access this website without internet
-				access. If you want these features,
-				try using Firefox or Chrome.`);
+				const div = create_error(`Your browser does not support offline storage. You will not be able to use this website without internet access. If you want these features, try switching to a Firefox- or Chrome-<b>based</b> brower.`);
 				const acc = document.getElementById("account-screen");
 				acc.innerHTML += div;
 			}
@@ -42,7 +96,6 @@ function create_error(message) {
 }
 
 function upload_avatar() {
-	// make path random keys
 	var filePath = firebase.auth().currentUser.uid + '/' + messageRef.id + '/' + file.name;
 	return firebase.storage().ref(filePath).put(file).then(function (fileSnapshot) {
 		return fileSnapshot.ref.getDownloadURL().then((url) => {
@@ -83,6 +136,7 @@ function bottom_navigation_click(event) {
 	}
 	element.classList.add("active");
 	hide_top_level_destinations();
+
 	// Call corresponding displaying function
 	[display_map, display_chat, display_account][clicked_el_index]();
 
@@ -95,9 +149,12 @@ function hide_top_level_destinations() {
 	for (const destination of destinations) {
 		destination.classList.remove("active");
 	}
+
+	// Hide contacts
 	const contacts = document.getElementById("contact-list").children;
 	for (let contact of contacts)
 		contact.classList.remove("active");
+
 	// Actually hide
 	setTimeout(() => {
 		for (const destination of destinations) {
@@ -121,11 +178,12 @@ function display_chat() {
 	for (let i = 0; i < contacts.length; i++) {
 		setTimeout(() => {
 			contacts[i].classList.add("active");
-		}, 35 * (i + 1));
+			if (i + 1 == contacts.length)
+				requestAnimationFrame(init_ripple);
+		}, 25 * (i + 1));
 	}
 	setTimeout(() => {
 		chat_screen.classList.add("active")
-		init_ripple();
 	}, 25)
 	set_add_fren_on_click();
 	set_new_group_on_click();
@@ -204,7 +262,7 @@ function display_friend_for_new_group(container, img, name, id) {
 							<div class="contact-last-message">Click to select</div>
 						</section>
 					</div>`;
-	const div = container.querySelector("#" + id);
+	const div = container.getElementById(id);
 	div.setAttribute("data-group-id", id);
 	div.getElementsByClassName("contact-image")[0].src = img;
 	div.getElementsByClassName("contact-name")[0].innerText = name;
@@ -223,7 +281,7 @@ function create_new_group(dialog) {
 		admins: user_id,
 		last_message: "New group",
 		name: name,
-		image: "/images/android-icon-48x48.png"
+		image: "gs://echeveria-runyonii.appspot.com/favicon-96x96.png"
 	});
 	tiny_dialog_message(dialog, `Group ${name} was created.`);
 }
@@ -563,21 +621,25 @@ function remove_message(id) {
 function create_message(id, timestamp, image, dialog, me) {
 	const message = document.createElement('div');
 	message.classList.add("message");
-	/* if the message is from the current user then it will be green.
-	positioned to the right, and without an avatar */
+	/*	If the message is from the current user then it will be green,
+		positioned to the right, and without an avatar */
 	message.innerHTML = me ?
 		`<span class="message-text"></span>`
 		: `<img class="message-avatar"/>
 			<span class="message-text"></span>`;
-	if (me) message.classList.add("from-me");
-	else message.getElementsByClassName("message-avatar")[0].src = image;
+	if (me)
+		message.classList.add("from-me");
+	else
+		message.getElementsByClassName("message-avatar")[0].src = image;
+
+	// Store metadata in element
 	message.setAttribute('data-time', timestamp);
 	message.setAttribute('id', id);
 
 	// Figure out where to insert new message
 	const message_list = dialog
 		.getElementsByClassName("message-container")[0];
-	const existing_messages = message_list.children;
+	const existing_messages = Array.from(message_list.children).reverse();
 	if (existing_messages.length === 0) {
 		message_list.appendChild(message);
 	} else {
@@ -585,7 +647,7 @@ function create_message(id, timestamp, image, dialog, me) {
 		while (message_list_node) {
 			const message_list_node_time
 				= message_list_node.getAttribute('data-time');
-			if (message_list_node_time < timestamp)
+			if (message_list_node_time > timestamp)
 				break;
 			message_list_node = message_list_node.nextSibling;
 		}
@@ -633,8 +695,8 @@ function create_message_listener(group_id, dialog, limit) {
 function display_message(dialog, time, sender, text, image, id) {
 	const me = sender == firebase.auth().currentUser.uid;
 	const msg = document.getElementById(id) ||
-		create_message(id, time, image, dialog, me);
-	display_message_after_wait(msg);
+		create_message(id, time.toMillis(), image, dialog, me);
+	requestAnimationFrame(() => display_message_after_wait(msg));
 	msg.setAttribute("data-sender", sender);
 	const txt = msg.getElementsByClassName("message-text")[0];
 	txt.innerText = text;
@@ -644,9 +706,20 @@ function display_message(dialog, time, sender, text, image, id) {
 let messages_displayed = 0;
 let reset_timer = null;
 function display_message_after_wait(msg) {
-	const wait = messages_displayed * 15;
+	const wait = messages_displayed * 20;
+	// Set timers to apply styles
+	if (messages_displayed == 0) {
+		// Single new message
+		msg.style.marginBottom = "-30px";
+		requestAnimationFrame(() => msg.classList.add("display"))
+	} else {
+		// Multiple at the same time
+		msg.style.paddingBottom = "8px";
+		requestAnimationFrame(() => setTimeout(() => msg.classList.add("display"), wait))
+	}
+
+	// Increment
 	messages_displayed++;
-	setTimeout(() => msg.classList.add("display"), wait);
 
 	// Reset to zero after one second of no messages 
 	if (reset_timer)
@@ -711,8 +784,8 @@ function scale_in_title() {
 function fade_out_title() {
 	document.body.classList.add("loaded");
 	// Had to do this twice?
-	requestAnimationFrame(function () {
-		requestAnimationFrame(function () {
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
 			const app_title = document.getElementById("app-title");
 			app_title.classList.add("fade-out");
 		});
@@ -727,21 +800,14 @@ function float_title() {
 
 function register_service_worker() {
 	if ("serviceWorker" in navigator) {
-		navigator.serviceWorker
-			.register("/app/sw.js")
-			.then(function (registration) {
-				console.log("Service worker registered at scope ", registration.scope);
-			});
-		navigator.serviceWorker.ready.then(function (registration) {
-			console.log("Service worker Ready");
-		});
-	} else {
-		console.log("Service worker is unavailable");
+		navigator.serviceWorker.register("/app/sw.js");
 	}
 }
 
 function check_logged_in() {
 	firebase.auth().onAuthStateChanged((user) => {
+		if (chose_to_sign_out)
+			return;
 		if (user) {
 			logged_in(user);
 		} else {
@@ -751,8 +817,10 @@ function check_logged_in() {
 	});
 }
 
+let chose_to_sign_out = false;
 function sign_out() {
 	firebase.auth().signOut().then(function () {
+		chose_to_sign_out = true;
 		display_snackbar("Signed out");
 		location.reload();
 	}).catch(function (error) {
@@ -776,14 +844,21 @@ function hide_login_form() {
 function logged_in(user) {
 	if (user.displayName != null)
 		display_snackbar("Signed in as " + user.displayName);
+
 	fs.collection("users").doc(user.uid).get().then((doc) => {
 		if (doc.exists) {
 			populate_contact_list(user.uid);
 		}
 	});
+
+	const chat_screen = document.getElementById("chat-screen");
+	chat_screen.classList.add("active")
+
 	display_logged_in_ui();
 	check_friend_requests();
 	add_groups_to_grouplists();
+	setTimeout(enable_messaging, 3000);
+	init_ripple();
 }
 
 function check_friend_requests() {
@@ -860,46 +935,62 @@ function populate_contact_list(user_id) {
 	fs.collection("grouplists").doc(user_id).get().then((doc) => {
 		if (!doc.exists)
 			return;
-		// todo: make a screen telling the user that he has no friends
+		// TODO: make a screen telling the user that he has no friends
 		contact_container.innerHTML = "";
 		let i = 0;
 		for (const group of doc.data().groups) {
-			fs.collection("groups").doc(group.id).get().then((grp) => {
-				contact_container.innerHTML +=
-					`<div class="contact ripple active">
-						<img class="contact-image" alt="Profile picture"/>
-						<section class="contact-text">
-							<div class="contact-name"></div>
-							<div class="contact-last-message">Hej feto</div>
-						</section>
-					</div>`;
-				contact_container.getElementsByClassName("contact")[i]
-					.setAttribute("data-id", group.id);
-				contact_container.getElementsByClassName("contact-name")[i]
-					.innerText = grp.data().name == null ? group.name
-						: grp.data().name;
-				contact_container.getElementsByClassName("contact-image")[i]
-					.src = grp.data().image;
-				contact_container
-					.getElementsByClassName("contact-last-message")[i]
-					.innerText = grp.data().last_message;
-				requestAnimationFrame(() => display_chat());
-				i++;
+			fs.collection("groups").doc(group.id).get().then(group_info => {
+				append_contact(group, group_info.data());
+				// if this is the last contact
+				if (++i == doc.data().groups.length)
+					setTimeout(display_chat, 500);
 			});
 		}
 	});
 }
 
+function append_contact(group, group_data) {
+	let contact = document.createElement("div");
+	contact.setAttribute("class", "contact ripple");
+	contact.setAttribute("data-id", group.id);
+	contact.innerHTML = `<img class="contact-image" alt="Profile picture"/>
+		<section class="contact-text">
+			<div class="contact-name"></div>
+			<div class="contact-last-message">Hej feto</div>
+		</section>`;
+	contact.querySelector(".contact-name").innerText =
+		group_data.name == null ? group.name : group_data.name;
+	contact.querySelector(".contact-image").src = group_data.image;
+	contact.querySelector(".contact-last-message").innerText = group_data.last_message;
+
+	const contact_container = document.getElementById("contact-list");
+	contact_container.appendChild(contact);
+}
+
 function display_logged_in_ui() {
 	fade_out_title();
 	hide_login_form();
+	load_account_screen_info();
 	setTimeout(() => {
-		display_chat();
 		login.style.display = "none";
 	}, 250);
 	setTimeout(() => {
 		document.getElementById("bottom-navigation").classList.add("slide-in")
 	}, 480);
+}
+
+function load_account_screen_info() {
+	const uid = firebase.auth().currentUser.uid;
+	firebase.firestore().collection("users").doc(uid).get().then(doc => {
+		const data = doc.data();
+		const storage = firebase.storage();
+		storage.refFromURL(data.image).getDownloadURL().then(url => {
+			const picture = document.querySelector(".profile-picture-large");
+			picture.src = url;
+		});
+		const name = document.querySelector(".profile-display-name");
+		name.innerText = data.display;
+	})
 }
 
 function display_sign_in() {
@@ -939,6 +1030,38 @@ function validate_login_form(form) {
 function set_text_color() {
 	// Display the fonts initally hidden
 	document.body.parentNode.style.color = "rgba(0, 0, 0, 0.9)";
+}
+
+function display_banner(content) {
+	// Remove previous
+	hide_banner();
+
+	let banner = document.createElement("div");
+	banner.classList.add("banner");
+	banner.innerHTML = content;
+	const main = document.querySelector("main")
+	main.appendChild(banner);
+	requestAnimationFrame(() => {
+		const height = banner.clientHeight;
+		banner.marginTop = banner.clientHeight;
+		for (let dest of main.getElementsByClassName("top-level-destination"))
+			dest.style.marginTop = height + "px";
+		banner.classList.add("slide-in");
+		init_ripple();
+	})
+}
+
+function hide_banner() {
+	const banner = document.querySelector(".banner");
+	if (!banner)
+		return;
+	banner.style.marginTop = (-banner.clientHeight) + "px";
+	setTimeout(() => {
+		banner.remove();
+	}, 350);
+	const main = document.querySelector("main")
+	for (let dest of main.getElementsByClassName("top-level-destination"))
+		dest.style.marginTop = "0px";
 }
 
 // Displays a message at the bottom of the screen for 4 seconds

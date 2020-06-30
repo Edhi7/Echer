@@ -42,18 +42,18 @@
 }
 
 article {
-    max-height: calc(100vh - 256px);
+    max-height: calc(100vh - 112px);
     box-sizing: border-box;
     overflow-y: auto;
     width: 536px;
     margin: 24px auto;
     padding: 8px 12px;
     border-radius: 4px;
-    background: #fefefe;
-    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.12), 0 1px 5px rgba(0, 0, 0, 0.2);
+    font-size: 30px;
 }
 
 .title {
+    padding-top: 64px;
     font-size: 80px;
     letter-spacing: 2px;
     font-weight: 500;
