@@ -12,7 +12,13 @@ async function respond(event) {
 	// Let cache open in background
 	const cache_promise = caches.match(event.request);
 
-	let fetched_response = await fetch(event.request);
+	let fetched_response;
+	try {
+		fetched_response = await fetch(event.request);
+	} catch (error) {
+		console.log(error);
+		return cache_promise;
+	}
 
 	// Choose if we use the cache or fetched response
 	if (!fetched_response || fetched_response.status !== 200) {
@@ -26,11 +32,13 @@ async function respond(event) {
 	} else {
 		// Only cache same-origin requests
 		if (fetched_response.type === 'basic') {
+			console.log("cachar");
 			// Cache and respond with fetched response
 			var response_to_be_cached = fetched_response.clone();
 			const opened = await caches.open(CACHE);
 			opened.put(event.request, response_to_be_cached);
-	}
+			console.log("klar med att cacha ", event.request.url);
+		}
 		return fetched_response;
 	}
 }

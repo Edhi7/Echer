@@ -1116,14 +1116,14 @@ body .raised-button {
 	/* Bottom nav becomes side nav when screen is too big */
 	#bottom-navigation {
 		width: 64px;
-		height: 192px;
+		height: 100%;
 		left: -72px;
-		top: calc(50vh - 121px);
+		top: 0;
 		box-sizing: border-box;
 		right: initial;
 		display: initial;
 		padding-top: 16px;
-		border-radius: 0 8px 8px 0;
+		/*border-radius: 0 8px 8px 0;*/
 	}
 	#bottom-navigation.slide-in {
 		left: 0;
