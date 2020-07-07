@@ -27,10 +27,9 @@ exports.sendNewMessageNotification = functions.firestore.document("groups/{group
 		let user_data_promises = [];
 		for (const uid of members) {
 			console.log(uid, " får meddelande från ", sender_id);
-			// TODO uncomment
-			/*// Do not send notifications to the sender
-			if (user_id == sender_id)
-				continue;*/
+			// Do not send notifications to the sender
+			if (uid == sender_id)
+				continue;
 			user_data_promises.push(fs.doc(`users/${uid}`).get());
 		}
 
@@ -43,16 +42,21 @@ exports.sendNewMessageNotification = functions.firestore.document("groups/{group
 				title: `New message from ${sender_name}`,
 				body: message_text,
 				icon: sender_image
-			}
+			},
+			data: {
+				group_id: group
+			},
+			/*webpush: {
+				fcm_options: {
+					link: `https://echeveria-runyonii.web.app?msg_from=${group}`
+				}
+			}*/
 		};
 
 		const user_data = await Promise.all(user_data_promises);
 		let notif_tokens = [];
 		let token_user_ref = [];
 		for (const user of user_data) {
-			/*console.log("==== BÖRJAN PÅ user OBJEKT ==== ")
-			console.log(user);
-			console.log("////////////// SLUT //////////////");*/
 			const data = user.data();
 			if (data.notification_tokens) {
 				for (const token of data.notification_tokens) {
@@ -62,81 +66,27 @@ exports.sendNewMessageNotification = functions.firestore.document("groups/{group
 			}
 		}
 
+		console.log(notif_tokens);
 		const response = await admin.messaging().sendToDevice(notif_tokens, payload);
 		// For each message check if there was an error.
 		let tokens_to_remove = [];
 		response.results.forEach((result, index) => {
 			const error = result.error;
-			console.log("/////////////////// RESUlTATET VAR");
-			console.log(result);
-			console.log("/////////////////// SlUT PÅ RESULTAT");
 			if (error) {
-				console.error("Failure sending notification to ", notif_tokens[index], error);
+				console.error("Failure sending notification to ", notif_tokens[index]);
 				// Cleanup the tokens that are no longer registered.
 				if (error.code === 'messaging/invalid-registration-token' ||
 					error.code === 'messaging/registration-token-not-registered') {
 					console.log("Tar bort token ", notif_tokens[index]);
 					tokens_to_remove.push(token_user_ref[index].update({
-						tokens: admin.firestore.FieldValue.arrayRemove(notif_tokens[index])
+						notification_tokens: admin.firestore.FieldValue.arrayRemove(notif_tokens[index])
 					}));
 				}
-			}
+			} else
+				console.log(result);
 		});
-		
-		return Promise.all(tokens_to_remove);
 
-		/*const getDeviceTokensPromise = admin.database()
-			.ref(`/users/${followedUid}/notificationTokens`).once('value');
+		console.log("/////////////////// SlUT PÅ RESULTAT");
 
-		// Get the list of device notification tokens.
-		const getDeviceTokensPromise = admin.database()
-			.ref(`/users/${followedUid}/notificationTokens`).once('value');
-
-		// Get the follower profile.
-		const getFollowerProfilePromise = admin.auth().getUser(followerUid);*/
-
-		/*// The snapshot to the user's tokens.
-		let tokensSnapshot;
-
-		// The array containing all the user's tokens.
-		let tokens;
-
-		//const results = await Promise.all([getDeviceTokensPromise, getFollowerProfilePromise]);
-		tokensSnapshot = results[0];
-		const follower = results[1];
-
-		// Check if there are any device tokens.
-		if (!tokensSnapshot.hasChildren()) {
-			return console.log('There are no notification tokens to send to.');
-		}
-		console.log('There are', tokensSnapshot.numChildren(), 'tokens to send notifications to.');
-		console.log('Fetched follower profile', follower);
-
-		// Notification details.
-		const payload = {
-			notification: {
-				title: 'You have a new follower!',
-				body: `${follower.displayName} is now following you.`,
-				icon: follower.photoURL
-			}
-		};
-
-		// Listing all tokens as an array.
-		tokens = Object.keys(tokensSnapshot.val());
-		// Send notifications to all tokens.
-		const response = await admin.messaging().sendToDevice(tokens, payload);
-		// For each message check if there was an error.
-		const tokensToRemove = [];
-		response.results.forEach((result, index) => {
-			const error = result.error;
-			if (error) {
-				console.error('Failure sending notification to', tokens[index], error);
-				// Cleanup the tokens who are not registered anymore.
-				if (error.code === 'messaging/invalid-registration-token' ||
-					error.code === 'messaging/registration-token-not-registered') {
-					tokensToRemove.push(tokensSnapshot.ref.child(tokens[index]).remove());
-				}
-			}
-		});
-		return Promise.all(tokensToRemove); */
+		return await Promise.all(tokens_to_remove);
 	});

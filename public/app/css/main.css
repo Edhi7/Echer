@@ -421,7 +421,7 @@ body #authentication {
 	opacity: 0;
 	background-color: #efefef;
 	color: #323232;
-	border-radius: 2px;
+	border-radius: 6px;
 	padding: 12px 16px;
 	transition: opacity 120ms cubic-bezier(0.4, 0, 1, 1), top 360ms cubic-bezier(0.4, 0, 1, 1);
 	box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 1px 5px rgba(0, 0, 0, 0.2);
@@ -1123,7 +1123,7 @@ body .raised-button {
 		right: initial;
 		display: initial;
 		padding-top: 16px;
-		/*border-radius: 0 8px 8px 0;*/
+		border-radius: 0;
 	}
 	#bottom-navigation.slide-in {
 		left: 0;

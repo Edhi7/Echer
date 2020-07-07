@@ -639,7 +639,7 @@ function create_message(id, timestamp, image, dialog, me) {
 	// Figure out where to insert new message
 	const message_list = dialog
 		.getElementsByClassName("message-container")[0];
-	const existing_messages = Array.from(message_list.children).reverse();
+	const existing_messages = Array.from(message_list.children);
 	if (existing_messages.length === 0) {
 		message_list.appendChild(message);
 	} else {
@@ -647,7 +647,7 @@ function create_message(id, timestamp, image, dialog, me) {
 		while (message_list_node) {
 			const message_list_node_time
 				= message_list_node.getAttribute('data-time');
-			if (message_list_node_time > timestamp)
+			if (message_list_node_time < timestamp)
 				break;
 			message_list_node = message_list_node.nextSibling;
 		}
@@ -704,6 +704,7 @@ function display_message(dialog, time, sender, text, image, id) {
 }
 
 let messages_displayed = 0;
+let initial_load_done = false;
 let reset_timer = null;
 function display_message_after_wait(msg) {
 	const wait = messages_displayed * 20;
@@ -726,7 +727,7 @@ function display_message_after_wait(msg) {
 		clearTimeout(reset_timer);
 	reset_timer = setTimeout(() => {
 		messages_displayed = 0;
-	}, 500);
+	}, 200);
 }
 
 function messages_hide_loader(dialog) {

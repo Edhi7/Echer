@@ -16,7 +16,6 @@ async function respond(event) {
 	try {
 		fetched_response = await fetch(event.request);
 	} catch (error) {
-		console.log(error);
 		return cache_promise;
 	}
 
@@ -32,19 +31,16 @@ async function respond(event) {
 	} else {
 		// Only cache same-origin requests
 		if (fetched_response.type === 'basic') {
-			console.log("cachar");
 			// Cache and respond with fetched response
 			var response_to_be_cached = fetched_response.clone();
 			const opened = await caches.open(CACHE);
 			opened.put(event.request, response_to_be_cached);
-			console.log("klar med att cacha ", event.request.url);
 		}
 		return fetched_response;
 	}
 }
 
 self.addEventListener("install", event => {
-	console.log("installerar");
 	event.waitUntil(precache());
 });
 
