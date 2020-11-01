@@ -81,7 +81,7 @@ function enable_persistence() {
 			} else if (err.code == "unimplemented") {
 				// The current browser does not support all of the
 				// features required to enable persistence
-				const div = create_error(`Your browser does not support offline storage. You will not be able to use this website without internet access. If you want these features, try switching to a Firefox- or Chrome-<b>based</b> brower.`);
+				const div = create_error(`Your browser does not support offline storage. You will not be able to use this website without internet access. If you want these features, try switching to a Firefox or Chrome <b>based</b> brower.`);
 				const acc = document.getElementById("account-screen");
 				acc.innerHTML += div;
 			}
@@ -139,7 +139,6 @@ function bottom_navigation_click(event) {
 
 	// Call corresponding displaying function
 	[display_map, display_chat, display_account][clicked_el_index]();
-
 }
 
 function hide_top_level_destinations() {
@@ -264,7 +263,9 @@ function display_friend_for_new_group(container, img, name, id) {
 					</div>`;
 	const div = container.getElementById(id);
 	div.setAttribute("data-group-id", id);
-	div.getElementsByClassName("contact-image")[0].src = img;
+	firebase.storage().ref().child(img).getDownloadURL().then(url => {
+		div.getElementsByClassName("contact-image")[0].src = url;
+	});
 	div.getElementsByClassName("contact-name")[0].innerText = name;
 	div.addEventListener("click", (e) => e.currentTarget.classList.toggle("selected"));
 }
@@ -371,13 +372,15 @@ function display_friend_requests(dialog) {
 								</section>
 							</div>`;
 						const data = ユーザー.data();
-						container.getElementsByClassName("contact-image")[i]
-							.src = data.image;
+						const image = container.getElementsByClassName("contact-image")[i];
+						firebase.storage().ref().child(data.image).getDownloadURL().then(url => {
+							image.src = url;
+						});
 						container.getElementsByClassName("contact-name")[i]
 							.innerText = data.display;
 						container.getElementsByClassName("contact")[i]
 							.addEventListener("click", (e) =>
-								accept_friend_request(e, snd));
+								accept_friend_request(e, snd, data.display));
 						i++;
 					}
 				});
@@ -387,23 +390,48 @@ function display_friend_requests(dialog) {
 }
 
 function no_friend_requests(container) {
-	container.innerText = "No one wants to become your friend";
+	// TODO fix
+	container.innerHTML = `<div class="no-friends>
+		<div>No one wants to become your friend</div>
+		<img src="why.gif"/>
+	</div>`;
 }
 
-function accept_friend_request(e, uid) {
+function accept_friend_request(e, uid, name) {
 	const user_id = firebase.auth().currentUser.uid;
-	fs.collection("friendlists").doc(user_id).set({
-		uid: firebase.firestore.FieldValue.arrayUnion(uid)
-	}, { merge: true });
-	fs.collection("accepted-friends").doc(user_id).set({
-		uids: firebase.firestore.FieldValue.arrayUnion(uid)
-	}, { merge: true });
-	fs.collection("groups").add({
-		members: [user_id, uid],
-		admins: null,
-		last_message: "New friend",
-		name: null,
-		image: "/images/android-icon-48x48.png"
+	is_in_friendlist(uid).then(is_friend => {
+		if (is_friend) {
+			display_snackbar("Already friends with ", name);
+		} else {
+			fs.collection("friendlists").doc(user_id).set({
+				uid: firebase.firestore.FieldValue.arrayUnion(uid)
+			}, { merge: true });
+			fs.collection("accepted-friends").doc(user_id).set({
+				uids: firebase.firestore.FieldValue.arrayUnion(uid)
+			}, { merge: true });
+			fs.collection("groups").add({
+				members: [user_id, uid],
+				admins: null,
+				last_message: "New friend",
+				name: null,
+				image: "/images/android-icon-48x48.png"
+			});
+		}
+	});
+}
+
+function is_in_friendlist(uid) {
+	const user_id = firebase.auth().currentUser.uid;
+	return new Promise((resolve, _) => {
+		return fs.collection("friendlists").doc(user_id).get().then(doc => {
+			if (!doc.exists) {
+				return resolve(false);
+			}
+			const friends = doc.data().uid;
+			return resolve(friends.includes(uid));
+		});
+	}).catch(e => {
+		resolve(false);
 	});
 }
 
@@ -453,8 +481,10 @@ function search_for_frens(e) {
 					results.getElementsByClassName("contact")[i]
 						.addEventListener("click",
 							() => send_friend_request(doc.id));
-					results.getElementsByClassName("contact-image")[i]
-						.src = data.image;
+					const contact_image = results.getElementsByClassName("contact-image")[i];
+					firebase.storage().ref().child(data.image).getDownloadURL().then(url => {
+						contact_image.src = url;
+					});
 					results.getElementsByClassName("contact-name")[i]
 						.innerText = data.display;
 					i++;
@@ -627,10 +657,13 @@ function create_message(id, timestamp, image, dialog, me) {
 		`<span class="message-text"></span>`
 		: `<img class="message-avatar"/>
 			<span class="message-text"></span>`;
-	if (me)
+	if (me) {
 		message.classList.add("from-me");
-	else
-		message.getElementsByClassName("message-avatar")[0].src = image;
+	} else {
+		firebase.storage().ref().child(image).getDownloadURL().then(url => {
+			message.getElementsByClassName("message-avatar")[0].src = url;
+		});
+	}
 
 	// Store metadata in element
 	message.setAttribute('data-time', timestamp);
@@ -767,12 +800,14 @@ function send_message(group, msg) {
 	// Write message to db
 	const user_id = firebase.auth().currentUser.uid;
 	const image = firebase.auth().currentUser.photoURL;
-	fs.collection("groups").doc(group).collection("messages").add({
+	const msg_data = {
 		text: msg,
 		sender: user_id,
 		time: firebase.firestore.Timestamp.now(),
-		image: image
-	});
+		image: image,
+		notif_sent: false
+	}
+	fs.collection("groups").doc(group).collection("messages").add(msg_data);
 	fs.collection("groups").doc(group).update({
 		"last_message": msg
 	});
@@ -934,9 +969,12 @@ function add_groups_to_grouplists() {
 function populate_contact_list(user_id) {
 	const contact_container = document.getElementById("contact-list");
 	fs.collection("grouplists").doc(user_id).get().then((doc) => {
-		if (!doc.exists)
+		if (!doc.exists || doc.data().groups.length == 0) {
+			setTimeout(display_chat, 500);
+			display_no_friends();
 			return;
-		// TODO: make a screen telling the user that he has no friends
+		}
+
 		contact_container.innerHTML = "";
 		let i = 0;
 		for (const group of doc.data().groups) {
@@ -950,7 +988,21 @@ function populate_contact_list(user_id) {
 	});
 }
 
+function display_no_friends() {
+	const chat_screen = document.getElementById("chat-screen");
+	const no_frens = document.createElement("div");
+	no_frens.classList.add("no-friends");
+	no_frens.innerHTML = `<div>Welcome to Runyonii. It looks like you don't have any friends in your friendlist yet. Click on add friends to get some.</div>
+		<img src="images/fren.png"/>`;
+	chat_screen.appendChild(no_frens);
+	setTimeout(() => {
+		no_frens.classList.add("displayed");
+	}, 1000);
+}
+
 function append_contact(group, group_data) {
+	remove_no_friend();
+
 	let contact = document.createElement("div");
 	contact.setAttribute("class", "contact ripple");
 	contact.setAttribute("data-id", group.id);
@@ -966,6 +1018,13 @@ function append_contact(group, group_data) {
 
 	const contact_container = document.getElementById("contact-list");
 	contact_container.appendChild(contact);
+}
+
+function remove_no_friend() {
+	const no_friend = document.querySelector("#chat-screen .no-friends");
+	console.log(no_friend);
+	if (no_friend)
+		no_friend.classList.remove("displayed");
 }
 
 function display_logged_in_ui() {
@@ -984,8 +1043,7 @@ function load_account_screen_info() {
 	const uid = firebase.auth().currentUser.uid;
 	firebase.firestore().collection("users").doc(uid).get().then(doc => {
 		const data = doc.data();
-		const storage = firebase.storage();
-		storage.refFromURL(data.image).getDownloadURL().then(url => {
+		firebase.storage().ref().child(data.image).getDownloadURL().then(url => {
 			const picture = document.querySelector(".profile-picture-large");
 			picture.src = url;
 		});
@@ -1152,14 +1210,14 @@ function submit_signup_form(event) {
 			.then(() => {
 				const user = firebase.auth().currentUser;
 				const user_id = user.uid;
+				setTimeout(() => firebase.firestore().collection("users").doc(user_id).set({
+					display: display_name,
+					image: "favicon-96x96.png",
+				}), 500);
 				user.updateProfile({
 					displayName: display_name,
-					photoURL: "/images/android-icon-48x48.png"
+					photoURL: "favicon-96x96.png"
 				});
-				fs.collection("users").doc(user_id).set({
-					display: display_name,
-					image: "/images/android-icon-48x48.png",
-				})
 				remove_loader();
 			}).catch((error) => {
 				if (!error.code == "auth/email-already-in-use")

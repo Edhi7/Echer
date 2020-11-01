@@ -2,6 +2,10 @@
     margin: 0;
 }
 
+*:focus {
+    outline: none;
+}
+
 .tab {
     font-size: 18px;
     text-transform: uppercase;

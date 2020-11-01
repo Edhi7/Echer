@@ -10,5 +10,16 @@
   //     ]
   //   }
   // ]
-  "indexes": []
+  "indexes": [
+    /*{
+      "collectionGroup": "messages",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "nofif_sent",
+          "order": "ASCENDING"
+        }
+      ]
+    }*/
+  ]
 }

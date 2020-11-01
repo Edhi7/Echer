@@ -380,6 +380,7 @@ a {
 }
 
 #add-friend, #create-group {
+	z-index: 24;
 	float: left;
 	height: 48px;
 	line-height: 48px;
@@ -700,6 +701,28 @@ body .raised-button {
 	z-index: 4;
 	display: block;
 	margin: 0 auto 2px auto;
+}
+
+.no-friends {
+	position: relative;
+	font-size: 30px;
+	text-align: center;
+	transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	overflow: hidden;
+	max-height: 0px;
+	top: -32px;
+	opacity: 0;
+}
+
+.no-friends.displayed {
+	max-height: 500px;
+	top: 0;
+	opacity: 1;
+}
+
+.no-friends img {
+	margin-top: 16px;
+	width: 60%;
 }
 
 #account-screen {

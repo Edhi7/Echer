@@ -15,15 +15,27 @@ const firebase_config = {
 firebase.initializeApp(firebase_config);
 const messaging = firebase.messaging();
 
-messaging.setBackgroundMessageHandler(function (payload) {
-	console.log('Received background message ', payload);
-	// Customize notification here
-	const notificationTitle = 'Background Message Title';
-	const notificationOptions = {
-		body: 'Background Message body.',
+messaging.setBackgroundMessageHandler(payload => {
+	console.log("Received background message");
+	console.dir(payload);
+
+	if (payload.data.title == undefined)
+		return;
+
+	const options = {
+		body: payload.data.body,
+		actions: [
+			{
+				title: "Open chat",
+				action: "open",
+			},
+			{
+				title: "Mute",
+				action: "mute",
+			}],
 		icon: '/firebase-logo.png'
 	};
 
-	return self.registration.showNotification(notificationTitle,
-		notificationOptions);
+	return self.registration.showNotification(payload.data.title,
+		options);
 });

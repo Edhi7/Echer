@@ -6,7 +6,7 @@ admin.initializeApp();
 const fs = admin.firestore();
 
 
-exports.sendNewMessageNotification = functions.firestore.document("groups/{group_id}/messages/{message_id}")
+/*exports.sendNewMessageNotification = functions.firestore.document("groups/{group_id}/messages/{message_id}")
 	.onWrite(async (change, context) => {
 		const group = context.params.group_id;
 		const message = context.params.message_id;
@@ -26,9 +26,8 @@ exports.sendNewMessageNotification = functions.firestore.document("groups/{group
 
 		let user_data_promises = [];
 		for (const uid of members) {
-			console.log(uid, " får meddelande från ", sender_id);
 			// Do not send notifications to the sender
-			if (uid == sender_id)
+			if (uid === sender_id)
 				continue;
 			user_data_promises.push(fs.doc(`users/${uid}`).get());
 		}
@@ -46,12 +45,7 @@ exports.sendNewMessageNotification = functions.firestore.document("groups/{group
 			data: {
 				group_id: group
 			},
-			/*webpush: {
-				fcm_options: {
-					link: `https://echeveria-runyonii.web.app?msg_from=${group}`
-				}
-			}*/
-		};
+		/*};
 
 		const user_data = await Promise.all(user_data_promises);
 		let notif_tokens = [];
@@ -66,7 +60,6 @@ exports.sendNewMessageNotification = functions.firestore.document("groups/{group
 			}
 		}
 
-		console.log(notif_tokens);
 		const response = await admin.messaging().sendToDevice(notif_tokens, payload);
 		// For each message check if there was an error.
 		let tokens_to_remove = [];
@@ -86,7 +79,5 @@ exports.sendNewMessageNotification = functions.firestore.document("groups/{group
 				console.log(result);
 		});
 
-		console.log("/////////////////// SlUT PÅ RESULTAT");
-
 		return await Promise.all(tokens_to_remove);
-	});
+	});*/
